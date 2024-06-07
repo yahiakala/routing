@@ -9,13 +9,12 @@ class HomeRoute(Route):
     def __loader__():
         pass
 
-    @staticmethod
+    @classmethod
     def render():
         pass
 
 class ArticleRoute(Route):
     path = "/articles"
 
-    def render(se):
+    def render(afe):
         pass
-        
