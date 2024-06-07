@@ -6,3 +6,5 @@ services:
 - source: /runtime/services/tables.yml
   client_config: {}
   server_config: {}
+startup_form: null
+startup: {type: form, module: ArticlesForm}

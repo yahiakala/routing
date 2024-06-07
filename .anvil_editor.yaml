@@ -1,8 +1,12 @@
 unique_ids:
-  forms: {}
+  forms:
+    ArticlesForm: '17177359737641172904003.9640815'
+    ArticlesForm.RowTemplate1: '171773632446897758320821.07506'
+    HomeForm: '1717736014965247069639613.10135'
   modules:
-    Module1: '1717734852341876304947910.7903'
-  server_modules: {}
+    routes: '1717734852341876304947910.7903'
+  server_modules:
+    ServerModule1: '1717736082549857999544716.4503'
   assets:
     standard-page.html: J7H3Y56XEKLR3UWXODGDP7Y34DCJYIKR
     theme.css: R2N3O3L6SXTEU655BA5UYLJJA56T3YWP

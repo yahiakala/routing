@@ -1,0 +1,21 @@
+is_package: true
+container:
+  type: HtmlTemplate
+  properties: {html: '@theme:standard-page.html'}
+components:
+- type: ColumnPanel
+  properties: {}
+  name: content_panel
+  layout_properties: {slot: default}
+  components:
+  - name: data_grid_1
+    properties:
+      columns:
+      - {id: JKSDUP, title: id, data_key: id}
+      - {id: VJQQOR, title: name, data_key: name}
+    type: DataGrid
+    components:
+    - name: repeating_panel_1
+      properties: {item_template: ArticlesForm.RowTemplate1}
+      type: RepeatingPanel
+    layout_properties: {grid_position: 'SDLCQH,HDIIOY'}
