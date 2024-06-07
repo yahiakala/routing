@@ -1,14 +1,16 @@
 from ._anvil_designer import ArticlesFormTemplate
 from anvil import *
 
-from ..routes import ArticlesRoute
+from ..routes import Router
 
 
 class ArticlesForm(ArticlesFormTemplate):
     def __init__(self, **properties):
-        # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        self.repeating_panel_1.items = ArticlesRoute.data
 
+        data = Router.get_data(self)
+        path_params = Router.get_path_params(self)
+        search_params = Router.get_search_params(self)
+        location = Router.get_location(self)
 
-        # Any code you write here will run before the form opens.
+        self.repeating_panel_1.items = data

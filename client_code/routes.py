@@ -1,5 +1,44 @@
 import anvil.server
 
+from anvil.js.window import WeakMap
+
+formCache = WeakMap()
+
+class CachedRoute:
+    def __init__(self, *, location, route, data=None):
+        self.location = location
+        # and the rest
+
+
+class Router_:
+    def get_cached_route(self, form):
+        cached_route = None
+        while form.parent is not None:
+            cached_route = formCache.get(form)
+            if cached_route:
+                break    
+            form = form.parent
+
+        else: # if no break
+            raise Exception("No cached route - you may need to wait for the show event")
+
+        return cached_route
+
+    def get_path_params(self, form):
+        return self.get_cached_route(form).path_params
+
+    def get_search_params(self, form):
+        return self.get_cached_route(form).search_params
+
+    def get_location(self, form):
+        return self.get_cached_route(form).location
+
+    def get_data(self, form):
+        return self.get_cached_route(form).data
+
+Router = Router_()
+
+
 class Route:
     data = None
 
@@ -50,3 +89,4 @@ class ArticlesRoute(Route):
         # caching will be fun here
         # search params, path params
         return anvil.server.call("load_articles")
+
