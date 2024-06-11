@@ -62,14 +62,12 @@ class HomeRoute(Route):
     def loader(self):
         pass
 
-    def validate_search(self):
+    def parse_search_params(self):
         pass
 
-    def parse_params(self):
+    def parse_path_params(self):
         pass
 
-    def dump_params(self):
-        pass
 
 
 
