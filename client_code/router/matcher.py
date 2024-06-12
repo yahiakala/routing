@@ -1,14 +1,7 @@
 import json
 
-from .utils import trim_path
-from .routes import sorted_routes
-
-try:
-    from anvil.http import url_decode
-except ImportError:
-    from urllib.parse import unquote
-    def url_decode(s):
-        return unquote(s)
+from .utils import trim_path, url_decode
+from .routes import Segment, sorted_routes
 
 
 class Match:
@@ -21,6 +14,7 @@ class Match:
 
 def get_segments(path):
     return path.split("/")
+
 
 def get_matches(location):
     path = trim_path(location.path)
@@ -39,23 +33,24 @@ def get_matches(location):
         for part in parts:
             try:
                 segment = next(iter_segments)
-                if segment.type == "static":
+                if segment.type == Segment.STATIC:
                     if part != segment.value:
                         break
-                elif segment.type == "param":
+                elif segment.type == Segment.PARAM:
                     match.path_params[segment.value] = url_decode(part)
                 else:
                     raise Exception("Unknown segment type")
             except StopIteration:
                 break
-        
-        else: # if no break
+
+        else:  # if no break
             match.route = route
             match.search_params = parse_search(match)
             match.path_params = parse_path(match)
             return match
 
     return None
+
 
 def parse_search(match):
     search_params = match.location.search_params
@@ -83,4 +78,3 @@ def parse_path(match):
         return parser.parse(match.path_params)
     else:
         return match.path_params
-

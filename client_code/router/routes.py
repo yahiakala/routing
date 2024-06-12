@@ -1,21 +1,31 @@
-from client_code.router.utils import trim_path
+from re import S
+from .utils import trim_path
 
 
 sorted_routes = []
 
-PARAM = "param"
-STATIC = "static"
-
 
 class Segment:
+    PARAM = "PARAM"
+    STATIC = "STATIC"
+
     def __init__(self, type, value):
         self.type = type
         self.value = value
+
+    @classmethod
+    def static(cls, value):
+        return cls(cls.STATIC, value)
+
+    @classmethod
+    def param(cls, value):
+        return cls(cls.PARAM, value)
 
 
 class Route:
     path = ""
     form = None
+    stale_time = 0
 
     def __init__(self):
         path = trim_path(self.path)
@@ -23,11 +33,17 @@ class Route:
         segments = []
         for part in parts:
             if part.startswith(":"):
-                segments.append(Segment(PARAM, part[1:]))
+                segments.append(Segment.param(part[1:]))
             else:
-                segments.append(Segment(STATIC, part))
+                segments.append(Segment.static(part))
 
         self.segments = segments
+
+    def loader_deps(self, **loader_args):
+        return {}
+
+    def loader(self, **loader_args):
+        return None
 
     def parse_path_params(self, path_params):
         return path_params
@@ -36,6 +52,4 @@ class Route:
         return search_params
 
     def __init_subclass__(cls) -> None:
-        # TODO sort the routes by path specificity
-        print("adding route", cls)
         sorted_routes.append(cls())
