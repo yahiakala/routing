@@ -3,14 +3,12 @@ import anvil
 from .routes import sorted_routes
 from .matcher import get_matches
 from .loader import load_data, cache
+from urllib.parse import urlencode
 
 
 if anvil.is_server_side():
 
-    class Location(object):
-        def __init__(self, path, query_params):
-            self.path = path
-            self.search_params = query_params
+    from anvil.history import Location
 
     def create():
         from anvil.server import route
@@ -22,8 +20,8 @@ if anvil.is_server_side():
                 request = anvil.server.request
                 path = request.path
                 query_params = request.query_params
-                location = Location(path=path, query_params=query_params)
-
+                search = f"?{urlencode(query_params)}" if query_params else ""
+                location = Location(path=path, search=search, key="default")
                 match = get_matches(location=location)
                 load_data(match)
                 return anvil.server.LoadAppResponse(data={"cache": cache})
@@ -45,9 +43,9 @@ else:
         from anvil.history import history
 
         from anvil.server import startup_data
+
         if startup_data is not None:
             startup_cache = startup_data.get("cache", {})
-
 
         history.listen(listener)
         # TODO navigate to the first page
