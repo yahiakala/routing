@@ -1,9 +1,8 @@
+layout: {type: 'form:Layout'}
 is_package: true
-container:
-  type: HtmlTemplate
-  properties: {html: '@theme:standard-page.html'}
-components:
-- type: ColumnPanel
-  properties: {}
-  name: content_panel
-  layout_properties: {slot: default}
+components_by_slot:
+  main:
+  - name: label_1
+    properties: {text: Home}
+    type: Label
+    layout_properties: {}

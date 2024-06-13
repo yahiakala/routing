@@ -1,15 +1,21 @@
 import json
+from time import sleep
 from datetime import datetime
 import anvil.server
+
 
 try:
     from anvil.js.window import Promise
     from anvil.js import await_promise
+    from anvil.js import report_exceptions
 except ImportError:
     from async_promises import Promise
 
     def await_promise(promise):
         return promise.get()
+
+    def report_exceptions(fn):
+        return fn
 
 
 in_flight = {}
@@ -28,12 +34,18 @@ class CachedData:
         self.location = location
         self.fetched_at = datetime.now()
 
-    @classmethod
-    def __deserialize__(cls, data, gbl_data):
-        return cls(**data)
+    def __deserialize__(self, data, gbl_data):
+        self.__dict__.update(data, fetched_at=datetime.now())
+
+
+_inital_request = True
 
 
 def load_data(match):
+    global _inital_request
+    is_initial = _inital_request
+    _inital_request = False
+
     route = match.route
     location = match.location
     search_params = match.search_params
@@ -43,9 +55,22 @@ def load_data(match):
         location=location, search_params=search_params, path_params=path_params
     )
     key = f"{path}:{json.dumps(deps, sort_keys=True)}"
+    print(key, "data cache key")
 
+    def clean_up_inflight(result=None):
+        try:
+            del in_flight[key]
+            print(key, "deleting in_flight key", repr(key))
+        except KeyError as e:
+            print(key, "no in_flight key", repr(e))
+            pass
+
+        return result
+    
+    @report_exceptions
     def load_data_async(resolve, reject):
-        print("load_data_async")
+        print(key, "load_data_async")
+        sleep(0) # give control to the event loop
         try:
             data = route.loader(
                 location=location,
@@ -55,13 +80,7 @@ def load_data(match):
             )
             cached = CachedData(data=data, location=location)
             cache[key] = cached
-            print("cached", cached)
-            try:
-                del in_flight[key]
-                print("deleting in_flight key", repr(key))
-            except KeyError as e:
-                print("no in_flight key", repr(e))
-                pass
+            clean_up_inflight()
             resolve(cached)
         except Exception as e:
             print(repr(e))
@@ -69,11 +88,11 @@ def load_data(match):
 
     def create_in_flight_data_promise():
         if key in in_flight:
-            print("key already in in_flight")
+            print(key, "key already in in_flight")
             return in_flight[key]
         data_promise = Promise(load_data_async)
-        print("creating data_promise")
         in_flight[key] = data_promise
+
         return data_promise
 
     if key in cache:
@@ -81,22 +100,20 @@ def load_data(match):
         cached = cache[key]
         fetched_at = cached.fetched_at
         print(
-            "stale time",
+            key, "stale time",
             (datetime.now() - fetched_at).total_seconds(),
             route.stale_time,
         )
-        if (datetime.now() - fetched_at).total_seconds() > route.stale_time:
-            print("stale - creating data_promise")
+        if (
+            not is_initial
+            and (datetime.now() - fetched_at).total_seconds() > route.stale_time
+        ):
+            print(key, "stale - creating data_promise")
             create_in_flight_data_promise()
 
-    elif key in in_flight:
-        print("key in in_flight")
-        cached = await_promise(in_flight[key])
-
     else:
-        print("key not in cache or in_flight")
+        print(key, "key not in cache")
         cached = await_promise(create_in_flight_data_promise())
-        print("cached", cached)
 
-    print(cached)
+    print(key, cached)
     return cached.data

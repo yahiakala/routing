@@ -1,90 +1,58 @@
-import anvil.server
-
-from anvil.js.window import WeakMap
-
-formCache = WeakMap()
-
-class CachedRoute:
-    def __init__(self, *, location, route, data=None):
-        self.location = location
-        # and the rest
+from .router.routes import Route
+from datetime import datetime
 
 
-class Router_:
-    def get_cached_route(self, form):
-        cached_route = None
-        while form.parent is not None:
-            cached_route = formCache.get(form)
-            if cached_route:
-                break    
-            form = form.parent
-
-        else: # if no break
-            raise Exception("No cached route - you may need to wait for the show event")
-
-        return cached_route
-
-    def get_path_params(self, form):
-        return self.get_cached_route(form).path_params
-
-    def get_search_params(self, form):
-        return self.get_cached_route(form).search_params
-
-    def get_location(self, form):
-        return self.get_cached_route(form).location
-
-    def get_data(self, form):
-        return self.get_cached_route(form).data
-
-Router = Router_()
+articles = [
+    {"id": id, "name": f"Article {id}", "body": "Lorem ipsum"} for id in range(1, 200)
+]
 
 
-class Route:
-    data = None
+def get_page(page):
+    return [{**a, "timestamp": datetime.now()} for a in articles[30 * (page - 1) : 30 * page]]
 
 
 class HomeRoute(Route):
     path = "/"
     form = "HomeForm"
 
-    def before_load(self):
-        pass
-
-    @property
-    def form(self):
-        from .HomeForm import HomeForm
-        return HomeForm
-
-    @property
-    def error_form(self):
-        pass
-
-    def loader(self):
-        pass
-
-    def parse_search_params(self):
-        pass
-
-    def parse_path_params(self):
-        pass
-
-
-
-
 class ArticlesRoute(Route):
     path = "/articles"
     form = "ArticlesForm"
+    stale_time = 3
 
-    @staticmethod
-    def loader():
-        # could use context here - we need to be paricularly careful about open form
-        # because open form can be asyncronous in some ways
-        # i.e. multiple open forms can be called in flight
-        # so if we use context - we'll want to do our clever __new__ thing
-        # attach the context (maybe through a weak map)
-        # then call the API with self
-        # e.g. routing.get_data(self) - probably
-        # caching will be fun here
-        # search params, path params
-        return anvil.server.call("load_articles")
+    def parse_search_params(self, search_params):
+        page = search_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            page = 0
+        return {**search_params, "page": page}
 
+    def loader_deps(self, **loader_args):
+        page = loader_args.get("search_params", {}).get("page", 1)
+        return {"page": page}
+
+    def loader(self, **loader_args):
+        # usually this would be a server call
+        from time import sleep
+        sleep(2)
+        page = loader_args.get("deps", {}).get("page", 1)
+        return get_page(page)
+
+class ArticleRoute(Route):
+    path = "/articles/:id"
+    form = "ArticleForm"
+    stale_time = 0.1
+
+    def parse_path_params(self, path_params):
+        id = path_params.get("id", 1)
+        try:
+            id = int(id)
+        except ValueError:
+            id = 0
+        return {"id": id}
+
+    def loader(self, **loader_args):
+        sleep(self.stale_time / 2)
+        id = loader_args.get("path_params", {}).get("id", 1)
+        return {**articles[id - 1]}

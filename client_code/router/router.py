@@ -1,21 +1,19 @@
-from webbrowser import get
 import anvil
 from .routes import sorted_routes
 from .matcher import get_matches
 from .loader import load_data, cache
-from urllib.parse import urlencode
 
 
 if anvil.is_server_side():
 
+    from urllib.parse import urlencode
     from anvil.history import Location
 
     def create():
-        from anvil.server import route
 
         for route in sorted_routes:
 
-            @route(route.path)
+            @anvil.server.route(route.path)
             def route_handler(*args, **kwargs):
                 request = anvil.server.request
                 path = request.path
@@ -28,7 +26,19 @@ if anvil.is_server_side():
 
 else:
 
+    from anvil.history import history
+
+    def navigate():
+        location = history.location
+        match = get_matches(location)
+        data = load_data(match)
+        form = match.route.form
+        print(form)
+        anvil.open_form(form, data=data)
+
+
     def listener(args):
+        navigate()
         # TODO:
         # call get_matches
         # if match:
@@ -47,6 +57,11 @@ else:
         if startup_data is not None:
             startup_cache = startup_data.get("cache", {})
 
-        print(startup_data)
+        print("STARTUP DATA")
+        if startup_data is not None:
+            cache = startup_data.get("cache", {})
+            for key, val in cache.items():
+                print(key, val.__dict__)
         history.listen(listener)
+        navigate()
         # TODO navigate to the first page

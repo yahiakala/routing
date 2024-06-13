@@ -1,10 +1,16 @@
 allow_embedding: false
 package_name: Routing_API_Design
 name: Routing API Design
-runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
+runtime_options:
+  version: 3
+  client_version: '3'
+  server_version: python3-full
+  server_spec: null
+  legacy_features: {class_names: true, bootstrap3: true, __dict__: true, root_container: true}
 services:
 - source: /runtime/services/tables.yml
   client_config: {}
   server_config: {}
 startup_form: null
-startup: {type: form, module: ArticlesForm}
+startup: {type: module, module: startup}
+native_deps: null

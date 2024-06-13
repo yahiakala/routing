@@ -1,21 +1,17 @@
+layout: {type: 'form:Layout'}
 is_package: true
-container:
-  type: HtmlTemplate
-  properties: {html: '@theme:standard-page.html'}
-components:
-- type: ColumnPanel
-  properties: {}
-  name: content_panel
-  layout_properties: {slot: default}
-  components:
+components_by_slot:
+  main:
   - name: data_grid_1
     properties:
       columns:
       - {id: JKSDUP, title: id, data_key: id}
       - {id: VJQQOR, title: name, data_key: name}
+      - {id: DWMMSC, data_key: timestamp, title: timestamp}
     type: DataGrid
     components:
     - name: repeating_panel_1
       properties: {item_template: ArticlesForm.RowTemplate1}
       type: RepeatingPanel
-    layout_properties: {grid_position: 'SDLCQH,HDIIOY'}
+      layout_properties: {}
+    layout_properties: {}
