@@ -56,12 +56,16 @@ else:
 
         if startup_data is not None:
             startup_cache = startup_data.get("cache", {})
+            cache.update(startup_cache)
 
         print("STARTUP DATA")
         if startup_data is not None:
-            cache = startup_data.get("cache", {})
-            for key, val in cache.items():
-                print(key, val.__dict__)
+            startup_cache = startup_data.get("cache", {})
+            for key, val in startup_cache.items():
+                print(key, repr(val.__dict__)[:20])
+
+            
+        
         history.listen(listener)
         navigate()
         # TODO navigate to the first page

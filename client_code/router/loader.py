@@ -66,11 +66,11 @@ def load_data(match):
             pass
 
         return result
-    
+
     @report_exceptions
     def load_data_async(resolve, reject):
         print(key, "load_data_async")
-        sleep(0) # give control to the event loop
+        sleep(0)  # give control to the event loop
         try:
             data = route.loader(
                 location=location,
@@ -100,7 +100,10 @@ def load_data(match):
         cached = cache[key]
         fetched_at = cached.fetched_at
         print(
-            key, "stale time",
+            key,
+            "stale time",
+            is_initial,
+            repr(fetched_at),
             (datetime.now() - fetched_at).total_seconds(),
             route.stale_time,
         )
