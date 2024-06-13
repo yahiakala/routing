@@ -47,5 +47,6 @@ else:
         if startup_data is not None:
             startup_cache = startup_data.get("cache", {})
 
+        print(startup_data)
         history.listen(listener)
         # TODO navigate to the first page
