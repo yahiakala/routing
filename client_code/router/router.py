@@ -32,23 +32,33 @@ else:
 
     def navigate():
         location = history.location
+        key = location.key
+        def is_stale():
+            return key != history.location.key
+
         match = get_matches(location)
         if match is None:
             raise Exception("No match")
 
-        pending_form = match.route.pending_form
-        pending_delay = match.route.pending_delay
+        route = match.route
+        pending_form = route.pending_form
+        pending_delay = route.pending_delay
 
         data_promise = load_data_promise(match)
         result = Promise.race([data_promise, timeout(pending_delay)])
-        print(result)
+
+        if is_stale():
+            return
 
         if pending_form is not None and result is TIMEOUT:
             anvil.open_form(pending_form)
             sleep(pending_delay)
 
         data = await_promise(data_promise)
-        form = match.route.form
+        if is_stale():
+            return
+
+        form = route.form
         anvil.open_form(form, data=data)
 
     def listener(args):

@@ -39,6 +39,6 @@ def report_exceptions(fn):
     return fn
 
 
-def setTimeout(ms=0):
+def timeout(ms=0):
     return None
 
