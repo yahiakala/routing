@@ -120,3 +120,17 @@ def load_data(match):
 
     print(key, cached)
     return cached.data
+
+
+def load_data_promise(match):
+    sleep(0)  # give control to the event loop
+
+    @report_exceptions
+    def data_promise(resolve, reject):
+        try:
+            resolve(load_data(match))
+        except Exception as e:
+            reject(e)
+
+    return Promise(data_promise)
+

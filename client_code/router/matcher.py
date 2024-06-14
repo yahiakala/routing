@@ -1,16 +1,16 @@
 import json
+from re import search
 
 from .utils import trim_path, url_decode
-from .routes import Segment, sorted_routes
+from .routes import Route, Segment, sorted_routes
 
 
 class Match:
-    def __init__(self, location) -> None:
+    def __init__(self, location, path_params, search_params, route: Route) -> None:
         self.location = location
-        self.path_params = {}
-        self.search_params = {}
-        self.route = None
-
+        self.path_params = path_params
+        self.search_params = search_params
+        self.route = route
 
 def get_segments(path):
     return path.split("/")
@@ -24,7 +24,7 @@ def get_matches(location):
         print(route, route.segments)
 
         iter_segments = iter(route.segments)
-        match = Match(location)
+        path_params = {}
 
         if len(parts) != len(route.segments):
             # todo splat
@@ -37,31 +37,28 @@ def get_matches(location):
                     if part != segment.value:
                         break
                 elif segment.type == Segment.PARAM:
-                    match.path_params[segment.value] = url_decode(part)
+                    path_params[segment.value] = url_decode(part)
                 else:
                     raise Exception("Unknown segment type")
             except StopIteration:
                 break
 
         else:  # if no break
-            match.route = route
-            match.search_params = parse_search(match)
-            match.path_params = parse_path(match)
-            return match
+            path_params = parse_path(route, path_params)
+            search_params = parse_search(route, location.search_params)
+            return Match(location, path_params, search_params, route)
 
     return None
 
 
-def parse_search(match):
-    search_params = match.location.search_params
-
+def parse_search(route: Route, search_params: dict):
     for key, value in dict(search_params).items():
         try:
             search_params[key] = json.loads(value)
         except Exception:
             search_params[key] = value
 
-    parser = match.route.parse_search_params
+    parser = route.parse_search_params
     if callable(parser):
         return parser(search_params)
     elif hasattr(parser, "parse"):
@@ -70,11 +67,11 @@ def parse_search(match):
         return search_params
 
 
-def parse_path(match):
-    parser = match.route.parse_path_params
+def parse_path(route: Route, path_params: dict):
+    parser = route.parse_path_params
     if callable(parser):
-        return parser(match.path_params)
+        return parser(path_params)
     elif hasattr(parser, "parse"):
-        return parser.parse(match.path_params)
+        return parser.parse(path_params)
     else:
-        return match.path_params
+        return path_params

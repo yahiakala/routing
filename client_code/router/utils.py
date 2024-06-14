@@ -16,3 +16,15 @@ def trim_path(path):
     while end > start and path[end - 1] == "/":
         end -= 1
     return path[start:end]
+
+
+TIMEOUT = object()
+
+def timeout(ms=0):
+    from anvil.js.window import Promise, setTimeout
+    def wait_async(resolve, reject):
+        def timeout():
+            resolve(TIMEOUT)
+        setTimeout(timeout, ms)
+
+    return Promise(wait_async)

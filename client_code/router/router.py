@@ -1,7 +1,9 @@
+from time import sleep
 import anvil
+from .utils import TIMEOUT, timeout
 from .routes import sorted_routes
 from .matcher import get_matches
-from .loader import load_data, cache
+from .loader import load_data, cache, load_data_promise
 
 
 if anvil.is_server_side():
@@ -27,15 +29,27 @@ if anvil.is_server_side():
 else:
 
     from anvil.history import history
+    from anvil.js.window import Promise
+    from anvil.js import await_promise
 
     def navigate():
         location = history.location
         match = get_matches(location)
+        if match is None:
+            raise Exception("No match")
+
         pending_form = match.route.pending_form
+        pending_delay = match.route.pending_delay
+
+        data_promise = load_data_promise(match)
+        result = Promise.race([data_promise, timeout(pending_delay)])
         
-        data = load_data(match)
+        if pending_form is not None and result is TIMEOUT:
+            anvil.open_form(pending_form)
+            sleep(pending_delay)
+
+        data = await_promise(data_promise)
         form = match.route.form
-        print(form)
         anvil.open_form(form, data=data)
 
 
