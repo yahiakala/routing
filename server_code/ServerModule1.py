@@ -11,7 +11,7 @@ import anvil.server
 def load_articles():
   return [{"id": 0, "name": "foo"}, {"id": 1, "name": "bar"}]
 
-from . import routes
-from .router import router
+# from . import routes
+# from .router import router
 
-router.create()
+# router.create()
