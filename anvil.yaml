@@ -9,7 +9,7 @@ runtime_options:
   legacy_features: {class_names: true, bootstrap3: true, __dict__: true, root_container: true}
 services:
 - source: /runtime/services/tables.yml
-  client_config: {}
+  client_config: {enable_v2: true}
   server_config: {}
 startup_form: null
 startup: {type: module, module: startup}
