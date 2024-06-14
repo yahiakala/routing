@@ -1,7 +1,15 @@
+import anvil
+from .constants import TIMEOUT
+
 try:
     from anvil.http import url_decode as unquote
 except ImportError:
     from urllib.parse import unquote
+
+if anvil.is_server_side():
+    from .utils_server import Promise, await_promise, report_exceptions, timeout
+else:
+    from .utils_client import Promise, await_promise, report_exceptions, timeout
 
 
 def url_decode(s):
@@ -20,11 +28,4 @@ def trim_path(path):
 
 TIMEOUT = object()
 
-def timeout(ms=0):
-    from anvil.js.window import Promise, setTimeout
-    def wait_async(resolve, reject):
-        def timeout():
-            resolve(TIMEOUT)
-        setTimeout(timeout, ms)
 
-    return Promise(wait_async)

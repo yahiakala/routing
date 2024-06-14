@@ -1,6 +1,6 @@
 from time import sleep
 import anvil
-from .utils import TIMEOUT, timeout
+from .utils import TIMEOUT, await_promise, timeout, Promise
 from .routes import sorted_routes
 from .matcher import get_matches
 from .loader import load_data, cache, load_data_promise
@@ -29,8 +29,6 @@ if anvil.is_server_side():
 else:
 
     from anvil.history import history
-    from anvil.js.window import Promise
-    from anvil.js import await_promise
 
     def navigate():
         location = history.location
@@ -43,7 +41,7 @@ else:
 
         data_promise = load_data_promise(match)
         result = Promise.race([data_promise, timeout(pending_delay)])
-        
+
         if pending_form is not None and result is TIMEOUT:
             anvil.open_form(pending_form)
             sleep(pending_delay)
@@ -51,7 +49,6 @@ else:
         data = await_promise(data_promise)
         form = match.route.form
         anvil.open_form(form, data=data)
-
 
     def listener(args):
         navigate()
@@ -67,7 +64,6 @@ else:
 
     def create():
         from anvil.history import history
-
         from anvil.server import startup_data
 
         if startup_data is not None:
@@ -80,8 +76,6 @@ else:
             for key, val in startup_cache.items():
                 print(key, repr(val.__dict__)[:20])
 
-            
-        
         history.listen(listener)
         navigate()
         # TODO navigate to the first page
