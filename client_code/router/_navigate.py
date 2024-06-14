@@ -23,7 +23,7 @@ def navigate(path=None, search_params=None, path_params=None, hash="", replace=F
                 value = path_params.get(segment.value, NOT_FOUND)
                 if value is NOT_FOUND:
                     raise Exception(f"No path param for {segment.value}")
-                real_path += "/" + url_encode(value)
+                real_path += "/" + url_encode(str(value))
     if search_params:
         real_search_params = {}
         keys = sorted(search_params.keys())
