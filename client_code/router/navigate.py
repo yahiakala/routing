@@ -35,9 +35,10 @@ def navigate(path=None, search_params=None, path_params=None, hash="", replace=F
     location = Location(path=real_path, search=search, hash=hash)
     current_location = history.location
     print("LOCATION", location, current_location)
-    print(current_location.path == location.path
-        and current_location.search == location.search
-        and current_location.hash == location.hash)
+    print(current_location.path, location.path)
+    print(current_location.search, location.search)
+    print(current_location.hash, location.hash)
+    print(current_location.path == location.path and current_location.search == location.search and current_location.hash == location.hash)
 
     if (
         current_location.path == location.path
