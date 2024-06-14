@@ -10,6 +10,7 @@ articles = [
 def get_page(page):
     return [{**a, "timestamp": datetime.now()} for a in articles[30 * (page - 1) : 30 * page]]
 
+raise Exception("should not import me")
 
 class HomeRoute(Route):
     path = "/"
