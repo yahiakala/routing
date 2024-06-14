@@ -13,7 +13,7 @@ def navigate(path=None, search_params=None, path_params=None, hash="", replace=F
     search_params = search_params or {}
 
     if path is not None:
-        real_path = "/"
+        real_path = ""
         path = trim_path(path)
         segments = Segment.from_path(path)
         for segment in segments:
@@ -31,14 +31,20 @@ def navigate(path=None, search_params=None, path_params=None, hash="", replace=F
 
         search = encode_search_params(real_search_params)
 
+    print(real_path, search, hash, replace)
     location = Location(path=real_path, search=search, hash=hash)
     current_location = history.location
+    print("LOCATION", location, current_location)
+    print(current_location.path == location.path
+        and current_location.search == location.search
+        and current_location.hash == location.hash)
 
     if (
         current_location.path == location.path
         and current_location.search == location.search
         and current_location.hash == location.hash
     ):
+        print("early exit")
         return
 
     if replace:
