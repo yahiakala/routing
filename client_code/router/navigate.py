@@ -26,19 +26,15 @@ def navigate(path=None, search_params=None, path_params=None, hash="", replace=F
                 real_path += "/" + url_encode(value)
     if search_params:
         real_search_params = {}
-        for key, value in search_params.items():
-            real_search_params[key] = json.dumps(value)
+        keys = sorted(search_params.keys())
+        for key in keys:
+            real_search_params[key] = json.dumps(search_params[key], sort_keys=True)
 
         search = encode_search_params(real_search_params)
 
-    print(real_path, search, hash, replace)
     location = Location(path=real_path, search=search, hash=hash)
     current_location = history.location
     print("LOCATION", location, current_location)
-    print(current_location.path, location.path)
-    print(current_location.search, location.search)
-    print(current_location.hash, location.hash)
-    print(current_location.path == location.path and current_location.search == location.search and current_location.hash == location.hash)
 
     if (
         current_location.path == location.path
