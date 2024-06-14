@@ -26,6 +26,4 @@ def trim_path(path):
     return path[start:end]
 
 
-TIMEOUT = object()
-
 

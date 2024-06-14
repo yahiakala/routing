@@ -41,6 +41,7 @@ else:
 
         data_promise = load_data_promise(match)
         result = Promise.race([data_promise, timeout(pending_delay)])
+        print(result)
 
         if pending_form is not None and result is TIMEOUT:
             anvil.open_form(pending_form)
