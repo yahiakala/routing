@@ -44,9 +44,8 @@ class Route:
         from .matcher import get_match
 
         path = cls.path
-        print("registering route", path)
 
-        @anvil.server.route(path)
+        @anvil.server.route("/" + path)
         def route_handler(*args, **kwargs):
             request = anvil.server.request
             path = request.path
