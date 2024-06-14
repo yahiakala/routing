@@ -31,6 +31,8 @@ else:
     def navigate():
         location = history.location
         match = get_matches(location)
+        pending_form = match.route.pending_form
+        
         data = load_data(match)
         form = match.route.form
         print(form)

@@ -26,6 +26,9 @@ class Route:
     path = ""
     form = None
     stale_time = 0
+    pending_form = None
+    pending_min = 0.5
+    pending_delay = 1
 
     def __init__(self):
         path = trim_path(self.path)
