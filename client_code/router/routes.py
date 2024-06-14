@@ -45,7 +45,7 @@ class Route:
 
         path = cls.path
 
-        print("registering route", "/" + path, cls.form)
+        # print("registering route", "/" + path, cls.form)
 
         @anvil.server.route("/" + path)
         def route_handler(*args, **kwargs):
