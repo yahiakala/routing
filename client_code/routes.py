@@ -19,6 +19,7 @@ class ArticlesRoute(Route):
     path = "/articles"
     form = "ArticlesForm"
     stale_time = 3
+    pending_form = "PendingForm"
 
     def parse_search_params(self, search_params):
         page = search_params.get("page", 1)
@@ -40,7 +41,7 @@ class ArticlesRoute(Route):
         return get_page(page)
 
 class ArticleRoute(Route):
-    path = "/articles/:id"
+    path = "/article/:id"
     form = "ArticleForm"
     stale_time = 0.1
 
