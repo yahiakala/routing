@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 
 from client_code.router.routes import Route, sorted_routes
-from client_code.router.matcher import get_matches
+from client_code.router.matcher import get_match
 from client_code.router.loader import clear_cache
 
 try:

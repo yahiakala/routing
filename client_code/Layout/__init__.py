@@ -1,6 +1,7 @@
 from ._anvil_designer import LayoutTemplate
 from anvil import *
-from anvil.history import history
+from ..router.navigate import navigate
+
 
 
 class Layout(LayoutTemplate):
@@ -9,9 +10,9 @@ class Layout(LayoutTemplate):
 
     def button_1_click(self, **event_args):
         """This method is called when the button is clicked"""
-        history.push("/")
+        navigate("/")
 
     def button_2_click(self, **event_args):
         """This method is called when the button is clicked"""
-        history.push("/articles")
+        navigate("/articles")
 

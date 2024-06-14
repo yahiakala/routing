@@ -1,3 +1,6 @@
+from urllib.parse import urlencode
+
+
 try:
     from async_promises import Promise
 except ImportError:
@@ -42,3 +45,8 @@ def report_exceptions(fn):
 def timeout(ms=0):
     return None
 
+
+def encode_search_params(search_params):
+    if not search_params:
+        return ""
+    return "?" + urlencode(search_params)

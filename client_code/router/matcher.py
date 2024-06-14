@@ -2,7 +2,7 @@ import json
 from re import search
 
 from .utils import trim_path, url_decode
-from .routes import Route, Segment, sorted_routes
+from .routes import Route, sorted_routes
 
 
 class Match:
@@ -16,7 +16,7 @@ def get_segments(path):
     return path.split("/")
 
 
-def get_matches(location):
+def get_match(location):
     path = trim_path(location.path)
     parts = path.split("/")
 
@@ -33,10 +33,10 @@ def get_matches(location):
         for part in parts:
             try:
                 segment = next(iter_segments)
-                if segment.type == Segment.STATIC:
+                if segment.is_static():
                     if part != segment.value:
                         break
-                elif segment.type == Segment.PARAM:
+                elif segment.is_param():
                     path_params[segment.value] = url_decode(part)
                 else:
                     raise Exception("Unknown segment type")

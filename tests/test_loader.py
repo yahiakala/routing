@@ -1,18 +1,18 @@
 from client_code.router.loader import load_data
 from time import sleep
-from client_code.router.matcher import get_matches
+from client_code.router.matcher import get_match
 from tests.deps import routes, Location, get_page
 
 def test_loader(routes):
     [HomeRoute, ArticlesRoute, ArticleRoute] = routes
 
-    match_1 = get_matches(location=Location("/articles/123"))
+    match_1 = get_match(location=Location("/articles/123"))
     assert match_1 is not None
     assert type(match_1.route) is ArticleRoute
     assert match_1.path_params == {"id": 123}
     assert match_1.search_params == {}
 
-    match_2 = get_matches(location=Location("/articles/42"))
+    match_2 = get_match(location=Location("/articles/42"))
     assert match_2 is not None
     assert type(match_2.route) is ArticleRoute
     assert match_2.path_params == {"id": 42}
@@ -37,12 +37,12 @@ def test_loader(routes):
     assert data_2_0 is data_2_1
     assert data_2_0 is not data_2_2
 
-    articles_match_1 = get_matches(location=Location("/articles", "?page=1"))
+    articles_match_1 = get_match(location=Location("/articles", "?page=1"))
     assert articles_match_1 is not None
     assert type(articles_match_1.route) is ArticlesRoute
     assert articles_match_1.search_params == {"page": 1}
 
-    articles_match_2 = get_matches(location=Location("/articles", "?page=2"))
+    articles_match_2 = get_match(location=Location("/articles", "?page=2"))
     assert articles_match_2 is not None
     assert type(articles_match_2.route) is ArticlesRoute
     assert articles_match_2.search_params == {"page": 2}

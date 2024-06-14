@@ -1,8 +1,8 @@
 from time import sleep
 import anvil
-from .utils import TIMEOUT, await_promise, timeout, Promise
+from .utils import TIMEOUT, await_promise, timeout, Promise, encode_search_params
 from .routes import sorted_routes
-from .matcher import get_matches
+from .matcher import get_match
 from .loader import load_data, cache, load_data_promise
 
 
@@ -19,10 +19,9 @@ if anvil.is_server_side():
             def route_handler(*args, **kwargs):
                 request = anvil.server.request
                 path = request.path
-                query_params = request.query_params
-                search = f"?{urlencode(query_params)}" if query_params else ""
+                search = encode_search_params(request.query_params)
                 location = Location(path=path, search=search, key="default")
-                match = get_matches(location=location)
+                match = get_match(location=location)
                 load_data(match)
                 return anvil.server.LoadAppResponse(data={"cache": cache})
 
@@ -30,13 +29,13 @@ else:
 
     from anvil.history import history
 
-    def navigate():
+    def on_navigate():
         location = history.location
         key = location.key
         def is_stale():
             return key != history.location.key
 
-        match = get_matches(location)
+        match = get_match(location)
         if match is None:
             raise Exception("No match")
 
@@ -62,9 +61,9 @@ else:
         anvil.open_form(form, data=data)
 
     def listener(args):
-        navigate()
+        on_navigate()
         # TODO:
-        # call get_matches
+        # call get_match
         # if match:
         #   call the loader
         #   load the form with the data
@@ -88,5 +87,5 @@ else:
                 print(key, repr(val.__dict__)[:20])
 
         history.listen(listener)
-        navigate()
+        on_navigate()
         # TODO navigate to the first page
