@@ -3,7 +3,13 @@ from .matcher import Match
 
 
 class Context:
-    _events = ["data_loaded", "data_error", "search_changed", "hash_changed"]
+    _events = [
+        "data_loaded",
+        "data_loading",
+        "data_error",
+        "search_changed",
+        "hash_changed",
+    ]
 
     def __init__(self, match: Match, data=None):
         self.match = match
@@ -23,7 +29,7 @@ class Context:
     def add_event_handler(self, event, handler):
         self._validate_event(event)
         self._listeners.setdefault(event, []).append(handler)
-    
+
     def remove_event_handler(self, event, handler):
         self._validate_event(event)
         if event in self._listeners:
@@ -38,5 +44,3 @@ class Context:
     def invalidate(self):
         # TODO: reload the data and emit the data_loaded event
         pass
-
-
