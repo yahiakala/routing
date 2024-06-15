@@ -133,4 +133,3 @@ def load_data_promise(match):
             reject(e)
 
     return Promise(data_promise)
-

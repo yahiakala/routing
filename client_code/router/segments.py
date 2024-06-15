@@ -1,3 +1,6 @@
+from client_code.router.utils import trim_path
+
+
 class Segment:
     PARAM = "PARAM"
     STATIC = "STATIC"
@@ -22,6 +25,7 @@ class Segment:
 
     @classmethod
     def from_path(cls, path):
+        path = trim_path(path)
         parts = path.split("/")
         segments = []
         for part in parts:

@@ -1,5 +1,6 @@
 from time import sleep
 import anvil
+from .context import Context
 from .utils import TIMEOUT, await_promise, timeout, Promise, encode_search_params
 from .routes import sorted_routes
 from .matcher import get_match
@@ -32,6 +33,7 @@ else:
     def on_navigate():
         location = history.location
         key = location.key
+
         def is_stale():
             return key != history.location.key
 
@@ -42,6 +44,8 @@ else:
         route = match.route
         pending_form = route.pending_form
         pending_delay = route.pending_delay
+
+        context = Context(match)
 
         data_promise = load_data_promise(match)
         result = Promise.race([data_promise, timeout(pending_delay)])
@@ -57,8 +61,10 @@ else:
         if is_stale():
             return
 
+        context.data = data
+
         form = route.form
-        anvil.open_form(form, data=data)
+        anvil.open_form(form, context=context)
 
     def listener(args):
         on_navigate()
