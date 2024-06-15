@@ -1,4 +1,3 @@
-import glob
 from time import sleep
 import anvil
 from .context import Context
