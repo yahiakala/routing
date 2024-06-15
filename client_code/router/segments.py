@@ -1,4 +1,4 @@
-from client_code.router.utils import trim_path
+from .utils import trim_path
 
 
 class Segment:
