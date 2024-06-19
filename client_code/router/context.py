@@ -2,7 +2,7 @@ from re import T
 
 from .loader import load_data
 from .matcher import Match
-from ._deferred import call_async
+
 
 
 class Context:
@@ -60,6 +60,7 @@ class Context:
         self._emit("data_error", error=error)
 
     def _load_data(self):
+        from ._deferred import call_async
         async_call = call_async(load_data, self.match)
         self._emit("data_loading")
         async_call.on_result(self._on_data_loaded)
