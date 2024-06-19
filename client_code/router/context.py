@@ -61,7 +61,7 @@ class Context:
 
     def _load_data(self):
         from ._deferred import call_async
-        async_call = call_async(load_data, self.match)
+        async_call = call_async(load_data, self.match, force=True)
         self._emit("data_loading")
         async_call.on_result(self._on_data_loaded)
         async_call.on_error(self._on_data_error)

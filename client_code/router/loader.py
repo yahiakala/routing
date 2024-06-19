@@ -41,7 +41,7 @@ class CachedData:
 _inital_request = True
 
 
-def load_data(match):
+def load_data(match, force=False):
     global _inital_request
     is_initial = _inital_request
     _inital_request = False
@@ -95,7 +95,7 @@ def load_data(match):
 
         return data_promise
 
-    if key in cache:
+    if key in cache and not force:
         print("key in cache")
         cached = cache[key]
         fetched_at = cached.fetched_at
