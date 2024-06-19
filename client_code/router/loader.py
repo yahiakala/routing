@@ -1,6 +1,7 @@
 import json
 from time import sleep
 from datetime import datetime
+from ._deferred import call_async
 import anvil.server
 
 
@@ -42,7 +43,7 @@ _inital_request = True
 
 
 @report_exceptions
-def load_data(match, force=False):
+def load_data_promise(match, force=False):
     global _inital_request
     is_initial = _inital_request
     _inital_request = False
@@ -66,42 +67,50 @@ def load_data(match, force=False):
         return result
 
     @report_exceptions
-    def load_data_async(resolve, reject):
+    def on_result(data):
         from .context import Context
-
         print(key, "load_data_async")
-        sleep(0)  # give control to the event loop
-        try:
-            data = route.loader(
-                location=location,
-                search_params=search_params,
-                path_params=path_params,
-                deps=deps,
-            )
-            cached = CachedData(data=data, location=location)
-            cache[key] = cached
-            if Context._current is not None:
-                if key == Context._current.match.key:
-                    Context._current.data = data
+        cached = CachedData(data=data, location=location)
+        cache[key] = cached
+        if Context._current is not None:
+            if key == Context._current.match.key:
+                Context._current.data = data
 
-            clean_up_inflight()
-            resolve(cached)
-        except Exception as e:
-            print(repr(e))
-            reject(e)
+        clean_up_inflight()
+    
+    def on_error(error):
+        # TODO: handle error
+        from .context import Context
+        print(key, "load_data_async error")
+        if Context._current is not None:
+            if key == Context._current.match.key:
+                Context._current.data = None
 
     def create_in_flight_data_promise():
         if key in in_flight:
             print(key, "key already in in_flight")
             return in_flight[key]
-        data_promise = Promise(load_data_async)
+
+        async_call = call_async(
+            route.loader,
+            location=location,
+            search_params=search_params,
+            path_params=path_params,
+            deps=deps,
+        )
+        async_call.on_result(on_result)
+        async_call.on_error(on_error)
+
+        data_promise = async_call.promise
         in_flight[key] = data_promise
 
         return data_promise
+    
 
     if key in cache and not force:
         print("key in cache")
         cached = cache[key]
+        data_promise = cached.data
         fetched_at = cached.fetched_at
         print(
             key,
@@ -120,21 +129,10 @@ def load_data(match, force=False):
 
     else:
         print(key, "key not in cache")
-        cached = await_promise(create_in_flight_data_promise())
+        data_promise = create_in_flight_data_promise()
 
-    print(key, cached)
-    return cached.data
+    return data_promise
 
 
-def load_data_promise(match):
-    sleep(0)  # give control to the event loop
-
-    @report_exceptions
-    def data_promise(resolve, reject):
-        try:
-            resolve(load_data(match))
-        except Exception as e:
-            print(repr(e))
-            reject(e)
-
-    return Promise(data_promise)
+def load_data(match, force=False):
+    return await_promise(load_data_promise(match, force))

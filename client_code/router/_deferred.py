@@ -6,25 +6,23 @@
 # This software is published at https://github.com/anvilistas/anvil-extras
 
 from functools import partial as _partial
+import anvil
 
-from anvil.js import report_exceptions as _report
-from anvil.js import window as _W
 from anvil.server import call_s as _call_s
 
-__version__ = "2.6.1"
+from .utils import report_exceptions as _report
+from .utils import Promise
 
-try:
-    # just for a nice repr by default
-    _call_s.__name__ = "call_s"
-    _call_s.__qualname__ = "anvil.server.call_s"
-except AttributeError:
-    pass
 
-# python errors get wrapped when called from a js function in python
-# so instead reject the error from a js function in js
-_deferred = _W.Function(
-    "fn",
-    """
+if not anvil.is_server_side():
+    from anvil.js.window import Function
+
+    # python errors get wrapped when called from a js function in python
+    # so instead reject the error from a js function in js
+
+    _deferred = Function(
+        "fn",
+        """
 const deferred = { status: "PENDING", error: null };
 
 deferred.promise = new Promise(async (resolve, reject) => {
@@ -57,7 +55,60 @@ return Object.assign(deferred, {
     await_result: async () => await deferred.promise,
 });
 """,
-)
+    )
+
+else:
+
+    class Deferred(dict):
+        def __init__(self, *args, **kwargs):
+            dict.__init__(self, *args, **kwargs)
+            self.__dict__ = self
+
+    def _deferred(fn):
+        deferred = Deferred(status="PENDING", error=None)
+
+        def callbaack(resolve, reject):
+            try:
+                resolve(fn())
+                deferred.status = "FULFILLED"
+            except Exception as e:
+                deferred.status = "REJECTED"
+                deferred.error = e
+                reject(e)
+
+        deferred.promise = Promise(callbaack)
+
+        handlers = {"result": deferred.promise, "error": None}
+
+        def on_result(resultHandler, errorHandler=None):
+            if not errorHandler and handlers["error"]:
+                # the on_error was already called so provide a dummy handler;
+                errorHandler = lambda *args, **kws: None
+            handlers["result"] = handlers["result"].then(resultHandler, errorHandler)
+            handlers["error"] = None
+
+        def on_error(errorHandler):
+            handlers["error"] = handlers["result"].catch(errorHandler)
+            handlers["result"] = deferred.promise
+
+        def await_result():
+            return deferred.promise.get()
+
+        deferred.update(
+            on_result=on_result, on_error=on_error, await_result=await_result
+        )
+
+        return deferred
+
+
+__version__ = "2.6.1"
+
+try:
+    # just for a nice repr by default
+    _call_s.__name__ = "call_s"
+    _call_s.__qualname__ = "anvil.server.call_s"
+except AttributeError:
+    pass
 
 
 class _Result:
@@ -114,7 +165,7 @@ class _AsyncCall:
     @property
     def promise(self):
         """Returns: JavaScript Promise that resolves to the value from the function call"""
-        return _W.Promise(
+        return Promise(
             lambda resolve, reject: resolve(
                 self._deferred.promise.then(lambda r: r.value)
             )
@@ -161,151 +212,3 @@ def wait_for(async_call_object):
             f"expected an AsyncCall object, got {type(async_call_object).__name__}"
         )
     return async_call_object.await_result()
-
-
-class _AbstractTimerRef:
-    def _clear(self, id):
-        raise NotImplementedError("implemented by subclasses")
-
-    def __init__(self, id):
-        self._id = id
-
-    def cancel(self):
-        self._clear(self._id)
-
-
-class _DeferRef(_AbstractTimerRef):
-    _clear = _W.clearTimeout
-
-
-class _RepeatRef(_AbstractTimerRef):
-    _clear = _W.clearInterval
-
-
-def cancel(ref):
-    """Cancel an active call to delay or defer
-    Parameters
-    ----------
-    ref: should be None, or the return value from calling delay/defer
-
-    e.g.
-    >>> ref = defer(fn, 1)
-    >>> cancel(ref)
-    """
-    if ref is None:
-        return
-    if not isinstance(ref, _AbstractTimerRef):
-        msg = "Invalid argumnet to cancel(), expected None or the return value from calling delay/defer"
-        raise TypeError(msg)
-    return ref.cancel()
-
-
-def defer(fn, delay):
-    """Defer a function call after a set period of time has elapsed (in seconds)
-
-    Parameters
-    ----------
-    fn : a callable that takes no args
-    delay : int | float
-        the time delay in seconds to wait before calling fn
-
-    Returns
-    -------
-    DeferRef
-        a reference to the deferred call that can be cancelled
-        either with ref.cancel() or non_blocking.cancel(ref)
-    """
-    return _DeferRef(_W.setTimeout(fn, delay * 1000))
-
-
-def repeat(fn, interval):
-    """Repeatedly call a function with a set interval (in seconds)
-
-    Parameters
-    ----------
-    fn : a callable that takes no args
-    interval : int | float
-        the time between calls to fn
-
-    Returns
-    -------
-    RepeatRef
-        a reference to the repeated call that can be cancelled
-        either with ref.cancel() or non_blocking.cancel(ref)
-    """
-    return _RepeatRef(_W.setInterval(fn, interval * 1000))
-
-
-if __name__ == "__main__":
-    # TESTS
-    from time import sleep as _sleep
-
-    _v = 0
-
-    def _f():
-        global _x, _v
-        _v += 1
-        if _v >= 5:
-            cancel(_x)
-
-    print("Testing repeat")
-    _x = repeat(_f, 0.01)
-    _x.cancel()
-    assert _v == 0
-    _x = repeat(_f, 0.01)
-    _sleep(0.1)
-    assert _v == 5
-    _x = repeat(_f, 0.01)
-    assert _v == 5
-    _sleep(0.1)
-    assert _v == 6
-
-    print("Testing defer")
-    _v = 0
-    _x = defer(_f, delay=0.05)
-    _sleep(0.01)
-    cancel(_x)
-    _x = defer(_f, delay=0.05)
-    _sleep(0.1)
-    assert _v == 1
-
-    print("Testing Async Call")
-    _x = call_async(lambda v: v + 1, 42)
-    assert _x.status == "PENDING"
-    try:
-        _x.result
-    except RuntimeError:
-        pass
-    else:
-        assert False
-    _v = _x.await_result()
-    assert _x.status == "FULFILLED"
-    assert _x.result == 43
-    assert _x.error is None
-    _v = None
-
-    def _f(v):
-        global _v
-        _v = v
-
-    _x.on_result(_f)
-    assert _v is None
-    _sleep(0)
-    assert _v == 43
-    _v = None
-    _x = call_async(lambda v: v + 1, "foo")
-    _x.on_result(_f)
-    _x.on_error(_f)
-    _sleep(0)
-    assert _x.status == "REJECTED"
-    assert isinstance(_v, TypeError)
-    assert _v is _x.error
-    try:
-        _x.result
-    except TypeError:
-        pass
-    else:
-        assert False
-    _v = call_async(lambda: {}).await_result()
-    assert type(_v) is dict
-    print("PASSED")
