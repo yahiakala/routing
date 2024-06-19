@@ -6,7 +6,6 @@ from .routes import sorted_routes
 from .matcher import get_match
 from .loader import load_data, cache, load_data_promise
 
-_current_context = None
 
 if anvil.is_server_side():
 
@@ -32,7 +31,6 @@ else:
     from anvil.history import history
 
     def on_navigate():
-        global _current_context
 
         location = history.location
         key = location.key
@@ -48,8 +46,8 @@ else:
         pending_form = route.pending_form
         pending_delay = route.pending_delay
 
-        prev_context = _current_context
-        context = _current_context = Context(match)
+        prev_context = Context._current
+        context = Context._current = Context(match)
         # TODO: decide what to do if only search params change or only hash changes
         # if only search params change, we need to load data
         # but the form might be using navigate_on_search_change=False

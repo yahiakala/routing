@@ -1,8 +1,12 @@
 from re import T
+
+from .loader import load_data
 from .matcher import Match
+from ._deferred import call_async
 
 
 class Context:
+    _current = None
     _events = [
         "data_loaded",
         "data_loading",
@@ -42,5 +46,21 @@ class Context:
             handler(**kwargs)
 
     def invalidate(self):
-        # TODO: reload the data and emit the data_loaded event
-        pass
+        if self._current is not self:
+            # TODO: flag that we need to reload the data for next time
+            return
+
+        self._load_data()
+
+    def _on_data_loaded(self, data):
+        self.data = data
+        self._emit("data_loaded", data=data)
+    
+    def _on_data_error(self, error):
+        self._emit("data_error", error=error)
+
+    def _load_data(self):
+        async_call = call_async(load_data, self.match)
+        self._emit("data_loading")
+        async_call.on_result(self._on_data_loaded)
+        async_call.on_error(self._on_data_error)
