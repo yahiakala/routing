@@ -4,7 +4,7 @@ from .context import Context
 from .utils import TIMEOUT, await_promise, timeout, Promise, encode_search_params
 from .routes import sorted_routes
 from .matcher import get_match
-from .loader import load_data, cache, load_data_promise
+from .loader import load_data, cache, load_data_promise, CachedData
 
 
 if anvil.is_server_side():
@@ -23,8 +23,25 @@ if anvil.is_server_side():
                 search = encode_search_params(request.query_params)
                 location = Location(path=path, search=search, key="default")
                 match = get_match(location=location)
-                load_data(match)
-                return anvil.server.LoadAppResponse(data={"cache": cache})
+                if match is None:
+                    raise Exception("No match")
+
+                search_params = match.search_params
+                path_params = match.path_params
+                deps = match.deps
+
+                data = route.loader(
+                    location=location,
+                    search_params=search_params,
+                    path_params=path_params,
+                    deps=deps,
+                )
+
+                cached_data = CachedData(data=data, location=location)
+
+                return anvil.server.LoadAppResponse(
+                    data={"cache": {match.key: cached_data}}
+                )
 
 else:
 
