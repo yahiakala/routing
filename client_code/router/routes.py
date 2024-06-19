@@ -25,7 +25,13 @@ class Route:
     def parse_path_params(self, path_params):
         return path_params
 
+    def prepare_path_params(self, path_params):
+        return path_params
+
     def parse_search_params(self, search_params):
+        return search_params
+
+    def prepare_search_params(self, search_params):
         return search_params
 
     def __init_subclass__(cls) -> None:
@@ -34,7 +40,6 @@ class Route:
         sorted_routes.append(cls())
         if anvil.is_server_side():
             cls.create_server_route()
-
 
     @classmethod
     def create_server_route(cls):

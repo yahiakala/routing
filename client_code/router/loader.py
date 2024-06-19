@@ -41,6 +41,7 @@ class CachedData:
 _inital_request = True
 
 
+@report_exceptions
 def load_data(match, force=False):
     global _inital_request
     is_initial = _inital_request
@@ -130,6 +131,7 @@ def load_data_promise(match):
         try:
             resolve(load_data(match))
         except Exception as e:
+            print(repr(e))
             reject(e)
 
     return Promise(data_promise)
