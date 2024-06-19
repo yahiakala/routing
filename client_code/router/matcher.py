@@ -11,6 +11,11 @@ class Match:
         self.path_params = path_params
         self.search_params = search_params
         self.route = route
+        self.deps = route.loader_deps(
+            location=location, search_params=search_params, path_params=path_params
+        )
+        self.key = f"{self.location.path}:{json.dumps(self.deps, sort_keys=True)}"
+
 
 def get_segments(path):
     return path.split("/")

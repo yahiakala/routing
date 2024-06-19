@@ -51,11 +51,8 @@ def load_data(match, force=False):
     location = match.location
     search_params = match.search_params
     path_params = match.path_params
-    path = match.location.path
-    deps = route.loader_deps(
-        location=location, search_params=search_params, path_params=path_params
-    )
-    key = f"{path}:{json.dumps(deps, sort_keys=True)}"
+    deps = match.deps
+    key = match.key
     print(key, "data cache key")
 
     def clean_up_inflight(result=None):
@@ -70,6 +67,8 @@ def load_data(match, force=False):
 
     @report_exceptions
     def load_data_async(resolve, reject):
+        from .context import Context
+
         print(key, "load_data_async")
         sleep(0)  # give control to the event loop
         try:
@@ -81,6 +80,10 @@ def load_data(match, force=False):
             )
             cached = CachedData(data=data, location=location)
             cache[key] = cached
+            if Context._current is not None:
+                if key == Context._current.match.key:
+                    Context._current.data = data
+
             clean_up_inflight()
             resolve(cached)
         except Exception as e:

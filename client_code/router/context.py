@@ -21,7 +21,7 @@ class Context:
         self.path_params = match.path_params
         self.search_params = match.search_params
         self.route = match.route
-        self.data = data
+        self._data = data
         self._listeners = {}
 
     def _validate_event(self, event):
@@ -51,10 +51,18 @@ class Context:
             return
 
         self._load_data()
+    
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, data):
+        self._data = data
+        self._emit("data_loaded", data=data)
 
     def _on_data_loaded(self, data):
         self.data = data
-        self._emit("data_loaded", data=data)
     
     def _on_data_error(self, error):
         self._emit("data_error", error=error)
