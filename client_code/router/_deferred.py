@@ -8,7 +8,10 @@
 from functools import partial as _partial
 import anvil
 
-from anvil.server import call_s as _call_s
+try:
+    from anvil.server import call_s as _call_s
+except ImportError:
+    from anvil.server import call as _call_s
 
 from .utils import report_exceptions as _report
 from .utils import Promise
