@@ -1,7 +1,9 @@
+from curses import window
 from time import sleep
 
 import anvil
 from anvil.history import history
+from anvil.js import window
 
 from ..navigate import navigate
 from ..redirect import Redirect
@@ -16,22 +18,44 @@ undoing = False
 redirect = True
 current = True
 
-navigation_blockers = []
+navigation_blockers = set()
+before_unload_blockers = set()
+
+def _beforeunload(e):
+    e.preventDefault()  # cancel the event
+    e.returnValue = ""  # chrome requires a returnValue to be set
 
 
-class BlockNavigation:
+class NavigationBlocker:
+    def __init__(self, warn_before_unload=False):
+        self.warn_before_unload = warn_before_unload
+
     def __enter__(self):
+        self.block()
+        return self
+
+    def __exit__(self, *args):
+        self.unblock()
+        return False
+
+    def block(self):
         global waiting
         waiting = True
-        navigation_blockers.append(self)
-        return self
-    
-    def __exit__(self, *args):
+        navigation_blockers.add(self)
+        if self.warn_before_unload:
+            if not before_unload_blockers:
+                window.addEventListener("beforeunload", _beforeunload)
+            before_unload_blockers.add(self)
+
+
+    def unblock(self):
         global waiting
         navigation_blockers.remove(self)
         waiting = bool(navigation_blockers)
-        return False
-
+        if self.warn_before_unload:
+            before_unload_blockers.remove(self)
+            if not before_unload_blockers:
+                window.removeEventListener("beforeunload", _beforeunload)
 
 def on_navigate():
 

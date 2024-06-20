@@ -2,7 +2,7 @@ def create():
     pass
 
 
-class BlockNavigation:
+class NavigationBlocker:
     def __enter__(self):
         pass
 
