@@ -1,5 +1,8 @@
+import re
 from time import sleep
 import anvil
+from .navigate import navigate
+from .redirect import Redirect
 from .context import Context
 from .utils import TIMEOUT, await_promise, timeout, Promise, encode_search_params
 from .routes import sorted_routes
@@ -62,6 +65,11 @@ else:
         route = match.route
         pending_form = route.pending_form
         pending_delay = route.pending_delay
+
+        try:
+            route.before_load()
+        except Redirect as r:
+            return navigate(**r.__dict__, replace=True)
 
         prev_context = Context._current
         context = Context._current = Context(match)
