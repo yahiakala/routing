@@ -8,8 +8,8 @@ try:
     from Mantine.NavLink import NavLink
 
     class DefaultLink(NavLink):
-        def __init__(self, text=None, **properties):
-            super().__init__(label=text, **properties)
+        def __new__(cls, text=None, **properties):
+            return NavLink.__new__(cls, label=text, **properties)
 
         @property
         def text(self):
