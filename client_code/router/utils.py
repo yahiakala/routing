@@ -10,6 +10,8 @@ except ImportError:
 
 if anvil.is_server_side():
     from .utils_server import Promise, await_promise, report_exceptions, timeout, encode_search_params
+    # TODO: remove this at some point
+    anvil.server.call_s = anvil.server.call
 else:
     from .utils_client import Promise, await_promise, report_exceptions, timeout, encode_search_params
 
