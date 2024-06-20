@@ -61,6 +61,11 @@ class NavLink(anvil.Container):
         self.href = self.href
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
+    
+    def raise_event(self, event_name, **event_args):
+        super().raise_event(event_name, **event_args)
+        if event_name != "click":
+            self._link.raise_event(event_name, **event_args)
 
     def get_components(self):
         return self._link.get_components()
