@@ -26,9 +26,21 @@ def _beforeunload(e):
     e.returnValue = ""  # chrome requires a returnValue to be set
 
 
+class UnloadBlocker:
+    def block(self):
+        if not before_unload_blockers:
+            window.addEventListener("beforeunload", _beforeunload)
+        before_unload_blockers.add(self)
+
+    def unblock(self):
+        before_unload_blockers.remove(self)
+        if not before_unload_blockers:
+            window.removeEventListener("beforeunload", _beforeunload)
+
 class NavigationBlocker:
     def __init__(self, warn_before_unload=False):
         self.warn_before_unload = warn_before_unload
+        self.unload_blocker = UnloadBlocker()
 
     def __enter__(self):
         self.block()
@@ -43,18 +55,14 @@ class NavigationBlocker:
         waiting = True
         navigation_blockers.add(self)
         if self.warn_before_unload:
-            if not before_unload_blockers:
-                window.addEventListener("beforeunload", _beforeunload)
-            before_unload_blockers.add(self)
+            self.unload_blocker.block()
 
     def unblock(self):
         global waiting
         navigation_blockers.remove(self)
         waiting = bool(navigation_blockers)
         if self.warn_before_unload:
-            before_unload_blockers.remove(self)
-            if not before_unload_blockers:
-                window.removeEventListener("beforeunload", _beforeunload)
+            self.unload_blocker.unblock()
 
 
 def stop_unload():
@@ -63,6 +71,7 @@ def stop_unload():
     delta = current.get("delta")
     if delta is not None:
         history.go(-delta)
+    sleep(0) # give control back to event loop
 
 
 def on_navigate():
