@@ -89,7 +89,9 @@ def on_navigate():
                 stop_unload()
 
     if is_stale():
+        print("stale")
         return
+    print("not stale")
 
     match = get_match(location)
     if match is None:
