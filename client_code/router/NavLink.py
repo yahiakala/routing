@@ -5,8 +5,8 @@ from anvil.history import history
 
 
 class DefaultLink(anvil.Link):
-    def __init__(self, **properties):
-        super().__init__(**properties)
+    def __init__(self, href=None, **properties):
+        super().__init__(source=href, **properties)
 
     @property
     def href(self):
@@ -25,8 +25,7 @@ class NavLink(anvil.Component):
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
     def __init__(self, **properties):
-        self.href = properties.get("href")
-        self._link = DefaultLink(href=self.href)
+        self._link = DefaultLink(**properties)
         self._link.add_event_handler("x-anvil-page-added", self._setup)
         self._link.add_event_handler("x-anvil-page-removed", self._cleanup)
 
