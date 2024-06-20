@@ -87,11 +87,7 @@ def on_navigate():
         with NavigationBlocker():
             if prev_context._prevent_unload():
                 stop_unload()
-
-    if is_stale():
-        print("stale")
-        return
-    print("not stale")
+                return
 
     match = get_match(location)
     if match is None:
