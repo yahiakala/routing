@@ -83,7 +83,7 @@ class NavLink(anvil.Container):
 
     @property
     def text(self):
-        return self._props.get("href")
+        return self._props.get("text")
 
     @text.setter
     def text(self, value):
