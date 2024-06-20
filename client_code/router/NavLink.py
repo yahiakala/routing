@@ -6,15 +6,15 @@ from anvil.history import history
 
 class DefaultLink(anvil.Link):
     def __init__(self, href=None, **properties):
-        super().__init__(source=href, **properties)
+        super().__init__(url=href, **properties)
 
     @property
     def href(self):
-        return self.source
+        return self.url
 
     @href.setter
     def href(self, value):
-        self.source = value
+        self.url = value
 
 
 class NavLink(anvil.Component):
