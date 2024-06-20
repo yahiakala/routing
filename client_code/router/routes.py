@@ -94,9 +94,11 @@ class Route:
         return search_params
 
     def __init_subclass__(cls) -> None:
-        cls.path = trim_path(cls.path)
-        cls.segments = Segment.from_path(cls.path)
-        sorted_routes.append(cls())
+        if cls.path is not None:
+            cls.path = trim_path(cls.path)
+            cls.segments = Segment.from_path(cls.path)
+            sorted_routes.append(cls())
+
         if anvil.is_server_side():
             _create_server_route(cls)
 
