@@ -62,10 +62,10 @@ class NavLink(anvil.Container):
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
     
-    def raise_event(self, event_name, **event_args):
-        super().raise_event(event_name, **event_args)
-        if event_name != "click":
-            self._link.raise_event(event_name, **event_args)
+    # def raise_event(self, event_name, **event_args):
+    #     super().raise_event(event_name, **event_args)
+    #     if event_name != "click":
+    #         self._link.raise_event(event_name, **event_args)
 
     def get_components(self):
         return self._link.get_components()
@@ -105,11 +105,13 @@ class NavLink(anvil.Container):
         history.push(href)
 
     def _setup(self, **event_args):
+        self._link.raise_event("x-anvil-page-added", **event_args)
         print("SETUP")
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
 
     def _cleanup(self, **event_args):
+        self._link.raise_event("x-anvil-page-removed", **event_args)
         print("CLEANUP")
         el = self._el
         if el is None:
