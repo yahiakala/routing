@@ -9,14 +9,16 @@ try:
 
     class DefaultLink(NavLink):
         def __init__(self, text=None, **properties):
-            super().__init__(label=text, **properties)
+            NavLink.__init__(self, label=text, **properties)
 
         @property
         def text(self):
+            print("GET TEXT", self.label)
             return self.label
 
         @text.setter
         def text(self, value):
+            print("SET TEXT", value)
             self.label = value
 
 except ImportError:
