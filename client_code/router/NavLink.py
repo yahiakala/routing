@@ -56,7 +56,7 @@ class NavLink(anvil.Component):
         e.stopImmediatePropagation()
 
         href = self.href
-        navigate(path=href)
+        history.push(href)
 
     def _setup(self):
         self._el = get_dom_node(self._link)
