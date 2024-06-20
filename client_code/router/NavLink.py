@@ -5,11 +5,11 @@ from anvil.history import history
 from anvil.designer import in_designer, get_design_component
 
 try:
-    from Mantine.NavLink import NavLink
+    from Mantine.NavLink import NavLink as MantineNavLink
 
-    class DefaultLink(NavLink):
+    class DefaultLink(MantineNavLink):
         def __init__(self, text=None, **properties):
-            NavLink.__init__(self, label=text, **properties)
+            super().__init__(label=text, **properties)
 
         @property
         def text(self):
