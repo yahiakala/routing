@@ -29,7 +29,7 @@ class BlockNavigation:
     def __exit__(self, *args):
         global waiting
         navigation_blockers.remove(self)
-        waiting = not navigation_blockers
+        waiting = bool(navigation_blockers)
         return False
 
 
