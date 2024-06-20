@@ -25,24 +25,28 @@ class NavLink(anvil.Component):
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
     def __init__(self, **properties):
+        self._props = properties
         self._link = DefaultLink(**properties)
+        self.href = self.href
         self._link.add_event_handler("x-anvil-page-added", self._setup)
         self._link.add_event_handler("x-anvil-page-removed", self._cleanup)
 
     @property
     def href(self):
-        return self._link.href
+        return self._props.get("href")
 
     @href.setter
     def href(self, value):
-        self._link.href = value
+        self._props["href"] = value
+        self._link.href = history.createHref(value)
 
     @property
     def text(self):
-        return self._link.text
+        return self._props.get("href")
 
     @text.setter
     def text(self, value):
+        self._props["text"] = value
         self._link.text = value
 
     def _on_click(self, e):
