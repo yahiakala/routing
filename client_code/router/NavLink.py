@@ -28,8 +28,8 @@ class NavLink(anvil.Component):
         self._props = properties
         self._link = DefaultLink(**properties)
         self.href = self.href
-        self._link.add_event_handler("x-anvil-page-added", self._setup)
-        self._link.add_event_handler("x-anvil-page-removed", self._cleanup)
+        self.add_event_handler("x-anvil-page-added", self._setup)
+        self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
     @property
     def href(self):
