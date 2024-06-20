@@ -4,6 +4,7 @@ from ._navigate import navigate
 from anvil.history import history
 from anvil.designer import in_designer, get_design_component
 
+# This is just temporary to test using other nav links
 try:
     from Mantine.NavLink import NavLink as MantineNavLink
     from Mantine import utils
