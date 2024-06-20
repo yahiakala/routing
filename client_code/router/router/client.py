@@ -16,10 +16,11 @@ from ..loader import load_data, cache, load_data_promise, CachedData
 waiting = False
 undoing = False
 redirect = True
-current = True
+current = {"delta": None}
 
 navigation_blockers = set()
 before_unload_blockers = set()
+
 
 def _beforeunload(e):
     e.preventDefault()  # cancel the event
@@ -47,7 +48,6 @@ class NavigationBlocker:
                 window.addEventListener("beforeunload", _beforeunload)
             before_unload_blockers.add(self)
 
-
     def unblock(self):
         global waiting
         navigation_blockers.remove(self)
@@ -57,6 +57,15 @@ class NavigationBlocker:
             if not before_unload_blockers:
                 window.removeEventListener("beforeunload", _beforeunload)
 
+
+def stop_unload():
+    global undoing
+    undoing = True
+    delta = current.get("delta")
+    if delta is not None:
+        history.go(-delta)
+
+
 def on_navigate():
 
     location = history.location
@@ -64,6 +73,15 @@ def on_navigate():
 
     def is_stale():
         return key != history.location.key
+
+    prev_context = Context._current
+    if prev_context is not None:
+        with NavigationBlocker():
+            if prev_context._prevent_unload():
+                stop_unload()
+
+    if is_stale():
+        return
 
     match = get_match(location)
     if match is None:
@@ -78,7 +96,6 @@ def on_navigate():
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
 
-    prev_context = Context._current
     context = Context._current = Context(match)
     # TODO: decide what to do if only search params change or only hash changes
     # if only search params change, we need to load data
@@ -120,6 +137,8 @@ def listener(args):
             # user determined to navigate
             history.reload()
     else:
+        current = args
+
         if redirect:
             on_navigate()
         else:

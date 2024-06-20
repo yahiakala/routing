@@ -1,4 +1,4 @@
-from re import T
+from re import L, T
 
 from .loader import load_data
 from .matcher import Match
@@ -23,6 +23,19 @@ class Context:
         self.route = match.route
         self._data = data
         self._listeners = {}
+        self._blockers = set()
+    
+    def _prevent_unload(self):
+        for blocker in self._blockers:
+            if blocker():
+                return True
+        return False
+
+    def register_blocker(self, blocker):
+        self._blockers.add(blocker)
+
+    def unregister_blocker(self, blocker):
+        self._blockers.remove(blocker)
 
     def _validate_event(self, event):
         if not isinstance(event, str):
