@@ -4,10 +4,15 @@ from ._navigate import navigate
 from anvil.history import history
 from anvil.designer import in_designer, get_design_component
 
+try:
+    from Mantine import NavLink as _DefaultLink
+except ImportError:
+    _DefaultLink = anvil.Link
+
 if in_designer:
-    AnvilLink = get_design_component(anvil.Link)
+    AnvilLink = get_design_component(_DefaultLink)
 else:
-    AnvilLink = anvil.Link
+    AnvilLink = _DefaultLink
 
 class DefaultLink(AnvilLink):
     def __init__(self, href=None, **properties):
