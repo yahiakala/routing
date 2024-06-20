@@ -1,4 +1,3 @@
-from curses import window
 from time import sleep
 
 import anvil
