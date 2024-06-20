@@ -79,9 +79,9 @@ class Route:
                 route.before_load()
             except Redirect as r:
                 location = nav_args_to_location(**r.__dict__)
-                url = location.path + location.search + location.hash
+                url = "." + location.path + location.search + location.hash
                 print("redirecting to", url)
-                return anvil.server.HttpResponse(status=302, headers={"Location": "." + url})
+                return anvil.server.HttpResponse(status=302, headers={"Location": url})
 
             data = route.loader(
                 location=location,
