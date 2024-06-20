@@ -2,10 +2,14 @@ import anvil
 from anvil.js import get_dom_node
 from ._navigate import navigate
 from anvil.history import history
-from anvil.designer import in_designer
+from anvil.designer import in_designer, get_design_component
 
+if in_designer:
+    AnvilLink = get_design_component(anvil.Link)
+else:
+    AnvilLink = anvil.Link
 
-class DefaultLink(anvil.Link):
+class DefaultLink(AnvilLink):
     def __init__(self, href=None, **properties):
         super().__init__(url=href, **properties)
 
@@ -16,6 +20,17 @@ class DefaultLink(anvil.Link):
     @href.setter
     def href(self, value):
         self.url = value
+
+
+def wrap_special_method(method_name):
+    def wrapper(self, *args, **kwargs):
+        method = getattr(self._link, method_name, None)
+        if method is not None:
+            return method(*args, **kwargs)
+    
+    wrapper.__name__ = method_name
+
+    return wrapper
 
 
 class NavLink(anvil.Container):
@@ -82,18 +97,12 @@ class NavLink(anvil.Container):
         self._el = None
         el.removeEventListener("click", self._on_click, True)
 
-    def _anvil_setup_dom_(self):
-        return self._link._anvil_setup_dom_()
+    _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
 
     @property
     def _anvil_dom_element_(self):
         return self._link._anvil_dom_element_
 
-    def _anvil_get_container_design_info_(self, child):
-        return self._link._anvil_get_container_design_info_(child)
-    
-    def _anvil_enable_drop_mode_(self, *args, **kwargs):
-        return self._link._anvil_enable_drop_mode_(*args, **kwargs)
-    
-    def _anvil_disable_drop_mode_(self):
-        return self._link._anvil_disable_drop_mode_()
+    _anvil_get_container_design_info_ = wrap_special_method("_anvil_get_container_design_info_")
+    _anvil_enable_drop_mode_ = wrap_special_method("_anvil_enable_drop_mode_")
+    _anvil_disable_drop_mode_ = wrap_special_method("_anvil_disable_drop_mode_")
