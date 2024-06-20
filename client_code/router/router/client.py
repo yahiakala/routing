@@ -7,10 +7,9 @@ from anvil.js import window
 from ..navigate import navigate
 from ..redirect import Redirect
 from ..context import Context
-from ..utils import TIMEOUT, await_promise, timeout, Promise, encode_search_params
-from ..routes import sorted_routes
+from ..utils import TIMEOUT, await_promise, timeout, Promise
 from ..matcher import get_match
-from ..loader import load_data, cache, load_data_promise, CachedData
+from ..loader import cache, load_data_promise
 
 waiting = False
 undoing = False
