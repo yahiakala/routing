@@ -18,7 +18,10 @@ def _create_server_route(cls):
 
     path = cls.path
 
-    print("registering route", "/" + path, cls.form)
+    if path is None:
+        return
+
+    # print("registering route", "/" + path, cls.form)
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
@@ -61,7 +64,7 @@ def _create_server_route(cls):
 
 
 class Route:
-    path = ""
+    path = None
     segments = []
     form = None
     stale_time = 0
