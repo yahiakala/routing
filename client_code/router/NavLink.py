@@ -2,6 +2,7 @@ import anvil
 from anvil.js import get_dom_node
 from ._navigate import navigate
 from anvil.history import history
+from anvil.designer import in_designer
 
 
 class DefaultLink(anvil.Link):
@@ -47,7 +48,8 @@ class NavLink(anvil.Container):
     @href.setter
     def href(self, value):
         self._props["href"] = value
-        self._link.href = history.createHref(value)
+        if not in_designer:
+            self._link.href = history.createHref(value)
 
     @property
     def text(self):
