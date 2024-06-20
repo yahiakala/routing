@@ -14,3 +14,9 @@ services:
 startup_form: null
 startup: {type: module, module: startup}
 native_deps: null
+toolbox_sections:
+- packageName: routing
+  title: Routing
+  items:
+  - title: NavLink
+    component: {type: routing.router.NavLink}
