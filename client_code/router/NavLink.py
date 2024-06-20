@@ -5,26 +5,34 @@ from anvil.history import history
 from anvil.designer import in_designer, get_design_component
 
 try:
-    from Mantine.NavLink import NavLink as _DefaultLink
+    from Mantine.NavLink import NavLink
+
+    class DefaultLink(NavLink):
+        def __init__(self, text=None, **properties):
+            super().__init__(label=text, **properties)
+
+        @property
+        def text(self):
+            return self.label
+
+        @text.setter
+        def text(self, value):
+            self.label = value
+
 except ImportError:
-    _DefaultLink = anvil.Link
+    _DefaultLink = get_design_component(anvil.Link)
 
-if in_designer:
-    AnvilLink = get_design_component(_DefaultLink)
-else:
-    AnvilLink = _DefaultLink
+    class DefaultLink(_DefaultLink):
+        def __init__(self, href=None, **properties):
+            super().__init__(url=href, **properties)
 
-class DefaultLink(AnvilLink):
-    def __init__(self, href=None, **properties):
-        super().__init__(url=href, **properties)
+        @property
+        def href(self):
+            return self.url
 
-    @property
-    def href(self):
-        return self.url
-
-    @href.setter
-    def href(self, value):
-        self.url = value
+        @href.setter
+        def href(self, value):
+            self.url = value
 
 
 def wrap_special_method(method_name):
@@ -32,7 +40,7 @@ def wrap_special_method(method_name):
         method = getattr(self._link, method_name, None)
         if method is not None:
             return method(*args, **kwargs)
-    
+
     wrapper.__name__ = method_name
 
     return wrapper
@@ -108,6 +116,8 @@ class NavLink(anvil.Container):
     def _anvil_dom_element_(self):
         return self._link._anvil_dom_element_
 
-    _anvil_get_container_design_info_ = wrap_special_method("_anvil_get_container_design_info_")
+    _anvil_get_container_design_info_ = wrap_special_method(
+        "_anvil_get_container_design_info_"
+    )
     _anvil_enable_drop_mode_ = wrap_special_method("_anvil_enable_drop_mode_")
     _anvil_disable_drop_mode_ = wrap_special_method("_anvil_disable_drop_mode_")
