@@ -17,7 +17,7 @@ class DefaultLink(anvil.Link):
         self.url = value
 
 
-class NavLink(anvil.Component):
+class NavLink(anvil.Container):
     _anvil_properties_ = [
         {"name": "href", "type": "string"},
         {"name": "text", "type": "string"},
@@ -30,6 +30,15 @@ class NavLink(anvil.Component):
         self.href = self.href
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
+
+    def get_components(self):
+        return self._link.get_components()
+
+    def add_component(self, component, **properties):
+        self._link.add_component(component, **properties)
+
+    def clear(self):
+        self._link.clear()
 
     @property
     def href(self):
@@ -77,3 +86,12 @@ class NavLink(anvil.Component):
     @property
     def _anvil_dom_element_(self):
         return self._link._anvil_dom_element_
+
+    def _anvil_get_container_design_info_(self, child):
+        return self._link._anvil_get_container_design_info_(child)
+    
+    def _anvil_enable_drop_mode_(self, *args, **kwargs):
+        return self._link._anvil_enable_drop_mode_(*args, **kwargs)
+    
+    def _anvil_disable_drop_mode_(self):
+        return self._link._anvil_disable_drop_mode_()
