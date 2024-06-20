@@ -6,6 +6,9 @@ from anvil.designer import in_designer, get_design_component
 
 try:
     from Mantine.NavLink import NavLink as MantineNavLink
+    from Mantine import utils
+
+    utils.set_color_scheme("light")
 
     class DefaultLink(MantineNavLink):
         def __init__(self, text=None, **properties):
