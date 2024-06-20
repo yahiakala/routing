@@ -5,7 +5,7 @@ from anvil.history import history
 from anvil.designer import in_designer, get_design_component
 
 try:
-    from Mantine import NavLink as _DefaultLink
+    from Mantine.NavLink import NavLink as _DefaultLink
 except ImportError:
     _DefaultLink = anvil.Link
 
