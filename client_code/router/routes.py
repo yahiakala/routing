@@ -1,7 +1,6 @@
 import anvil.server
-from distutils.command import clean
 
-from client_code.router.navigate import nav_args_to_location
+from .navigate import nav_args_to_location
 from .redirect import Redirect
 
 from .segments import Segment
