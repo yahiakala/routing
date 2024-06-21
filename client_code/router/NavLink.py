@@ -184,21 +184,25 @@ class NavLink(anvil.Container):
     def text(self, value):
         self._props["text"] = value
         self._link.text = value
+    
+    def _do_click(self):
+        href = self._href
+        if not in_designer:
+            history.push(href)
+        else:
+            from SimpleRoutingExample import routes
+            print(routes)
+            match = get_match(location=self._location)
+            if match is not None:
+                start_editing_form(match.route.form)
+
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
             return
         e.preventDefault()
         e.stopImmediatePropagation()
-
-        href = self._href
-        if not in_designer:
-            history.push(href)
-        else:
-            from SimpleRoutingExample import routes
-            match = get_match(location=self._location)
-            if match is not None:
-                start_editing_form(match.route.form)
+        self._do_click()
 
 
 
@@ -207,7 +211,7 @@ class NavLink(anvil.Container):
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
         if in_designer:
-            register_interaction(self, self._el, "dblclick", self._on_click)
+            register_interaction(self, self._el, "dblclick", self._do_click)
 
     def _cleanup(self, **event_args):
         self._link.raise_event("x-anvil-page-removed", **event_args)
