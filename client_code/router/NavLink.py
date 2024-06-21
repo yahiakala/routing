@@ -195,6 +195,7 @@ class NavLink(anvil.Container):
         if not in_designer:
             history.push(href)
         else:
+            from SimpleRoutingExample import routes
             match = get_match(location=self._location)
             if match is not None:
                 start_editing_form(match.route.form)
