@@ -133,7 +133,7 @@ def load_data_promise(match, force=False):
         if mode == NETWORK_FIRST:
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
-            is_stale = datetime.now() - fetched_at > route.stale_time
+            is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
                 data_promise = create_in_flight_data_promise()
             else:
