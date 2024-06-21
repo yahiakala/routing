@@ -202,9 +202,8 @@ class NavLink(anvil.Container):
         self._link.text = value
 
     def _do_click(self, e):
-        href = self._href
         if not in_designer:
-            history.push(href)
+            history.push(self._location)
         elif self._form is not None:
             start_editing_form(self, self._form)
 
