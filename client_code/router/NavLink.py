@@ -110,13 +110,11 @@ class NavLink(anvil.Container):
 
     def _setup(self, **event_args):
         self._link.raise_event("x-anvil-page-added", **event_args)
-        print("SETUP")
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
 
     def _cleanup(self, **event_args):
         self._link.raise_event("x-anvil-page-removed", **event_args)
-        print("CLEANUP")
         el = self._el
         if el is None:
             return
