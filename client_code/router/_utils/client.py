@@ -4,6 +4,13 @@ from anvil.js.window import Promise, setTimeout, URLSearchParams, document
 from anvil.js import await_promise
 from anvil.js import report_exceptions
 
+if in_designer:
+    from anvil.js.window import encodeURIComponent as url_encode
+    from anvil.js.window import decodeURIComponent as url_decode
+else:
+    from anvil.http import url_encode
+    from anvil.http import url_decode
+
 
 def timeout(s=0):
     def wait_async(resolve, reject):

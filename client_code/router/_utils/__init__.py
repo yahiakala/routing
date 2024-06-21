@@ -1,12 +1,6 @@
 import anvil
 from .._constants import TIMEOUT
 
-try:
-    from anvil.http import url_decode
-    from anvil.http import url_encode
-except ImportError:
-    from urllib.parse import unquote as url_decode
-    from urllib.parse import quote as url_encode
 
 if anvil.is_server_side():
     from .server import (
@@ -17,6 +11,8 @@ if anvil.is_server_side():
         encode_search_params,
         setTimeout,
         document,
+        url_encode,
+        url_decode,
     )
 
     # TODO: remove this at some point
@@ -40,6 +36,8 @@ else:
         encode_search_params,
         setTimeout,
         document,
+        url_encode,
+        url_decode,
     )
 
 

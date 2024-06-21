@@ -1,5 +1,11 @@
 from urllib.parse import urlencode
 
+try:
+    from anvil.http import url_decode
+    from anvil.http import url_encode
+except ImportError:
+    from urllib.parse import unquote as url_decode
+    from urllib.parse import quote as url_encode
 
 try:
     from async_promises import Promise
@@ -32,12 +38,12 @@ except ImportError:
             self.error = error
             self.resolved = True
             self.STATUS = "REJECTED"
-        
+
         def _subscribe(self, event, fn):
             if event not in self._subscribers:
                 self._subscribers[event] = []
             self._subscribers[event].append(fn)
-        
+
         def _unsubscribe(self, event, fn):
             if event in self._subscribers:
                 self._subscribers[event].remove(fn)
@@ -51,7 +57,7 @@ except ImportError:
         @classmethod
         def race(cls, promises):
             raise NotImplementedError
-        
+
         def then(self, fn=None, error_fn=None):
             def handler(resolve, reject):
                 def on_status_change():
@@ -96,6 +102,7 @@ def report_exceptions(fn):
 
 def timeout(ms=0):
     return None
+
 
 def setTimeout(fn, ms):
     fn()
