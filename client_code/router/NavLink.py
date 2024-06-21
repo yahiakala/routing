@@ -2,7 +2,12 @@ import anvil
 from anvil.js import get_dom_node
 from ._navigate import navigate
 from anvil.history import history
-from anvil.designer import in_designer, get_design_component, start_editing_form, register_interaction
+from anvil.designer import (
+    in_designer,
+    get_design_component,
+    start_editing_form,
+    register_interaction,
+)
 from ._navigate import nav_args_to_location
 from ._matcher import get_match
 
@@ -89,21 +94,22 @@ class NavLink(anvil.Container):
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
-
     def _set_href(self):
         path = self.path
         search = self.search
         path_params = self.path_params
         search_params = self.search_params
         hash = self.hash
-        if in_designer:
-            return
+
         location = nav_args_to_location(path, path_params, search_params, hash)
         if not location.search and search:
             if not search.startswith("?"):
                 search = "?" + search
             location.search = search
         self._location = location
+
+        if in_designer:
+            return
         self._link.href = self._href = history.createHref(location)
 
     @property
@@ -114,7 +120,7 @@ class NavLink(anvil.Container):
     def path(self, value):
         self._props["path"] = value
         self._set_href()
-    
+
     @property
     def search_params(self):
         return self._props.get("search_params")
@@ -123,7 +129,7 @@ class NavLink(anvil.Container):
     def search_params(self, value):
         self._props["search_params"] = value
         self._set_href()
-    
+
     @property
     def search(self):
         return self._props.get("search")
@@ -132,7 +138,7 @@ class NavLink(anvil.Container):
     def search(self, value):
         self._props["search"] = value
         self._set_href()
-    
+
     @property
     def path_params(self):
         return self._props.get("path_params")
@@ -141,7 +147,7 @@ class NavLink(anvil.Container):
     def path_params(self, value):
         self._props["path_params"] = value
         self._set_href()
-    
+
     @property
     def hash(self):
         return self._props.get("hash")
@@ -173,7 +179,7 @@ class NavLink(anvil.Container):
     def text(self, value):
         self._props["text"] = value
         self._link.text = value
-    
+
     def _do_click(self, e):
         href = self._href
         if not in_designer:
@@ -181,11 +187,11 @@ class NavLink(anvil.Container):
         else:
             from SimpleRoutingExample import routes
             from ._route import sorted_routes
+
             print(routes, sorted_routes, self._location, self._href)
             match = get_match(location=self._location)
             if match is not None:
                 start_editing_form(match.route.form)
-
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
@@ -193,8 +199,6 @@ class NavLink(anvil.Container):
         e.preventDefault()
         e.stopImmediatePropagation()
         self._do_click(e)
-
-
 
     def _setup(self, **event_args):
         self._link.raise_event("x-anvil-page-added", **event_args)
