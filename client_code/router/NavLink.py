@@ -2,8 +2,9 @@ import anvil
 from anvil.js import get_dom_node
 from ._navigate import navigate
 from anvil.history import history
-from anvil.designer import in_designer, get_design_component
+from anvil.designer import in_designer, get_design_component, start_editing_form, register_interaction
 from ._navigate import nav_args_to_location
+from ._matcher import get_match
 
 # This is just temporary to test using other nav links
 try:
@@ -82,11 +83,13 @@ class NavLink(anvil.Container):
             path_params=path_params,
             hash=hash,
         )
+        self._location = None
         self._href = ""
         self._link = DefaultLink(**properties)
         self._set_href()
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
+
 
     def _set_href(self):
         path = self.path
@@ -101,6 +104,7 @@ class NavLink(anvil.Container):
             if not search.startswith("?"):
                 search = "?" + search
             location.search = search
+        self._location = location
         self._link.href = self._href = history.createHref(location)
 
     @property
@@ -190,11 +194,19 @@ class NavLink(anvil.Container):
         href = self._href
         if not in_designer:
             history.push(href)
+        else:
+            match = get_match(location=self._location)
+            if match is not None:
+                start_editing_form(match.route.form)
+
+
 
     def _setup(self, **event_args):
         self._link.raise_event("x-anvil-page-added", **event_args)
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
+        if in_designer:
+            register_interaction(self, self._el, "dblclick", self._on_click)
 
     def _cleanup(self, **event_args):
         self._link.raise_event("x-anvil-page-removed", **event_args)
