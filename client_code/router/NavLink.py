@@ -130,7 +130,7 @@ class NavLink(anvil.Container):
 
         if in_designer:
             self._form = _temp_hack_to_get_form(self)
-        else:
+        elif location.path is not None:
             self._link.href = self._href = history.createHref(location)
 
     @property
