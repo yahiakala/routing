@@ -180,7 +180,8 @@ class NavLink(anvil.Container):
             history.push(href)
         else:
             from SimpleRoutingExample import routes
-            print(routes)
+            from ._route import sorted_routes
+            print(routes, sorted_routes)
             match = get_match(location=self._location)
             if match is not None:
                 start_editing_form(match.route.form)
