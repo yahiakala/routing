@@ -3,6 +3,7 @@ from anvil.js import get_dom_node
 from ._navigate import navigate
 from anvil.history import history
 from anvil.designer import in_designer, get_design_component
+from ._navigate import nav_args_to_location
 
 # This is just temporary to test using other nav links
 try:
@@ -54,18 +55,97 @@ def wrap_special_method(method_name):
 
 class NavLink(anvil.Container):
     _anvil_properties_ = [
-        {"name": "href", "type": "string"},
+        {"name": "href", "type": "string", "important": True}, # temporary
+        {"name": "path", "type": "string", "important": True},
+        {"name": "search_params", "type": "object"},
+        {"name": "search", "type": "string"},
+        {"name": "path_params", "type": "object"},
+        {"name": "hash", "type": "string"},
         {"name": "text", "type": "string"},
     ]
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
-    def __init__(self, **properties):
-        self._props = properties
+    def __init__(
+        self,
+        path=None,
+        search_params=None,
+        search=None,
+        path_params=None,
+        hash="",
+        **properties
+    ):
+        self._props = dict(
+            properties,
+            path=path,
+            search_params=search_params,
+            search=search,
+            path_params=path_params,
+            hash=hash,
+        )
+        self._href = ""
         self._link = DefaultLink(**properties)
-        self.href = self.href
+        self._set_href()
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
+
+    def _set_href(self):
+        path = self.path
+        search = self.search
+        path_params = self.path_params
+        search_params = self.search_params
+        hash = self.hash
+        location = nav_args_to_location(path, path_params, search_params, hash)
+        if not location.search and search:
+            if not search.startswith("?"):
+                search = "?" + search
+            location.search = search
+        self._link.href = self._href = history.createHref(location)
+
+    @property
+    def path(self):
+        return self._props.get("path")
+
+    @path.setter
+    def path(self, value):
+        self._props["path"] = value
+        self._set_href()
     
+    @property
+    def search_params(self):
+        return self._props.get("search_params")
+
+    @search_params.setter
+    def search_params(self, value):
+        self._props["search_params"] = value
+        self._set_href()
+    
+    @property
+    def search(self):
+        return self._props.get("search")
+
+    @search.setter
+    def search(self, value):
+        self._props["search"] = value
+        self._set_href()
+    
+    @property
+    def path_params(self):
+        return self._props.get("path_params")
+
+    @path_params.setter
+    def path_params(self, value):
+        self._props["path_params"] = value
+        self._set_href()
+    
+    @property
+    def hash(self):
+        return self._props.get("hash")
+
+    @hash.setter
+    def hash(self, value):
+        self._props["hash"] = value
+        self._set_href()
+
     # def raise_event(self, event_name, **event_args):
     #     super().raise_event(event_name, **event_args)
     #     if event_name != "click":

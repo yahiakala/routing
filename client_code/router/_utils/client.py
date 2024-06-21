@@ -20,3 +20,4 @@ def encode_search_params(search_params):
         return ""
 
     return "?" + URLSearchParams(search_params).toString()
+
