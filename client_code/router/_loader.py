@@ -133,11 +133,10 @@ def load_data_promise(match, force=False):
         if mode == NETWORK_FIRST:
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
+            data_promise = cached.data
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
-                data_promise = create_in_flight_data_promise()
-            else:
-                data_promise = cached.data
+                create_in_flight_data_promise()
         else:
             raise Exception("Unknown cache mode")
 
