@@ -1,4 +1,3 @@
-from tkinter import NE
 import anvil.server
 
 from ._navigate import nav_args_to_location
@@ -104,4 +103,3 @@ class Route:
 
         if anvil.is_server_side():
             _create_server_route(cls)
-
