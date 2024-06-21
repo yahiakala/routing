@@ -185,7 +185,7 @@ class NavLink(anvil.Container):
         self._props["text"] = value
         self._link.text = value
     
-    def _do_click(self):
+    def _do_click(self, e):
         href = self._href
         if not in_designer:
             history.push(href)
@@ -202,7 +202,7 @@ class NavLink(anvil.Container):
             return
         e.preventDefault()
         e.stopImmediatePropagation()
-        self._do_click()
+        self._do_click(e)
 
 
 
