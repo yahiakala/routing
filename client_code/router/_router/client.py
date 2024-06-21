@@ -10,6 +10,7 @@ from .._context import RoutingContext
 from .._utils import TIMEOUT, await_promise, timeout, Promise
 from .._matcher import get_match
 from .._loader import cache, load_data_promise
+from .._view_transition import ViewTransition
 
 waiting = False
 undoing = False
@@ -116,7 +117,8 @@ def on_navigate():
         return
 
     if pending_form is not None and result is TIMEOUT:
-        anvil.open_form(pending_form)
+        with ViewTransition(None):
+            anvil.open_form(pending_form)
         sleep(pending_delay)
 
     data = await_promise(data_promise)
@@ -126,7 +128,8 @@ def on_navigate():
     context.data = data
 
     form = route.form
-    anvil.open_form(form, routing_context=context)
+    with ViewTransition(None):
+        anvil.open_form(form, routing_context=context)
 
 
 def listener(args):

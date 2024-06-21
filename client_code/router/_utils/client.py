@@ -1,6 +1,6 @@
 from .._constants import TIMEOUT
 
-from anvil.js.window import Promise, setTimeout, URLSearchParams
+from anvil.js.window import Promise, setTimeout, URLSearchParams, document
 from anvil.js import await_promise
 from anvil.js import report_exceptions
 

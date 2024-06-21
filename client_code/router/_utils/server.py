@@ -97,8 +97,14 @@ def report_exceptions(fn):
 def timeout(ms=0):
     return None
 
+def setTimeout(fn, ms):
+    fn()
+
 
 def encode_search_params(search_params):
     if not search_params:
         return ""
     return "?" + urlencode(search_params)
+
+
+document = object()
