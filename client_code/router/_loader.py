@@ -1,7 +1,11 @@
 import json
+from textwrap import wrap
 from time import sleep
 from datetime import datetime
+from tkinter import NE
+from venv import create
 from ._deferred import call_async
+from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 import anvil.server
 
 
@@ -30,9 +34,10 @@ def clear_cache():
 
 @anvil.server.portable_class
 class CachedData:
-    def __init__(self, *, data, location):
+    def __init__(self, *, data, location, mode):
         self.data = data
         self.location = location
+        self.mode = mode
         self.fetched_at = datetime.now()
 
     def __deserialize__(self, data, gbl_data):
@@ -71,7 +76,7 @@ def load_data_promise(match, force=False):
         from ._context import RoutingContext
 
         print(key, "load_data_async")
-        cached = CachedData(data=data, location=location)
+        cached = CachedData(data=data, location=location, mode=route.cache_mode)
         cache[key] = cached
         if RoutingContext._current is not None:
             if key == RoutingContext._current.match.key:
@@ -88,13 +93,25 @@ def load_data_promise(match, force=False):
             if key == RoutingContext._current.match.key:
                 RoutingContext._current.data = None
 
+    def wrapped_loader(retries=0, **loader_args):
+        try:
+            return route.loader(**loader_args)
+        except anvil.server.AppOfflineError:
+            if not retries:
+                sleep(1)
+                return wrapped_loader(retries=retries + 1, **loader_args)
+            elif key in cache:
+                return cache[key].data
+            else:
+                raise
+
     def create_in_flight_data_promise():
         if key in in_flight:
             print(key, "key already in in_flight")
             return in_flight[key]
 
         async_call = call_async(
-            route.loader,
+            wrapped_loader,
             location=location,
             search_params=search_params,
             path_params=path_params,
@@ -109,24 +126,24 @@ def load_data_promise(match, force=False):
         return data_promise
 
     if key in cache and not force:
-        print("key in cache")
         cached = cache[key]
-        data_promise = cached.data
+
         fetched_at = cached.fetched_at
-        print(
-            key,
-            "stale time",
-            is_initial,
-            repr(fetched_at),
-            (datetime.now() - fetched_at).total_seconds(),
-            route.stale_time,
-        )
-        if (
-            not is_initial
-            and (datetime.now() - fetched_at).total_seconds() > route.stale_time
-        ):
-            print(key, "stale - creating data_promise")
-            create_in_flight_data_promise()
+        mode = cached.mode
+
+        if is_initial:
+            # data came in with startup data
+            data_promise = cached.data
+        if mode == NETWORK_FIRST:
+            data_promise = create_in_flight_data_promise()
+        elif mode == STALE_WHILE_REVALIDATE:
+            is_stale = datetime.now() - fetched_at > route.stale_time
+            if is_stale:
+                data_promise = create_in_flight_data_promise()
+            else:
+                data_promise = cached.data
+        else:
+            raise Exception("Unknown cache mode")
 
     else:
         print(key, "key not in cache")

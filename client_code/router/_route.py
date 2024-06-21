@@ -1,3 +1,4 @@
+from tkinter import NE
 import anvil.server
 
 from ._navigate import nav_args_to_location
@@ -5,6 +6,7 @@ from ._redirect import Redirect
 
 from ._segments import Segment
 from ._utils import trim_path, encode_search_params
+from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 
 
 sorted_routes = []
@@ -71,6 +73,7 @@ class Route:
     pending_form = None
     pending_min = 0.5
     pending_delay = 1
+    cache_mode = NETWORK_FIRST
 
     def before_load(self):
         pass
