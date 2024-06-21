@@ -21,6 +21,16 @@ if anvil.is_server_side():
 
     # TODO: remove this at some point
     anvil.server.call_s = anvil.server.call
+
+    class LoadingIndicator:
+        def __enter__(self):
+            pass
+
+        def __exit__(self, *args):
+            pass
+
+    anvil.server.no_loading_indicator = LoadingIndicator()
+
 else:
     from .client import (
         Promise,
