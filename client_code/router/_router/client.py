@@ -92,7 +92,7 @@ def on_navigate():
 
     match = get_match(location)
     if match is None:
-        raise Exception("No match")
+        raise Exception(f"No match {location}")
 
     route = match.route
     pending_form = route.pending_form
