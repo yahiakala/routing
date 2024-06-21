@@ -59,7 +59,7 @@ def wrap_special_method(method_name):
     return wrapper
 
 
-def _temp_hack_to_get_match(self):
+def _temp_hack_to_get_form(self):
     if not in_designer:
         return None
     
@@ -72,7 +72,10 @@ def _temp_hack_to_get_match(self):
         return None
     elif self._location.path is None:
         return None
-    return get_match(location=self._location)
+    match = get_match(location=self._location)
+
+    if match is not None:
+        return match.route.form
 
 
 class NavLink(anvil.Container):
@@ -104,7 +107,7 @@ class NavLink(anvil.Container):
             hash=hash,
         )
         self._location = None
-        self._match = None
+        self._form = None
         self._href = ""
         self._link = DefaultLink(**properties)
         self._set_href()
@@ -126,7 +129,7 @@ class NavLink(anvil.Container):
         self._location = location
 
         if in_designer:
-            self._match = _temp_hack_to_get_match(self)
+            self._form = _temp_hack_to_get_form(self)
         else:
             self._link.href = self._href = history.createHref(location)
 
@@ -202,8 +205,8 @@ class NavLink(anvil.Container):
         href = self._href
         if not in_designer:
             history.push(href)
-        elif self._match is not None:
-            start_editing_form(self, self._match.route.form)
+        elif self._form is not None:
+            start_editing_form(self, self._form)
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
@@ -216,9 +219,7 @@ class NavLink(anvil.Container):
         self._link.raise_event("x-anvil-page-added", **event_args)
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
-        if self._match is not None:
-            print(self.path, self._match.route.form)
-        if in_designer and self._match is not None and self._match.route.form is not None:
+        if in_designer and self._form is not None:
             register_interaction(self, self._el, "dblclick", self._do_click)
 
     def _cleanup(self, **event_args):
