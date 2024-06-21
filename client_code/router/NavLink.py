@@ -56,7 +56,6 @@ def wrap_special_method(method_name):
 
 class NavLink(anvil.Container):
     _anvil_properties_ = [
-        {"name": "href", "type": "string", "important": True}, # temporary
         {"name": "path", "type": "string", "important": True},
         {"name": "search_params", "type": "object"},
         {"name": "search", "type": "string"},
@@ -165,16 +164,6 @@ class NavLink(anvil.Container):
 
     def clear(self):
         self._link.clear()
-
-    @property
-    def href(self):
-        return self._props.get("href")
-
-    @href.setter
-    def href(self, value):
-        self._props["href"] = value
-        if not in_designer:
-            self._link.href = history.createHref(value)
 
     @property
     def text(self):
