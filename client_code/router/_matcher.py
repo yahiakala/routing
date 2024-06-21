@@ -38,6 +38,7 @@ def get_match(location):
         for part in parts:
             try:
                 segment = next(iter_segments)
+                print(part, segment.type, segment.value)
                 if segment.is_static():
                     if part != segment.value:
                         break
