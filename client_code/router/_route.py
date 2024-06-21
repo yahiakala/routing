@@ -58,7 +58,7 @@ def _create_server_route(cls):
             deps=deps,
         )
 
-        cached_data = CachedData(data=data, location=location)
+        cached_data = CachedData(data=data, location=location, mode=route.cache_mode)
         cache = {match.key: cached_data}
 
         return anvil.server.LoadAppResponse(data={"cache": cache})
