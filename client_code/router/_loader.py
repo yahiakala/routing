@@ -122,6 +122,7 @@ def load_data_promise(match, force=False):
         return data_promise
 
     if key in cache and not force:
+        print(key, "data in cache")
         cached = cache[key]
 
         fetched_at = cached.fetched_at
@@ -131,11 +132,13 @@ def load_data_promise(match, force=False):
             # data came in with startup data
             data_promise = cached.data
         if mode == NETWORK_FIRST:
+            print(key, NETWORK_FIRST, "loading data")
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
             data_promise = cached.data
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
+                print(key, STALE_WHILE_REVALIDATE, "reloading in the background")
                 create_in_flight_data_promise()
         else:
             raise Exception("Unknown cache mode")
