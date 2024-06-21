@@ -59,6 +59,18 @@ def wrap_special_method(method_name):
     return wrapper
 
 
+def _temp_hack_to_get_match(self):
+    if not in_designer:
+        return None
+    
+    try:
+        from SimpleRoutingExample import routes
+    except ImportError:
+        pass
+
+    return get_match(location=self._location)
+
+
 class NavLink(anvil.Container):
     _anvil_properties_ = [
         {"name": "path", "type": "string", "important": True},
@@ -88,6 +100,7 @@ class NavLink(anvil.Container):
             hash=hash,
         )
         self._location = None
+        self._match = None
         self._href = ""
         self._link = DefaultLink(**properties)
         self._set_href()
@@ -109,8 +122,9 @@ class NavLink(anvil.Container):
         self._location = location
 
         if in_designer:
-            return
-        self._link.href = self._href = history.createHref(location)
+            self._match = _temp_hack_to_get_match(self)
+        else:
+            self._link.href = self._href = history.createHref(location)
 
     @property
     def path(self):
@@ -184,18 +198,8 @@ class NavLink(anvil.Container):
         href = self._href
         if not in_designer:
             history.push(href)
-        else:
-            from SimpleRoutingExample import routes
-            from ._route import sorted_routes
-
-            print(self._location)
-            match = get_match(location=self._location)
-            print(match)
-            if match is not None:
-                print("MATCH", match.route.form)
-                debugger
-                start_editing_form(self, match.route.form)
-                print("STARTED EDITING")
+        elif self._match is not None:
+            start_editing_form(self, self._match.route.form)
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
@@ -208,7 +212,7 @@ class NavLink(anvil.Container):
         self._link.raise_event("x-anvil-page-added", **event_args)
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
-        if in_designer:
+        if in_designer and self._match is not None:
             register_interaction(self, self._el, "dblclick", self._do_click)
 
     def _cleanup(self, **event_args):
