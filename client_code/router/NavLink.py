@@ -68,6 +68,10 @@ def _temp_hack_to_get_match(self):
     except ImportError:
         pass
 
+    if self._location is None:
+        return None
+    elif self._location.path is None:
+        return None
     return get_match(location=self._location)
 
 
