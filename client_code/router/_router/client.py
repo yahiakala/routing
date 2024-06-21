@@ -117,7 +117,8 @@ def on_navigate():
         return
 
     if pending_form is not None and result is TIMEOUT:
-        with ViewTransition(None):
+        print("LOADING PENDING FORM")
+        with ViewTransition():
             anvil.open_form(pending_form)
         sleep(pending_delay)
 
@@ -128,7 +129,7 @@ def on_navigate():
     context.data = data
 
     form = route.form
-    with ViewTransition(None):
+    with ViewTransition():
         anvil.open_form(form, routing_context=context)
 
 

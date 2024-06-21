@@ -44,31 +44,15 @@ def use_transitions(can_transition=True):
 
 
 class ViewTransition:
-    def __init__(self, form):
+    def __init__(self):
         self.deferred = Deferred()
-        self.form = form
         self.transition = None
-        try:
-            handlers = form.get_event_handlers("show")
-            form.set_event_handler("show", self.show)
-            # make us the first show event handler and re-add existing
-            for handler in handlers:
-                form.add_event_handler("show", handler)
-        except Exception:
-            pass
 
     def resolve(self):
         global _transition
         if _transition is self.transition:
             _transition = None
         self.deferred.resolve(None)
-
-    def show(self, **event_args):
-        self.resolve()
-        try:
-            self.form.remove_event_handler("show", self.show)
-        except Exception:
-            pass
 
     def __enter__(self):
         global _transition
