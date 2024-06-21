@@ -4,12 +4,12 @@ import anvil
 from anvil.history import history
 from anvil.js import window
 
-from ..navigate import navigate
-from ..redirect import Redirect
-from ..context import Context
-from ..utils import TIMEOUT, await_promise, timeout, Promise
-from ..matcher import get_match
-from ..loader import cache, load_data_promise
+from .._navigate import navigate
+from .._redirect import Redirect
+from .._context import RoutingContext
+from .._utils import TIMEOUT, await_promise, timeout, Promise
+from .._matcher import get_match
+from .._loader import cache, load_data_promise
 
 waiting = False
 undoing = False
@@ -35,6 +35,7 @@ class UnloadBlocker:
         before_unload_blockers.remove(self)
         if not before_unload_blockers:
             window.removeEventListener("beforeunload", _beforeunload)
+
 
 class NavigationBlocker:
     def __init__(self, warn_before_unload=False):
@@ -70,7 +71,7 @@ def stop_unload():
     delta = current.get("delta")
     if delta is not None:
         history.go(-delta)
-    sleep(0) # give control back to event loop
+    sleep(0)  # give control back to event loop
 
 
 def on_navigate():
@@ -81,7 +82,7 @@ def on_navigate():
     def is_stale():
         return key != history.location.key
 
-    prev_context = Context._current
+    prev_context = RoutingContext._current
     if prev_context is not None:
         with NavigationBlocker():
             if prev_context._prevent_unload():
@@ -101,7 +102,7 @@ def on_navigate():
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
 
-    context = Context._current = Context(match)
+    context = RoutingContext._current = RoutingContext(match)
     # TODO: decide what to do if only search params change or only hash changes
     # if only search params change, we need to load data
     # but the form might be using navigate_on_search_change=False
@@ -125,7 +126,7 @@ def on_navigate():
     context.data = data
 
     form = route.form
-    anvil.open_form(form, context=context)
+    anvil.open_form(form, routing_context=context)
 
 
 def listener(args):

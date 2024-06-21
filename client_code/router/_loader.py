@@ -68,23 +68,25 @@ def load_data_promise(match, force=False):
 
     @report_exceptions
     def on_result(data):
-        from .context import Context
+        from ._context import RoutingContext
+
         print(key, "load_data_async")
         cached = CachedData(data=data, location=location)
         cache[key] = cached
-        if Context._current is not None:
-            if key == Context._current.match.key:
-                Context._current.data = data
+        if RoutingContext._current is not None:
+            if key == RoutingContext._current.match.key:
+                RoutingContext._current.data = data
 
         clean_up_inflight()
-    
+
     def on_error(error):
         # TODO: handle error
-        from .context import Context
+        from ._context import RoutingContext
+
         print(key, "load_data_async error")
-        if Context._current is not None:
-            if key == Context._current.match.key:
-                Context._current.data = None
+        if RoutingContext._current is not None:
+            if key == RoutingContext._current.match.key:
+                RoutingContext._current.data = None
 
     def create_in_flight_data_promise():
         if key in in_flight:
@@ -105,7 +107,6 @@ def load_data_promise(match, force=False):
         in_flight[key] = data_promise
 
         return data_promise
-    
 
     if key in cache and not force:
         print("key in cache")

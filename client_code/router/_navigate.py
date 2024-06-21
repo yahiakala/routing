@@ -1,9 +1,9 @@
 from anvil.history import history, Location
 import json
 
-from .segments import Segment
-from .utils import trim_path, url_encode, encode_search_params
-from .constants import NOT_FOUND
+from ._segments import Segment
+from ._utils import trim_path, url_encode, encode_search_params
+from ._constants import NOT_FOUND
 
 
 def clean_path(path, path_params):
@@ -32,16 +32,19 @@ def clean_search_params(search_params):
     keys = sorted(search_params.keys())
     for key in keys:
         real_search_params[key] = json.dumps(search_params[key], sort_keys=True)
-    
-    return real_search_params
 
 
-def navigate(path=None, search_params=None, path_params=None, hash="", replace=False):
+def nav_args_to_location(path, search_params, path_params, hash):
+    path_params = path_params or {}
     search_params = clean_search_params(search_params)
-    path = clean_path(path, path_params or {})
     search = encode_search_params(search_params)
+    path = clean_path(path, path_params)
 
-    location = Location(path=path, search=search, hash=hash)
+    return Location(path=path, search=search, hash=hash)
+
+
+def navigate(*, path=None, search_params=None, path_params=None, hash="", replace=False):
+    location = nav_args_to_location(path, search_params, path_params, hash)
     current_location = history.location
     print("LOCATION", location, current_location)
 

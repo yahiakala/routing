@@ -1,4 +1,4 @@
-from .router import create, NavigationBlocker, UnloadBlocker
+from ._router import create, NavigationBlocker, UnloadBlocker
 from ._navigate import navigate
-from .routes import Route
-from .redirect import Redirect
+from ._route import Route
+from ._redirect import Redirect

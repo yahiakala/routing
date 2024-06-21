@@ -1,10 +1,10 @@
 import anvil.server
 
-from .navigate import nav_args_to_location
-from .redirect import Redirect
+from ._navigate import nav_args_to_location
+from ._redirect import Redirect
 
-from .segments import Segment
-from .utils import trim_path, encode_search_params
+from ._segments import Segment
+from ._utils import trim_path, encode_search_params
 
 
 sorted_routes = []
@@ -13,8 +13,8 @@ sorted_routes = []
 def _create_server_route(cls):
     # local for now while anvil uplink doesn't have history
     from anvil.history import Location
-    from .loader import load_data, cache, CachedData
-    from .matcher import get_match
+    from ._loader import load_data, cache, CachedData
+    from ._matcher import get_match
 
     path = cls.path
 

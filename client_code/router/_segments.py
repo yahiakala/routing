@@ -1,4 +1,4 @@
-from .utils import trim_path
+from ._utils import trim_path
 
 
 class Segment:

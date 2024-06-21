@@ -1,4 +1,4 @@
-from .constants import TIMEOUT
+from .._constants import TIMEOUT
 
 from anvil.js.window import Promise, setTimeout, URLSearchParams
 from anvil.js import await_promise

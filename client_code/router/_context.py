@@ -1,11 +1,10 @@
 from re import L, T
 
-from .loader import load_data
-from .matcher import Match
+from ._loader import load_data
+from ._matcher import Match
 
 
-
-class Context:
+class RoutingContext:
     _current = None
     _events = [
         "data_loaded",
@@ -24,7 +23,7 @@ class Context:
         self._data = data
         self._listeners = {}
         self._blockers = set()
-    
+
     def _prevent_unload(self):
         for blocker in self._blockers:
             if blocker():
@@ -64,7 +63,7 @@ class Context:
             return
 
         self._load_data()
-    
+
     @property
     def data(self):
         return self._data
@@ -76,12 +75,13 @@ class Context:
 
     def _on_data_loaded(self, data):
         self.data = data
-    
+
     def _on_data_error(self, error):
         self._emit("data_error", error=error)
 
     def _load_data(self):
         from ._deferred import call_async
+
         async_call = call_async(load_data, self.match, force=True)
         self._emit("data_loading")
         async_call.on_result(self._on_data_loaded)

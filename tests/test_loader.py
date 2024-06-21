@@ -1,6 +1,6 @@
-from client_code.router.loader import load_data
+from client_code.router._loader import load_data
 from time import sleep
-from client_code.router.matcher import get_match
+from client_code.router._matcher import get_match
 from tests.deps import routes, Location, get_page
 
 def test_loader(routes):

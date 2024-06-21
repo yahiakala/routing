@@ -13,8 +13,8 @@ try:
 except ImportError:
     from anvil.server import call as _call_s
 
-from .utils import report_exceptions as _report
-from .utils import Promise
+from ._utils import report_exceptions as _report
+from ._utils import Promise
 
 
 if not anvil.is_server_side():

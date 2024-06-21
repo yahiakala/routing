@@ -1,8 +1,8 @@
 import json
 from re import search
 
-from .utils import trim_path, url_decode
-from .routes import Route, sorted_routes
+from ._utils import trim_path, url_decode
+from ._route import Route, sorted_routes
 
 
 class Match:

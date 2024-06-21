@@ -1,8 +1,0 @@
-layout: {type: 'form:Layout'}
-is_package: true
-components_by_slot:
-  main:
-  - name: label_1
-    properties: {text: Home}
-    type: Label
-    layout_properties: {}
