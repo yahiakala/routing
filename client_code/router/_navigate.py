@@ -1,4 +1,7 @@
-from anvil.history import history, Location
+try:
+    from anvil.history import history, Location
+except ImportError:
+    pass
 import json
 
 from ._segments import Segment
