@@ -16,6 +16,7 @@ if anvil.is_server_side():
         timeout,
         encode_search_params,
         setTimeout,
+        document,
     )
 
     # TODO: remove this at some point
@@ -28,6 +29,7 @@ else:
         timeout,
         encode_search_params,
         setTimeout,
+        document,
     )
 
 
