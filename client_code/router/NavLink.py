@@ -192,7 +192,10 @@ class NavLink(anvil.Container):
             match = get_match(location=self._location)
             print(match)
             if match is not None:
+                print("MATCH", match.route.form)
+                debugger
                 start_editing_form(match.route.form)
+                print("STARTED EDITING")
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
