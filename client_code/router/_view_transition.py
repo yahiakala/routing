@@ -56,13 +56,13 @@ class ViewTransition:
 
     def __enter__(self):
         global _transition
-        if _transition is None and _can_transition and _use_transition:
-            self.transition = document.startViewTransition(
-                lambda: self.deferred.promise
-            )
-            _transition = self.transition
-            sleep(0)
-            setTimeout(self.resolve, 100)
+        # if _transition is None and _can_transition and _use_transition:
+        #     self.transition = document.startViewTransition(
+        #         lambda: self.deferred.promise
+        #     )
+        #     _transition = self.transition
+        #     sleep(0)
+        #     setTimeout(self.resolve, 100)
         return self
 
     def __exit__(self, *exc_args):
