@@ -194,7 +194,7 @@ class NavLink(anvil.Container):
             if match is not None:
                 print("MATCH", match.route.form)
                 debugger
-                start_editing_form(match.route.form)
+                start_editing_form(self, match.route.form)
                 print("STARTED EDITING")
 
     def _on_click(self, e):
