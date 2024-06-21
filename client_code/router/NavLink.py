@@ -94,6 +94,8 @@ class NavLink(anvil.Container):
         path_params = self.path_params
         search_params = self.search_params
         hash = self.hash
+        if in_designer:
+            return
         location = nav_args_to_location(path, path_params, search_params, hash)
         if not location.search and search:
             if not search.startswith("?"):
@@ -185,8 +187,9 @@ class NavLink(anvil.Container):
         e.preventDefault()
         e.stopImmediatePropagation()
 
-        href = self.href
-        history.push(href)
+        href = self._href
+        if not in_designer:
+            history.push(href)
 
     def _setup(self, **event_args):
         self._link.raise_event("x-anvil-page-added", **event_args)
