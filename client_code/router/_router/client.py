@@ -1,5 +1,4 @@
 from time import sleep
-from tkinter import N
 
 import anvil
 from anvil.history import history
