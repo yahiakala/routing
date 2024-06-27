@@ -4,6 +4,7 @@ import json
 from ._segments import Segment
 from ._utils import trim_path, url_encode, encode_search_params
 from ._constants import NOT_FOUND
+from ._exceptions import InvalidPathParams
 
 
 def clean_path(path, path_params):
@@ -19,7 +20,7 @@ def clean_path(path, path_params):
         elif segment.is_param():
             value = path_params.get(segment.value, NOT_FOUND)
             if value is NOT_FOUND:
-                raise Exception(f"No path param for {segment.value}")
+                raise InvalidPathParams(f"No path param for {segment.value}")
             path += "/" + url_encode(str(value))
 
     return path

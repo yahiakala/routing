@@ -1,6 +1,6 @@
 import anvil
 from anvil.js import get_dom_node
-from anvil.history import history
+from anvil.history import history, Location
 from anvil.designer import (
     in_designer,
     get_design_component,
@@ -9,6 +9,7 @@ from anvil.designer import (
 )
 from ._navigate import nav_args_to_location, navigate_with_location
 from ._matcher import get_match
+from ._exceptions import InvalidPathParams
 
 # This is just temporary to test using other nav links
 try:
@@ -112,7 +113,6 @@ class NavLink(anvil.Container):
         self._form = None
         self._href = ""
         self._link = DefaultLink(**properties)
-        self._set_href()
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
@@ -123,11 +123,18 @@ class NavLink(anvil.Container):
         search_params = self.search_params
         hash = self.hash
 
-        location = nav_args_to_location(path, path_params, search_params, hash)
+        try:
+            location = nav_args_to_location(path, path_params, search_params, hash)
+        except InvalidPathParams as e:
+            if not in_designer:
+                raise e
+            else:
+                location = Location(path=path, search=search, hash=hash)
         if not location.search and search:
             if not search.startswith("?"):
                 search = "?" + search
             location.search = search
+
         self._location = location
 
         if in_designer:
@@ -228,6 +235,7 @@ class NavLink(anvil.Container):
         self._link.raise_event("x-anvil-page-added", **event_args)
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
+        self._set_href()
         if in_designer and self._form is not None:
             register_interaction(self, self._el, "dblclick", self._do_click)
 
