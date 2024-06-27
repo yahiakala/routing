@@ -87,20 +87,13 @@ class Route:
     
     @classmethod
     def create(cls, path=None, form=None, loader=None):
-        _path = path
-        _form = form
-        _loader = loader
+        name = f"{form or 'CreatedRoute'}Route"
+        cls_dict = {"path": path, "form": form}
+        if loader is not None:
+            cls_dict["loader"] = staticmethod(loader)
 
-        class CreatedRoute(cls):
-            path = _path
-            form = _form
-            if _loader is not None:
-                loader = staticmethod(_loader)
+        return type(name, (cls,), cls_dict)
 
-        if CreatedRoute.form is not None:
-            CreatedRoute.__name__ = f"{CreatedRoute.form}_Route"
-
-        return CreatedRoute
 
 
     def before_load(self):
