@@ -43,7 +43,6 @@ class CachedData:
 _inital_request = True
 
 
-@report_exceptions
 def load_data_promise(match, force=False):
     global _inital_request
     is_initial = _inital_request
