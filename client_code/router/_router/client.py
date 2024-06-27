@@ -83,20 +83,6 @@ def on_navigate():
     def is_stale():
         return key != history.location.key
 
-    def handle_error(form_attr, error):
-        print("handle_error before stale check", form_attr, error)
-
-        if is_stale():
-            return
-
-        form = getattr(route, form_attr, None)
-        print("handle_error", form_attr, error, form)
-        if form is None:
-            raise error
-
-        with ViewTransition():
-            anvil.open_form(form)
-
     prev_context = RoutingContext._current
     if prev_context is not None:
         with NavigationBlocker():
@@ -108,9 +94,25 @@ def on_navigate():
     if match is None:
         raise Exception(f"No match {location}")
 
+    context = RoutingContext(match)
+
     route = match.route
     pending_form = route.pending_form
     pending_delay = route.pending_delay
+
+    def handle_error(form_attr, error):
+        if is_stale():
+            return
+
+        context.error = error
+
+        form = getattr(route, form_attr, None)
+        print("handle_error", form_attr, error, form)
+        if form is None:
+            raise error
+
+        with ViewTransition():
+            anvil.open_form(form, context=context)
 
     try:
         route.before_load()
@@ -121,7 +123,7 @@ def on_navigate():
     except Exception as e:
         return handle_error("error_form", e)
 
-    context = RoutingContext._current = RoutingContext(match)
+    RoutingContext._current = current
     # TODO: decide what to do if only search params change or only hash changes
     # if only search params change, we need to load data
     # but the form might be using navigate_on_search_change=False
@@ -129,14 +131,6 @@ def on_navigate():
     # if hash changes, just emit the hash_changed event
 
     data_promise = load_data_promise(match)
-    try:
-        print("awaiting data_promise", data_promise)
-        data = await_promise(data_promise)
-        print("DATA", data)
-    except NotFound as e:
-        return handle_error("not_found_form", e)
-    except Exception as e:
-        return handle_error("error_form", e)
 
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])
@@ -156,15 +150,11 @@ def on_navigate():
         sleep(pending_delay)
 
     try:
-        print("awaiting data_promise", data_promise)
         data = await_promise(data_promise)
-        print("DATA", data)
-    except:
-        print("ERROR")
-    # except NotFound as e:
-    #     return handle_error("not_found_form", e)
-    # except Exception as e:
-    #     return handle_error("error_form", e)
+    except NotFound as e:
+        return handle_error("not_found_form", e)
+    except Exception as e:
+        return handle_error("error_form", e)
 
     if is_stale():
         return

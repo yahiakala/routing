@@ -20,6 +20,7 @@ class RoutingContext:
         self.path_params = match.path_params
         self.search_params = match.search_params
         self.route = match.route
+        self.error = None
         self._data = data
         self._listeners = {}
         self._blockers = set()
