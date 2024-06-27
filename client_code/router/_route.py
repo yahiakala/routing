@@ -1,7 +1,8 @@
+from os import error
 import anvil.server
 
 from ._navigate import nav_args_to_location
-from ._redirect import Redirect
+from ._exceptions import Redirect
 
 from ._segments import Segment
 from ._utils import trim_path, encode_search_params
@@ -73,6 +74,8 @@ class Route:
     pending_min = 0.5
     pending_delay = 1
     cache_mode = NETWORK_FIRST
+    error_form = None
+    not_found_form = None
 
     def before_load(self):
         pass

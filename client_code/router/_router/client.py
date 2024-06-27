@@ -5,7 +5,7 @@ from anvil.history import history
 from anvil.js import window
 
 from .._navigate import navigate
-from .._redirect import Redirect
+from .._exceptions import Redirect, NotFound
 from .._context import RoutingContext
 from .._utils import TIMEOUT, await_promise, timeout, Promise
 from .._matcher import get_match
@@ -102,6 +102,13 @@ def on_navigate():
         route.before_load()
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
+    except NotFound as e:
+        if route.not_found_form is not None:
+            with ViewTransition():
+                anvil.open_form(route.not_found_form)
+            return
+        else:
+            raise e
 
     context = RoutingContext._current = RoutingContext(match)
     # TODO: decide what to do if only search params change or only hash changes
@@ -122,7 +129,27 @@ def on_navigate():
             anvil.open_form(pending_form)
         sleep(pending_delay)
 
-    data = await_promise(data_promise)
+    try:
+        data = await_promise(data_promise)
+    except NotFound as e:
+        if is_stale():
+            return
+        if route.not_found_form is not None:
+            with ViewTransition():
+                anvil.open_form(route.not_found_form)
+            return
+        else:
+            raise e
+    except Exception as e:
+        if is_stale():
+            return
+        if route.error_form is not None:
+            with ViewTransition():
+                anvil.open_form(route.error_form)
+            return
+        else:
+            raise e
+
     if is_stale():
         return
 
