@@ -147,6 +147,7 @@ def on_navigate():
         sleep(pending_delay)
 
     try:
+        print("awaiting data_promise", data_promise)
         data = await_promise(data_promise)
         print("DATA", data)
     except NotFound as e:
