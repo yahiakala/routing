@@ -1,3 +1,4 @@
+import stat
 import anvil.server
 
 from ._navigate import nav_args_to_location
@@ -84,6 +85,24 @@ class Route:
     cache_mode = NETWORK_FIRST
     error_form = None
     not_found_form = None
+    
+    @classmethod
+    def create(cls, path=None, form=None, loader=None):
+        _path = path
+        _form = form
+        _loader = loader
+
+        class CreatedRoute(cls):
+            path = _path
+            form = _form
+            if _loader is not None:
+                loader = staticmethod(_loader)
+
+        if CreatedRoute.form is not None:
+            CreatedRoute.__name__ = f"{CreatedRoute.form}_Route"
+
+        return CreatedRoute
+
 
     def before_load(self):
         pass
