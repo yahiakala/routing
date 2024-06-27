@@ -170,7 +170,7 @@ class _AsyncCall:
         """Returns: JavaScript Promise that resolves to the value from the function call"""
         return Promise(
             lambda resolve, reject: resolve(
-                self._deferred.promise.then(lambda r: r.value)
+                self._deferred.promise.then(lambda r: r.value, lambda e: reject(e))
             )
         )
 
