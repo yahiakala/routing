@@ -161,7 +161,6 @@ def on_navigate():
         print("DATA", data)
     except:
         print("ERROR")
-        return
     # except NotFound as e:
     #     return handle_error("not_found_form", e)
     # except Exception as e:
