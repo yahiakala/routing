@@ -113,8 +113,8 @@ def load_data_promise(match, force=False):
             path_params=path_params,
             deps=deps,
         )
-        async_call.on_result(on_result)
-        async_call.on_error(on_error)
+        # async_call.on_result(on_result)
+        # async_call.on_error(on_error)
 
         data_promise = async_call.promise
         in_flight[key] = data_promise
