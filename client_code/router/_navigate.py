@@ -19,6 +19,7 @@ def clean_path(path, path_params):
             path += "/" + url_encode(segment.value)
         elif segment.is_param():
             value = path_params.get(segment.value, NOT_FOUND)
+            print(segment.value, path_params, value)
             if value is NOT_FOUND:
                 raise InvalidPathParams(f"No path param for {segment.value}")
             path += "/" + url_encode(str(value))
