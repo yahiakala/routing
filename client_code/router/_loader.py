@@ -90,6 +90,7 @@ def load_data_promise(match, force=False):
                 RoutingContext._current.data = None
 
     def wrapped_loader(retries=0, **loader_args):
+        return route.loader(**loader_args)
         try:
             result = route.loader(**loader_args)
         except anvil.server.AppOfflineError as e:
