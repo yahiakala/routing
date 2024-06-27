@@ -114,7 +114,7 @@ def load_data_promise(context, force=False):
             search_params=search_params,
             path_params=path_params,
             deps=deps,
-            router_context=context,
+            # router_context=context,
             nav_args=context.nav_args,
         )
         async_call.on_result(on_result)
