@@ -84,6 +84,8 @@ class Route:
     cache_mode = NETWORK_FIRST
     error_form = None
     not_found_form = None
+    server_fn = None
+    server_silent = False
 
     @classmethod
     def create(cls, *, path=None, form=None, server_fn=None, **props):
@@ -123,6 +125,17 @@ class Route:
             cls.path = trim_path(cls.path)
             cls.segments = Segment.from_path(cls.path)
             sorted_routes.append(cls())
+        
+        server_fn = cls.__dict__.get("server_fn")
+        existing_loader = cls.__dict__.get("loader")
+        if server_fn is not None and existing_loader is None:
+            def loader(self, **loader_args):
+                if self.server_silent:
+                    return anvil.server.call_s(server_fn, **loader_args)
+                else:
+                    return anvil.server.call(server_fn, **loader_args)
+            cls.loader = loader
+
 
         if anvil.is_server_side():
             _create_server_route(cls)
