@@ -129,6 +129,7 @@ def on_navigate():
     data_promise = load_data_promise(match)
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])
+        print("RACE RESULT", result)
     except NotFound as e:
         return handle_error("not_found_form", e)
     except Exception as e:
@@ -145,6 +146,7 @@ def on_navigate():
 
     try:
         data = await_promise(data_promise)
+        print("DATA", data)
     except NotFound as e:
         return handle_error("not_found_form", e)
     except Exception as e:

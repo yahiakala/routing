@@ -43,6 +43,7 @@ class CachedData:
 _inital_request = True
 
 
+# @report_exceptions
 def load_data_promise(match, force=False):
     global _inital_request
     is_initial = _inital_request
@@ -66,7 +67,7 @@ def load_data_promise(match, force=False):
 
         return result
 
-    @report_exceptions
+    # @report_exceptions
     def on_result(data):
         from ._context import RoutingContext
 
