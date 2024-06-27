@@ -83,6 +83,18 @@ def on_navigate():
     def is_stale():
         return key != history.location.key
 
+    def handle_error(form_attr, error):
+        if is_stale():
+            return
+
+        form = getattr(route, form_attr, None)
+        print("handle_error", form_attr, error, form)
+        if form is None:
+            raise error
+
+        with ViewTransition():
+            anvil.open_form(form)
+
     prev_context = RoutingContext._current
     if prev_context is not None:
         with NavigationBlocker():
@@ -103,12 +115,9 @@ def on_navigate():
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
     except NotFound as e:
-        if route.not_found_form is not None:
-            with ViewTransition():
-                anvil.open_form(route.not_found_form)
-            return
-        else:
-            raise e
+        return handle_error("not_found_form", e)
+    except Exception as e:
+        return handle_error("error_form", e)
 
     context = RoutingContext._current = RoutingContext(match)
     # TODO: decide what to do if only search params change or only hash changes
@@ -121,23 +130,9 @@ def on_navigate():
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])
     except NotFound as e:
-        if is_stale():
-            return
-        if route.not_found_form is not None:
-            with ViewTransition():
-                anvil.open_form(route.not_found_form)
-            return
-        else:
-            raise e
+        return handle_error("not_found_form", e)
     except Exception as e:
-        if is_stale():
-            return
-        if route.error_form is not None:
-            with ViewTransition():
-                anvil.open_form(route.error_form)
-            return
-        else:
-            raise e
+        return handle_error("error_form", e)
 
     if is_stale():
         return
@@ -151,23 +146,9 @@ def on_navigate():
     try:
         data = await_promise(data_promise)
     except NotFound as e:
-        if is_stale():
-            return
-        if route.not_found_form is not None:
-            with ViewTransition():
-                anvil.open_form(route.not_found_form)
-            return
-        else:
-            raise e
+        return handle_error("not_found_form", e)
     except Exception as e:
-        if is_stale():
-            return
-        if route.error_form is not None:
-            with ViewTransition():
-                anvil.open_form(route.error_form)
-            return
-        else:
-            raise e
+        return handle_error("error_form", e)
 
     if is_stale():
         return
