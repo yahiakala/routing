@@ -1,6 +1,5 @@
 from time import sleep
 from datetime import datetime
-from unittest import result
 from ._deferred import call_async
 from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 import anvil.server
