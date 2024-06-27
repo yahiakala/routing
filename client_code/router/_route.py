@@ -1,7 +1,7 @@
 import anvil.server
 
 from ._navigate import nav_args_to_location
-from ._exceptions import Redirect
+from ._exceptions import Redirect, NotFound
 
 from ._segments import Segment
 from ._utils import trim_path, encode_search_params
@@ -39,6 +39,7 @@ def _create_server_route(cls):
         path_params = match.path_params
         deps = match.deps
 
+        cache = {}
         try:
             route.before_load()
         except Redirect as r:
@@ -50,13 +51,21 @@ def _create_server_route(cls):
                 + location.hash
             )
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
+        except (NotFound, Exception) as e:
+            # TODO: handle error on the client
+            return anvil.server.LoadAppResponse(data={"error": e, "cache": cache})
 
-        data = route.loader(
-            location=location,
-            search_params=search_params,
-            path_params=path_params,
-            deps=deps,
-        )
+        try:
+            data = route.loader(
+                location=location,
+                search_params=search_params,
+                path_params=path_params,
+                deps=deps,
+            )
+
+        except (NotFound, Exception) as e:
+            # TODO: handle error on the client
+            return anvil.server.LoadAppResponse(data={"error": e, "cache": cache})
 
         cached_data = CachedData(data=data, location=location, mode=route.cache_mode)
         cache = {match.key: cached_data}
