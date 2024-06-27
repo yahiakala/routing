@@ -84,17 +84,18 @@ class Route:
     cache_mode = NETWORK_FIRST
     error_form = None
     not_found_form = None
-    
+
     @classmethod
-    def create(cls, path=None, form=None, loader=None):
+    def create(cls, *, path=None, form=None, server_fn=None, **props):
         name = f"{form or 'CreatedRoute'}Route"
-        cls_dict = {"path": path, "form": form}
-        if loader is not None:
-            cls_dict["loader"] = staticmethod(loader)
+        cls_dict = {"path": path, "form": form, "server_fn": server_fn}
+        for key, value in props.items():
+            if callable(value):
+                cls_dict[key] = staticmethod(value)
+            else:
+                cls_dict[key] = value
 
         return type(name, (cls,), cls_dict)
-
-
 
     def before_load(self):
         pass
