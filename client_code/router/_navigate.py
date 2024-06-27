@@ -37,7 +37,7 @@ def clean_search_params(search_params):
         real_search_params[key] = json.dumps(search_params[key], sort_keys=True)
 
 
-def nav_args_to_location(path, search_params, path_params, hash):
+def nav_args_to_location(*, path, search_params, path_params, hash):
     path_params = path_params or {}
     search_params = clean_search_params(search_params)
     search = encode_search_params(search_params)
@@ -78,5 +78,5 @@ def navigate(
     replace=False,
     nav_args=None,
 ):
-    location = nav_args_to_location(path, search_params, path_params, hash)
+    location = nav_args_to_location(path=path, search_params=search_params, path_params=path_params, hash=hash)
     return navigate_with_location(location, replace=replace, nav_args=nav_args)
