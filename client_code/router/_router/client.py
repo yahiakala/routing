@@ -159,6 +159,9 @@ def on_navigate():
         print("awaiting data_promise", data_promise)
         data = await_promise(data_promise)
         print("DATA", data)
+    except:
+        print("ERROR")
+        return
     except NotFound as e:
         return handle_error("not_found_form", e)
     except Exception as e:
