@@ -162,10 +162,10 @@ def on_navigate():
     except:
         print("ERROR")
         return
-    except NotFound as e:
-        return handle_error("not_found_form", e)
-    except Exception as e:
-        return handle_error("error_form", e)
+    # except NotFound as e:
+    #     return handle_error("not_found_form", e)
+    # except Exception as e:
+    #     return handle_error("error_form", e)
 
     if is_stale():
         return
