@@ -84,6 +84,8 @@ def on_navigate():
         return key != history.location.key
 
     def handle_error(form_attr, error):
+        print("handle_error before stale check", form_attr, error)
+
         if is_stale():
             return
 
