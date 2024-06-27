@@ -1,7 +1,7 @@
 import anvil.server
 
 from ._navigate import nav_args_to_location
-from ._exceptions import Redirect, NotFound
+from ._exceptions import Redirect
 
 from ._segments import Segment
 from ._utils import trim_path, encode_search_params
