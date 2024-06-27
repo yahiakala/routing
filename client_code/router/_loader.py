@@ -1,5 +1,6 @@
 from time import sleep
 from datetime import datetime
+from unittest import result
 from ._deferred import call_async
 from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 import anvil.server
@@ -91,15 +92,16 @@ def load_data_promise(match, force=False):
 
     def wrapped_loader(retries=0, **loader_args):
         try:
-            return route.loader(**loader_args)
-        except anvil.server.AppOfflineError:
+            result = route.loader(**loader_args)
+        except anvil.server.AppOfflineError as e:
             if not retries:
                 sleep(1)
-                return wrapped_loader(retries=retries + 1, **loader_args)
+                result = wrapped_loader(retries=retries + 1, **loader_args)
             elif key in cache:
-                return cache[key].data
+                result = cache[key].data
             else:
-                raise
+                raise e
+        return result
 
     def create_in_flight_data_promise():
         if key in in_flight:
