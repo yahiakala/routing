@@ -1,4 +1,5 @@
 from time import sleep
+from tkinter import N
 
 import anvil
 from anvil.history import history
@@ -118,7 +119,26 @@ def on_navigate():
     # if hash changes, just emit the hash_changed event
 
     data_promise = load_data_promise(match)
-    result = Promise.race([data_promise, timeout(pending_delay)])
+    try:
+        result = Promise.race([data_promise, timeout(pending_delay)])
+    except NotFound as e:
+        if is_stale():
+            return
+        if route.not_found_form is not None:
+            with ViewTransition():
+                anvil.open_form(route.not_found_form)
+            return
+        else:
+            raise e
+    except Exception as e:
+        if is_stale():
+            return
+        if route.error_form is not None:
+            with ViewTransition():
+                anvil.open_form(route.error_form)
+            return
+        else:
+            raise e
 
     if is_stale():
         return
