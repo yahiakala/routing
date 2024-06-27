@@ -1,7 +1,7 @@
-from anvil.server import _register_exception_type as _register_exception
+from anvil.server import _register_exception_type, AnvilWrappedError
 
 
-class Redirect(Exception):
+class Redirect(AnvilWrappedError):
     def __init__(self, *, path=None, search_params=None, path_params=None, hash=""):
         self.path = path
         self.search_params = search_params
@@ -9,9 +9,9 @@ class Redirect(Exception):
         self.hash = hash
 
 
-class NotFound(Exception):
+class NotFound(AnvilWrappedError):
     pass
 
 
-_register_exception(f"{Redirect.__module__}.Redirect", Redirect)
-_register_exception(f"{NotFound.__module__}.NotFound", NotFound)
+_register_exception_type(f"{Redirect.__module__}.Redirect", Redirect)
+_register_exception_type(f"{NotFound.__module__}.NotFound", NotFound)
