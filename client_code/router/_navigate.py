@@ -21,8 +21,9 @@ def clean_path(path, path_params):
             if value is NOT_FOUND:
                 raise Exception(f"No path param for {segment.value}")
             path += "/" + url_encode(str(value))
-    
+
     return path
+
 
 def clean_search_params(search_params):
     if not search_params:
@@ -43,8 +44,12 @@ def nav_args_to_location(path, search_params, path_params, hash):
     return Location(path=path, search=search, hash=hash)
 
 
-def navigate(*, path=None, search_params=None, path_params=None, hash="", replace=False):
-    location = nav_args_to_location(path, search_params, path_params, hash)
+_current_nav_args = None
+
+
+def navigate_with_location(location, replace=False, nav_args=None):
+    global _current_nav_args
+    _current_nav_args = nav_args
     current_location = history.location
     print("LOCATION", location, current_location)
 
@@ -60,3 +65,16 @@ def navigate(*, path=None, search_params=None, path_params=None, hash="", replac
         history.replace(location)
     else:
         history.push(location)
+
+
+def navigate(
+    *,
+    path=None,
+    search_params=None,
+    path_params=None,
+    hash="",
+    replace=False,
+    nav_args=None,
+):
+    location = nav_args_to_location(path, search_params, path_params, hash)
+    return navigate_with_location(location, replace=replace, nav_args=nav_args)

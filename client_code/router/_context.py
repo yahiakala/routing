@@ -14,12 +14,13 @@ class RoutingContext:
         "hash_changed",
     ]
 
-    def __init__(self, match: Match, data=None):
+    def __init__(self, match: Match, data=None, nav_args=None):
         self.match = match
         self.location = match.location
         self.path_params = match.path_params
         self.search_params = match.search_params
         self.route = match.route
+        self.nav_args = nav_args
         self.error = None
         self._data = data
         self._listeners = {}
@@ -83,7 +84,7 @@ class RoutingContext:
     def _load_data(self):
         from ._deferred import call_async
 
-        async_call = call_async(load_data, self.match, force=True)
+        async_call = call_async(load_data, self, force=True)
         self._emit("data_loading")
         async_call.on_result(self._on_data_loaded)
         async_call.on_error(self._on_data_error)

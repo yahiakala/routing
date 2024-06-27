@@ -99,7 +99,7 @@ class Route:
 
         return type(name, (cls,), cls_dict)
 
-    def before_load(self):
+    def before_load(self, **loader_args):
         pass
 
     def loader_deps(self, **loader_args):

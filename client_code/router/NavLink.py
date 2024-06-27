@@ -1,6 +1,5 @@
 import anvil
 from anvil.js import get_dom_node
-from ._navigate import navigate
 from anvil.history import history
 from anvil.designer import (
     in_designer,
@@ -8,7 +7,7 @@ from anvil.designer import (
     start_editing_form,
     register_interaction,
 )
-from ._navigate import nav_args_to_location
+from ._navigate import nav_args_to_location, navigate_with_location
 from ._matcher import get_match
 
 # This is just temporary to test using other nav links
@@ -62,7 +61,7 @@ def wrap_special_method(method_name):
 def _temp_hack_to_get_form(self):
     if not in_designer:
         return None
-    
+
     try:
         from SimpleRoutingExample import routes
     except ImportError:
@@ -86,6 +85,7 @@ class NavLink(anvil.Container):
         {"name": "path_params", "type": "object"},
         {"name": "hash", "type": "string"},
         {"name": "text", "type": "string"},
+        {"name": "nav_args", "type": "object"},
     ]
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
@@ -203,7 +203,7 @@ class NavLink(anvil.Container):
 
     def _do_click(self, e):
         if not in_designer:
-            history.push(self._location)
+            navigate_with_location(self._location, nav_args=self._nav_args)
         elif self._form is not None:
             start_editing_form(self, self._form)
 

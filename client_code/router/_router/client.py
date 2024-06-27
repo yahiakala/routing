@@ -4,6 +4,7 @@ import anvil
 from anvil.history import history
 from anvil.js import window
 
+from .. import _navigate
 from .._navigate import navigate
 from .._exceptions import Redirect, NotFound
 from .._context import RoutingContext
@@ -79,6 +80,7 @@ def on_navigate():
 
     location = history.location
     key = location.key
+    nav_args = _navigate._current_nav_args
 
     def is_stale():
         return key != history.location.key
@@ -94,7 +96,7 @@ def on_navigate():
     if match is None:
         raise Exception(f"No match {location}")
 
-    context = RoutingContext(match)
+    context = RoutingContext(match=match, nav_args=nav_args)
 
     route = match.route
     pending_form = route.pending_form
@@ -115,7 +117,7 @@ def on_navigate():
             anvil.open_form(form, context=context)
 
     try:
-        route.before_load()
+        route.before_load(context=context)
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
     except NotFound as e:
@@ -130,7 +132,7 @@ def on_navigate():
     # so we need to emit the search_changed event
     # if hash changes, just emit the hash_changed event
 
-    data_promise = load_data_promise(match)
+    data_promise = load_data_promise(context)
 
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])

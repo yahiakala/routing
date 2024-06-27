@@ -44,7 +44,8 @@ _inital_request = True
 
 
 # @report_exceptions
-def load_data_promise(match, force=False):
+def load_data_promise(context, force=False):
+    match = context.match
     global _inital_request
     is_initial = _inital_request
     _inital_request = False
@@ -151,5 +152,5 @@ def load_data_promise(match, force=False):
     return data_promise
 
 
-def load_data(match, force=False):
-    return await_promise(load_data_promise(match, force))
+def load_data(context, force=False):
+    return await_promise(load_data_promise(context, force))
