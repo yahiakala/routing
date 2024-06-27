@@ -1,4 +1,3 @@
-from os import error
 import anvil.server
 
 from ._navigate import nav_args_to_location
