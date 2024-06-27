@@ -125,7 +125,7 @@ class NavLink(anvil.Container):
 
         try:
             print("NAVLINK SET HREF", path, path_params, search_params, hash)
-            location = nav_args_to_location(path, path_params, search_params, hash)
+            location = nav_args_to_location(path=path, path_params=path_params, search_params=search_params, hash=hash)
         except InvalidPathParams as e:
             if not in_designer:
                 raise e
