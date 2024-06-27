@@ -76,6 +76,8 @@ def stop_unload():
     sleep(0)  # give control back to event loop
 
 
+_match_cache = {}
+
 def on_navigate():
 
     location = history.location
@@ -95,6 +97,11 @@ def on_navigate():
     match = get_match(location)
     if match is None:
         raise Exception(f"No match {location}")
+
+    if match.key in _match_cache:
+        # TODO: update the context probably
+        anvil.open_form(_match_cache[match.key])
+        return
 
     context = RoutingContext(match=match, nav_args=nav_args)
 
@@ -165,7 +172,11 @@ def on_navigate():
 
     form = route.form
     with ViewTransition():
-        anvil.open_form(form, routing_context=context)
+        rv = anvil.open_form(form, routing_context=context)
+    if route.cache_form:
+        _match_cache[match.key] = rv
+    # TODO: decide how to cache the form
+
 
 
 def listener(args):

@@ -82,6 +82,7 @@ class Route:
     pending_min = 0.5
     pending_delay = 1
     cache_mode = NETWORK_FIRST
+    cache_form = False
     error_form = None
     not_found_form = None
     server_fn = None
