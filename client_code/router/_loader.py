@@ -114,6 +114,8 @@ def load_data_promise(context, force=False):
             search_params=search_params,
             path_params=path_params,
             deps=deps,
+            context=context,
+            nav_args=context.nav_args,
         )
         async_call.on_result(on_result)
         async_call.on_error(on_error)
