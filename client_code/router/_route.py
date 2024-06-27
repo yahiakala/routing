@@ -53,7 +53,7 @@ def _create_server_route(cls):
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
         except (NotFound, Exception) as e:
             # TODO: handle error on the client
-            return anvil.server.LoadAppResponse(data={"error": e, "cache": cache})
+            return anvil.server.LoadAppResponse(data={"cache": cache})
 
         try:
             data = route.loader(
@@ -65,7 +65,7 @@ def _create_server_route(cls):
 
         except (NotFound, Exception) as e:
             # TODO: handle error on the client
-            return anvil.server.LoadAppResponse(data={"error": e, "cache": cache})
+            return anvil.server.LoadAppResponse(data={"cache": cache})
 
         cached_data = CachedData(data=data, location=location, mode=route.cache_mode)
         cache = {match.key: cached_data}
