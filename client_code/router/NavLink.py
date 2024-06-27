@@ -96,6 +96,7 @@ class NavLink(anvil.Container):
         search=None,
         path_params=None,
         hash="",
+        nav_args=None,
         **properties
     ):
         self._props = dict(
@@ -105,6 +106,7 @@ class NavLink(anvil.Container):
             search=search,
             path_params=path_params,
             hash=hash,
+            nav_args=nav_args,
         )
         self._location = None
         self._form = None
@@ -132,6 +134,14 @@ class NavLink(anvil.Container):
             self._form = _temp_hack_to_get_form(self)
         elif location.path is not None:
             self._link.href = self._href = history.createHref(location)
+
+    @property
+    def nav_args(self):
+        return self._props.get("nav_args")
+
+    @nav_args.setter
+    def nav_args(self, value):
+        self._props["nav_args"] = value
 
     @property
     def path(self):
@@ -203,7 +213,7 @@ class NavLink(anvil.Container):
 
     def _do_click(self, e):
         if not in_designer:
-            navigate_with_location(self._location, nav_args=self._nav_args)
+            navigate_with_location(self._location, nav_args=self.nav_args)
         elif self._form is not None:
             start_editing_form(self, self._form)
 
