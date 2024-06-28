@@ -94,6 +94,7 @@ def load_data_promise(context, force=False):
         try:
             result = route.loader(**loader_args)
         except anvil.server.AppOfflineError as e:
+            print(e)
             if not retries:
                 sleep(1)
                 result = wrapped_loader(retries=retries + 1, **loader_args)
