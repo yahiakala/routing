@@ -78,6 +78,7 @@ def stop_unload():
 
 _match_cache = {}
 
+
 def on_navigate():
 
     location = history.location
@@ -178,14 +179,13 @@ def on_navigate():
     # TODO: decide how to cache the form
 
 
-
-def listener(args):
+def listener(**listener_args):
     global waiting, undoing, redirect, current
 
     if undoing:
         undoing = False
     elif waiting:
-        delta = args.get("delta")
+        delta = listener_args.get("delta")
         if delta is not None:
             undoing = True
             history.go(-delta)
@@ -193,7 +193,7 @@ def listener(args):
             # user determined to navigate
             history.reload()
     else:
-        current = args
+        current = listener_args
 
         if redirect:
             on_navigate()
