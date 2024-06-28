@@ -80,6 +80,7 @@ _match_cache = {}
 
 
 def on_navigate():
+    print("on_navigate")
 
     location = history.location
     key = location.key

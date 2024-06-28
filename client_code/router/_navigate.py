@@ -78,5 +78,6 @@ def navigate(
     replace=False,
     nav_args=None,
 ):
+    print("navigate", path, search_params, path_params, hash, replace, nav_args)
     location = nav_args_to_location(path=path, search_params=search_params, path_params=path_params, hash=hash)
     return navigate_with_location(location, replace=replace, nav_args=nav_args)
