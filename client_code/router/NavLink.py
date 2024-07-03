@@ -222,6 +222,39 @@ class NavLink(anvil.Container):
         self._props["hash"] = value
         self._set_href()
 
+    @property
+    def exact_path(self):
+        return self._props.get("exact_path")
+
+    @exact_path.setter
+    def exact_path(self, value):
+        self._props["exact_path"] = value
+
+    @property
+    def exact_search(self):
+        return self._props.get("exact_search")
+
+    @exact_search.setter
+    def exact_search(self, value):
+        self._props["exact_search"] = value
+
+    @property
+    def exact_hash(self):
+        return self._props.get("exact_hash")
+
+    @exact_hash.setter
+    def exact_hash(self, value):
+        self._props["exact_hash"] = value
+    
+    @property
+    def active(self):
+        return self._props.get("active")
+
+    @active.setter
+    def active(self, value):
+        self._props["active"] = value
+        self._link.active = value
+
     # def raise_event(self, event_name, **event_args):
     #     super().raise_event(event_name, **event_args)
     #     if event_name != "click":
