@@ -3,6 +3,7 @@ from datetime import datetime
 from ._non_blocking import call_async
 from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 from ._cached import IN_FLIGHT_DATA, CACHED_DATA
+from ._logger import logger
 import anvil.server
 
 
@@ -48,14 +49,12 @@ def load_data_promise(context, force=False):
     path_params = match.path_params
     deps = match.deps
     key = match.key
-    print(key, "data cache key")
+    logger.debug(f"loading data for {key}")
 
     def clean_up_inflight(result=None):
         try:
             del IN_FLIGHT_DATA[key]
-            print(key, "deleting in_flight key", repr(key))
         except KeyError as e:
-            print(key, "no in_flight key", repr(e))
             pass
 
         return result
@@ -64,7 +63,7 @@ def load_data_promise(context, force=False):
     def on_result(data):
         from ._context import RoutingContext
 
-        print(key, "load_data_async")
+        logger.debug(f"data loaded: {key}")
         cached = CachedData(data=data, location=location, mode=route.cache_mode)
         CACHED_DATA[key] = cached
         context.data = data
@@ -75,21 +74,21 @@ def load_data_promise(context, force=False):
         # TODO: handle error
         from ._context import RoutingContext
 
-        print(key, "load_data_async error")
+        logger.debug(f"load error {key}: {error}")
         if RoutingContext._current is not None:
             if key == RoutingContext._current.match.key:
                 RoutingContext._current.data = None
 
     def wrapped_loader(retries=0, **loader_args):
-        print("calling loader")
         try:
             result = route.loader(**loader_args)
         except anvil.server.AppOfflineError as e:
-            print(e)
             if not retries:
+                logger.debug(f"{key} {e!r}, retrying")
                 sleep(1)
                 result = wrapped_loader(retries=retries + 1, **loader_args)
             elif key in CACHED_DATA:
+                logger.debug(f"{key} {e!r} after retrying, using cached data")
                 result = CACHED_DATA[key].data
             else:
                 raise e
@@ -97,7 +96,7 @@ def load_data_promise(context, force=False):
 
     def create_in_flight_data_promise():
         if key in IN_FLIGHT_DATA:
-            print(key, "key already in in_flight")
+            logger.debug(f"{key} data already loading in flight")
             return IN_FLIGHT_DATA[key]
 
         async_call = call_async(
@@ -118,7 +117,7 @@ def load_data_promise(context, force=False):
         return data_promise
 
     if key in CACHED_DATA and not force:
-        print(key, "data in cache")
+        logger.debug(f"{key} data in cache")
         cached = CACHED_DATA[key]
 
         fetched_at = cached.fetched_at
@@ -128,19 +127,21 @@ def load_data_promise(context, force=False):
             # data came in with startup data
             data_promise = cached.data
         if mode == NETWORK_FIRST:
-            print(key, NETWORK_FIRST, "loading data")
+            logger.debug(f"{key} loading data, {NETWORK_FIRST}")
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
             data_promise = cached.data
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
-                print(key, STALE_WHILE_REVALIDATE, "reloading in the background")
+                logger.debug(
+                    f"{key} - reloading in the background, {STALE_WHILE_REVALIDATE}"
+                )
                 create_in_flight_data_promise()
         else:
             raise Exception("Unknown cache mode")
 
     else:
-        print(key, "key not in cache")
+        logger.debug(f"{key} data not in cache")
         data_promise = create_in_flight_data_promise()
 
     return data_promise

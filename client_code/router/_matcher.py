@@ -26,7 +26,6 @@ def get_match(location):
     parts = path.split("/")
 
     for route in sorted_routes:
-        print(route, route.segments)
 
         iter_segments = iter(route.segments)
         path_params = {}
@@ -38,7 +37,6 @@ def get_match(location):
         for part in parts:
             try:
                 segment = next(iter_segments)
-                print(part, segment.type, segment.value)
                 if segment.is_static():
                     if part != segment.value:
                         break

@@ -22,7 +22,6 @@ def _create_server_route(cls):
     if path is None:
         return
 
-    # print("registering route", "/" + path, cls.form)
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
