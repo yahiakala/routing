@@ -12,6 +12,7 @@ from ._matcher import get_match
 from ._exceptions import InvalidPathParams
 from ._segments import Segment
 from ._router import navigation_emitter
+from ._logger import logger
 
 # This is just temporary to test using other nav links
 try:
@@ -116,7 +117,7 @@ class NavLink(anvil.Container):
         exact_search=False,
         exact_hash=False,
         active=False,
-        **properties
+        **properties,
     ):
         self._props = dict(
             properties,
@@ -139,11 +140,18 @@ class NavLink(anvil.Container):
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
     def _set_href(self):
+        self._location = None
+        self._form = None
+
         path = self.path
         search = self.search
         path_params = self.path_params
         search_params = self.search_params
         hash = self.hash
+        if not path:
+            # path must be explicitly set
+            self._href = self._link.href = None
+            return
 
         try:
             location = nav_args_to_location(
@@ -158,9 +166,8 @@ class NavLink(anvil.Container):
             else:
                 location = Location(path=path, search=search, hash=hash)
         if not location.search and search:
-            if not search.startswith("?"):
-                search = "?" + search
-            location.search = search
+            # search was set by the search attribute rather than the search_params
+            location = Location(path=location.path, search=search, hash=location.hash)
 
         self._location = location
 
@@ -245,7 +252,7 @@ class NavLink(anvil.Container):
     @exact_hash.setter
     def exact_hash(self, value):
         self._props["exact_hash"] = value
-    
+
     @property
     def active(self):
         return self._props.get("active")
@@ -308,12 +315,20 @@ class NavLink(anvil.Container):
 
     def _do_click(self, e):
         if not in_designer:
-            navigate_with_location(self._location, nav_args=self.nav_args)
+            if self._location is not None:
+                logger.debug(f"NavLink clicked, navigating to {self._location}")
+                navigate_with_location(self._location, nav_args=self.nav_args)
+            else:
+                logger.debug("NavLink clicked, but with invalid path, search or hash")
+            self.raise_event("click", event=e)
         elif self._form is not None:
             start_editing_form(self, self._form)
 
     def _on_click(self, e):
         if e.ctrlKey or e.metaKey or e.shiftKey:
+            logger.debug(
+                "NavLink clicked, but with modifier keys - letting browser handle"
+            )
             return
         e.preventDefault()
         e.stopImmediatePropagation()
