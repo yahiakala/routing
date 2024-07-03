@@ -1,6 +1,6 @@
 from time import sleep
 from datetime import datetime
-from ._deferred import call_async
+from ._non_blocking import call_async
 from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
 import anvil.server
 
@@ -157,4 +157,4 @@ def load_data_promise(context, force=False):
 
 
 def load_data(context, force=False):
-    return await_promise(load_data_promise(context, force))
+    return await_promise(load_data_promise(context, force)).value

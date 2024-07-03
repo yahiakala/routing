@@ -82,7 +82,7 @@ class RoutingContext:
         self._emit("data_error", error=error)
 
     def _load_data(self):
-        from ._deferred import call_async
+        from ._non_blocking import call_async
 
         async_call = call_async(load_data, self, force=True)
         self._emit("data_loading")

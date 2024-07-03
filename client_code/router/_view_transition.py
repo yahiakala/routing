@@ -7,31 +7,8 @@
 
 from time import sleep
 
-from ._utils import document, setTimeout, Promise
-
-
-class Deferred:
-    def init_promise(self, resolve, reject):
-        self._resolve = resolve
-        if not self._pending:
-            resolve()
-
-    def __init__(self):
-        self._promise = None
-        self._resolve = None
-        self._pending = True
-
-    @property
-    def promise(self):
-        if self._promise is None:
-            self._promise = Promise(self.init_promise)
-        return self._promise
-
-    def resolve(self, value=None):
-        self._pending = False
-        if self._resolve is not None:
-            self._resolve(value)
-
+from ._non_blocking import Deferred
+from ._utils import document, setTimeout
 
 _transition = None
 _can_transition = hasattr(document, "startViewTransition")
