@@ -10,6 +10,8 @@ from anvil.designer import (
 from ._navigate import nav_args_to_location, navigate_with_location
 from ._matcher import get_match
 from ._exceptions import InvalidPathParams
+from ._segments import Segment
+from ._router import navigation_emitter
 
 # This is just temporary to test using other nav links
 try:
@@ -35,6 +37,7 @@ except ImportError:
 
     class DefaultLink(_DefaultLink):
         def __init__(self, href=None, **properties):
+            self._active = False
             super().__init__(url=href, **properties)
 
         @property
@@ -44,6 +47,15 @@ except ImportError:
         @href.setter
         def href(self, value):
             self.url = value
+
+        @property
+        def active(self):
+            return self._active
+
+        @active.setter
+        def active(self, value):
+            self._active = value
+            self.role = "selected" if value else None
 
 
 def wrap_special_method(method_name):
@@ -85,14 +97,18 @@ class NavLink(anvil.Container):
         {"name": "hash", "type": "string"},
         {"name": "text", "type": "string"},
         {"name": "nav_args", "type": "object"},
+        {"name": "active", "type": "boolean"},
+        {"name": "exact_path", "type": "boolean"},
+        {"name": "exact_search", "type": "boolean"},
+        {"name": "exact_hash", "type": "boolean"},
     ]
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
     def __init__(
         self,
-        path=None,
+        path="",
         search_params=None,
-        search=None,
+        search="",
         path_params=None,
         hash="",
         nav_args=None,
@@ -122,7 +138,12 @@ class NavLink(anvil.Container):
         hash = self.hash
 
         try:
-            location = nav_args_to_location(path=path, path_params=path_params, search_params=search_params, hash=hash)
+            location = nav_args_to_location(
+                path=path,
+                path_params=path_params,
+                search_params=search_params,
+                hash=hash,
+            )
         except InvalidPathParams as e:
             if not in_designer:
                 raise e
@@ -216,6 +237,34 @@ class NavLink(anvil.Container):
         self._props["text"] = value
         self._link.text = value
 
+    def _on_navigate(self, **nav_args):
+        curr_location = history.location
+        location = self._location
+        active = True
+
+        if location is None:
+            active = False
+        elif self.exact_path and curr_location.path != location.path:
+            active = False
+        elif self.exact_search and curr_location.search != location.search:
+            active = False
+        elif self.exact_hash and curr_location.hash != location.hash:
+            active = False
+        elif curr_location.path != location.path:
+            # check if the current location is a parent of the new location
+            curr_segments = Segment.from_path(curr_location.path)
+            location_segments = Segment.from_path(location.path)
+            if len(location_segments) > len(curr_segments):
+                active = False
+            else:
+                for gbl, loc in zip(curr_segments, location_segments):
+                    if gbl.value == loc.value or loc.is_param():
+                        continue
+                    active = False
+                    break
+
+        self.active = active
+
     def _do_click(self, e):
         if not in_designer:
             navigate_with_location(self._location, nav_args=self.nav_args)
@@ -234,8 +283,11 @@ class NavLink(anvil.Container):
         self._el = get_dom_node(self._link)
         self._el.addEventListener("click", self._on_click, True)
         self._set_href()
-        if in_designer and self._form is not None:
-            register_interaction(self, self._el, "dblclick", self._do_click)
+        if in_designer:
+            if self._form is not None:
+                register_interaction(self, self._el, "dblclick", self._do_click)
+        else:
+            navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
         self._link.raise_event("x-anvil-page-removed", **event_args)
@@ -244,6 +296,7 @@ class NavLink(anvil.Container):
             return
         self._el = None
         el.removeEventListener("click", self._on_click, True)
+        navigation_emitter.unsubscribe(self._on_navigate)
 
     _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
 

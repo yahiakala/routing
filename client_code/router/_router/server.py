@@ -20,3 +20,17 @@ class NavigationBlocker(_Blocker):
 
 class UnloadBlocker(_Blocker):
     pass
+
+
+class _NavigationEmitter:
+    def subscribe(self, fn):
+        pass
+
+    def unsubscribe(self, fn):
+        pass
+
+    def emit(self, *args, **kwargs):
+        pass
+
+
+navigation_emitter = _NavigationEmitter()

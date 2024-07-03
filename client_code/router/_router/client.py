@@ -22,6 +22,24 @@ navigation_blockers = set()
 before_unload_blockers = set()
 
 
+class _NavigationEmitter:
+    def __init__(self):
+        self._subscribers = set()
+
+    def subscribe(self, fn):
+        self._subscribers.add(fn)
+
+    def unsubscribe(self, fn):
+        self._subscribers.remove(fn)
+
+    def emit(self, *args, **kwargs):
+        for fn in self._subscribers:
+            fn(*args, **kwargs)
+
+
+navigation_emitter = _NavigationEmitter()
+
+
 def _beforeunload(e):
     e.preventDefault()  # cancel the event
     e.returnValue = ""  # chrome requires a returnValue to be set
@@ -200,6 +218,8 @@ def listener(**listener_args):
             on_navigate()
         else:
             redirect = True
+
+    navigation_emitter.emit("navigate", **listener_args)
 
 
 def create():
