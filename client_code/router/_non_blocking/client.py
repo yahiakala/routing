@@ -1,3 +1,4 @@
+import re
 from anvil.js.window import Function, Promise
 from anvil.js import report_exceptions as _report
 from functools import partial
@@ -126,7 +127,10 @@ class _AsyncCall:
         return self
 
     def await_result(self):
-        return self._async_call.await_result().value
+        def promise_handler(resolve, reject):
+            return self._async_call.promise(_Result.unwrap(resolve), reject)
+
+        return Promise(promise_handler)
 
     def __repr__(self):
         fn_repr = repr(self._fn).replace("functools.partial", "")
