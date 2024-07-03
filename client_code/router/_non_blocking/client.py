@@ -114,7 +114,10 @@ class _AsyncCall:
 
     @property
     def promise(self):
-        return self._async_call.promise
+        def promise_handler(resolve, reject):
+            return self._async_call.promise(_Result.unwrap(resolve), reject)
+
+        return Promise(promise_handler)
 
     def on_result(self, result_handler, error_handler=None):
         error_handler = error_handler and _report(error_handler)
@@ -127,10 +130,7 @@ class _AsyncCall:
         return self
 
     def await_result(self):
-        def promise_handler(resolve, reject):
-            return self._async_call.promise(_Result.unwrap(resolve), reject)
-
-        return Promise(promise_handler)
+        return self._async_call.await_result().value
 
     def __repr__(self):
         fn_repr = repr(self._fn).replace("functools.partial", "")
