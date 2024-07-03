@@ -60,13 +60,13 @@ class RoutingContext:
 
     def invalidate(self):
         # remove ourselves from cached from and cached data
-        CACHED_FORMS.pop(self.match.key, None)
-        CACHED_DATA.pop(self.match.key, None)
+        key = self.match.key
+        CACHED_FORMS.pop(key, None)
+        CACHED_DATA.pop(key, None)
 
         if self._current is not self:
             return
-        self._load_data()
-
+        return self._load_data()
 
     @property
     def data(self):
@@ -86,5 +86,6 @@ class RoutingContext:
     def _load_data(self):
         from ._non_blocking import call_async
 
-        call_async(load_data, self, force=True)
+        ac = call_async(load_data, self, force=True)
         self._emit("data_loading")
+        return ac
