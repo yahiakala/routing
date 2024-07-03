@@ -32,9 +32,10 @@ class _NavigationEmitter:
     def unsubscribe(self, fn):
         self._subscribers.remove(fn)
 
-    def emit(self, *args, **kwargs):
+    def emit(self, event_name, **kwargs):
+        kwargs["event_name"] = event_name
         for fn in self._subscribers:
-            fn(*args, **kwargs)
+            fn(**kwargs)
 
 
 navigation_emitter = _NavigationEmitter()
