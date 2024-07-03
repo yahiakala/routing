@@ -157,4 +157,8 @@ def load_data_promise(context, force=False):
 
 
 def load_data(context, force=False):
-    return await_promise(load_data_promise(context, force)).value
+    p = load_data_promise(context, force)
+    if p.__class__ is Promise:
+        return await_promise(p).value
+    else:
+        return p
