@@ -58,7 +58,7 @@ return [Deferred, AsyncCall];
 """
 
 
-Deferred, _JsAsyncCall = Function(_JS_Objects)
+Deferred, _JsAsyncCall = Function(_JS_Objects)()
 
 
 # class PromiseLike(dict):
