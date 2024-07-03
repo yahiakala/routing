@@ -1,5 +1,5 @@
-def create():
-    pass
+def launch():
+    raise NotImplementedError("launch is not implemented on the server")
 
 
 class _Blocker:

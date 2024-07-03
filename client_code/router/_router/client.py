@@ -13,6 +13,7 @@ from .._matcher import get_match
 from .._loader import CACHED_DATA, load_data_promise
 from .._view_transition import ViewTransition
 from .._cached import CACHED_FORMS
+from .._logger import logger
 
 waiting = False
 undoing = False
@@ -97,19 +98,22 @@ def stop_unload():
 
 
 def on_navigate():
-    print("on_navigate")
-
     location = history.location
+    logger.debug("navigating")
     key = location.key
     nav_args = _navigate._current_nav_args
 
     def is_stale():
-        return key != history.location.key
+        stale = key != history.location.key
+        if stale:
+            logger.debug(f"stale navigation detected exiting: {location}")
+        return stale
 
     prev_context = RoutingContext._current
     if prev_context is not None:
         with NavigationBlocker():
             if prev_context._prevent_unload():
+                logger.debug(f"navigation blocked by {prev_context.location}")
                 stop_unload()
                 return
 
@@ -118,8 +122,10 @@ def on_navigate():
         raise Exception(f"No match {location}")
 
     if match.key in CACHED_FORMS:
+        form = CACHED_FORMS[match.key]
         # TODO: update the context probably
-        anvil.open_form(CACHED_FORMS[match.key])
+        logger.debug(f"found a cached form for this location: {form}")
+        anvil.open_form(form)
         return
 
     context = RoutingContext(match=match, nav_args=nav_args)
@@ -127,15 +133,15 @@ def on_navigate():
     route = match.route
     pending_form = route.pending_form
     pending_delay = route.pending_delay
+    pending_min = route.pending_min
 
     def handle_error(form_attr, error):
         if is_stale():
             return
-
+        logger.debug(f"navigation error: {error}")
         context.error = error
 
         form = getattr(route, form_attr, None)
-        print("handle_error", form_attr, error, form)
         if form is None:
             raise error
 
@@ -162,7 +168,6 @@ def on_navigate():
 
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])
-        print("RACE RESULT", result)
     except NotFound as e:
         return handle_error("not_found_form", e)
     except Exception as e:
@@ -172,10 +177,12 @@ def on_navigate():
         return
 
     if pending_form is not None and result is TIMEOUT:
-        print("LOADING PENDING FORM")
+        logger.debug(
+            f"exceeded pending delay: {pending_delay}, loading pending form {pending_form!r}"
+        )
         with ViewTransition():
             anvil.open_form(pending_form)
-        sleep(pending_delay)
+        sleep(pending_min)
 
     try:
         data = await_promise(data_promise)
@@ -221,19 +228,14 @@ def listener(**listener_args):
     navigation_emitter.emit("navigate", **listener_args)
 
 
-def create():
+def launch():
     from anvil.history import history
     from anvil.server import startup_data
 
     if startup_data is not None:
         startup_cache = startup_data.get("cache", {})
         CACHED_DATA.update(startup_cache)
-
-    print("STARTUP DATA")
-    if startup_data is not None:
-        startup_cache = startup_data.get("cache", {})
-        for key, val in startup_cache.items():
-            print(key, repr(val.__dict__)[:20])
+        logger.debug(f"startup data: {repr(startup_cache)[:100]}...")
 
     history.listen(listener)
     on_navigate()
