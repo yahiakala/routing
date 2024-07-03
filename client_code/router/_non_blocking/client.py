@@ -61,27 +61,6 @@ return [Deferred, AsyncCall];
 
 Deferred, _JsAsyncCall = Function(_JS_Objects)()
 
-
-# class PromiseLike(dict):
-#     def __init__(self, promise):
-#         dict.__init__(
-#             self,
-#             {
-#                 "then": self._then,
-#                 "catch": promise["catch"],
-#                 "finally": promise["finally"],
-#             },
-#         )
-#         self._promise = promise
-#         self.__dict__ = self
-
-#     def _then(self, on_fulfilled, on_rejected=None):
-#         result = self._promise.then(on_fulfilled, on_rejected)
-#         if isinstance(result, _Result):
-#             return result.value
-#         return result
-
-
 class _Result:
     # dicts may come back as javascript object literals
     # so wrap the results in a more opaque python object
@@ -114,6 +93,7 @@ class _AsyncCall:
 
     @property
     def promise(self):
+        # annoyingly if the result is a dict then the result here will be a proxyobject
         def promise_handler(resolve, reject):
             return self._async_call.promise.then(_Result.unwrap(resolve), reject)
 

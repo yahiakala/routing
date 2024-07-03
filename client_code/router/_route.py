@@ -14,7 +14,7 @@ sorted_routes = []
 def _create_server_route(cls):
     # local for now while anvil uplink doesn't have history
     from anvil.history import Location
-    from ._loader import load_data, cache, CachedData
+    from ._loader import CachedData
     from ._matcher import get_match
 
     path = cls.path
@@ -126,17 +126,18 @@ class Route:
             cls.path = trim_path(cls.path)
             cls.segments = Segment.from_path(cls.path)
             sorted_routes.append(cls())
-        
+
         server_fn = cls.__dict__.get("server_fn")
         existing_loader = cls.__dict__.get("loader")
         if server_fn is not None and existing_loader is None:
+
             def loader(self, **loader_args):
                 if self.server_silent:
                     return anvil.server.call_s(server_fn, **loader_args)
                 else:
                     return anvil.server.call(server_fn, **loader_args)
-            cls.loader = loader
 
+            cls.loader = loader
 
         if anvil.is_server_side():
             _create_server_route(cls)

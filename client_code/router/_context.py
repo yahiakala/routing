@@ -84,7 +84,5 @@ class RoutingContext:
     def _load_data(self):
         from ._non_blocking import call_async
 
-        async_call = call_async(load_data, self, force=True)
+        call_async(load_data, self, force=True)
         self._emit("data_loading")
-        async_call.on_result(self._on_data_loaded)
-        async_call.on_error(self._on_data_error)

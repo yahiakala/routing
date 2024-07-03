@@ -75,9 +75,7 @@ def load_data_promise(context, force=False):
         print(key, "load_data_async")
         cached = CachedData(data=data, location=location, mode=route.cache_mode)
         cache[key] = cached
-        if RoutingContext._current is not None:
-            if key == RoutingContext._current.match.key:
-                RoutingContext._current.data = data
+        context.data = data
 
         clean_up_inflight()
 
@@ -157,4 +155,5 @@ def load_data_promise(context, force=False):
 
 
 def load_data(context, force=False):
-    return await_promise(load_data_promise(context, force))
+    await_promise(load_data_promise(context, force))
+    return context.data
