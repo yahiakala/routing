@@ -115,7 +115,7 @@ class _AsyncCall:
     @property
     def promise(self):
         def promise_handler(resolve, reject):
-            return self._async_call.promise(_Result.unwrap(resolve), reject)
+            return self._async_call.promise.then(_Result.unwrap(resolve), reject)
 
         return Promise(promise_handler)
 
