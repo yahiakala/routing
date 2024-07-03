@@ -2,6 +2,7 @@ from time import sleep
 from datetime import datetime
 from ._non_blocking import call_async
 from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
+from ._cached import IN_FLIGHT_DATA, CACHED_DATA
 import anvil.server
 
 
@@ -17,15 +18,6 @@ except ImportError:
 
     def report_exceptions(fn):
         return fn
-
-
-in_flight = {}
-cache = {}
-
-
-def clear_cache():
-    in_flight.clear()
-    cache.clear()
 
 
 @anvil.server.portable_class
@@ -60,7 +52,7 @@ def load_data_promise(context, force=False):
 
     def clean_up_inflight(result=None):
         try:
-            del in_flight[key]
+            del IN_FLIGHT_DATA[key]
             print(key, "deleting in_flight key", repr(key))
         except KeyError as e:
             print(key, "no in_flight key", repr(e))
@@ -74,7 +66,7 @@ def load_data_promise(context, force=False):
 
         print(key, "load_data_async")
         cached = CachedData(data=data, location=location, mode=route.cache_mode)
-        cache[key] = cached
+        CACHED_DATA[key] = cached
         context.data = data
 
         clean_up_inflight()
@@ -97,16 +89,16 @@ def load_data_promise(context, force=False):
             if not retries:
                 sleep(1)
                 result = wrapped_loader(retries=retries + 1, **loader_args)
-            elif key in cache:
-                result = cache[key].data
+            elif key in CACHED_DATA:
+                result = CACHED_DATA[key].data
             else:
                 raise e
         return result
 
     def create_in_flight_data_promise():
-        if key in in_flight:
+        if key in IN_FLIGHT_DATA:
             print(key, "key already in in_flight")
-            return in_flight[key]
+            return IN_FLIGHT_DATA[key]
 
         async_call = call_async(
             wrapped_loader,
@@ -121,13 +113,13 @@ def load_data_promise(context, force=False):
         async_call.on_error(on_error)
 
         data_promise = async_call.promise
-        in_flight[key] = data_promise
+        IN_FLIGHT_DATA[key] = data_promise
 
         return data_promise
 
-    if key in cache and not force:
+    if key in CACHED_DATA and not force:
         print(key, "data in cache")
-        cached = cache[key]
+        cached = CACHED_DATA[key]
 
         fetched_at = cached.fetched_at
         mode = cached.mode

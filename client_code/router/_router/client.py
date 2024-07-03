@@ -10,8 +10,9 @@ from .._exceptions import Redirect, NotFound
 from .._context import RoutingContext
 from .._utils import TIMEOUT, await_promise, timeout, Promise
 from .._matcher import get_match
-from .._loader import cache, load_data_promise
+from .._loader import CACHED_DATA, load_data_promise
 from .._view_transition import ViewTransition
+from .._cached import CACHED_FORMS
 
 waiting = False
 undoing = False
@@ -95,9 +96,6 @@ def stop_unload():
     sleep(0)  # give control back to event loop
 
 
-_match_cache = {}
-
-
 def on_navigate():
     print("on_navigate")
 
@@ -119,9 +117,9 @@ def on_navigate():
     if match is None:
         raise Exception(f"No match {location}")
 
-    if match.key in _match_cache:
+    if match.key in CACHED_FORMS:
         # TODO: update the context probably
-        anvil.open_form(_match_cache[match.key])
+        anvil.open_form(CACHED_FORMS[match.key])
         return
 
     context = RoutingContext(match=match, nav_args=nav_args)
@@ -195,7 +193,7 @@ def on_navigate():
     with ViewTransition():
         rv = anvil.open_form(form, routing_context=context)
     if route.cache_form:
-        _match_cache[match.key] = rv
+        CACHED_FORMS[match.key] = rv
     # TODO: decide how to cache the form
 
 
@@ -229,7 +227,7 @@ def create():
 
     if startup_data is not None:
         startup_cache = startup_data.get("cache", {})
-        cache.update(startup_cache)
+        CACHED_DATA.update(startup_cache)
 
     print("STARTUP DATA")
     if startup_data is not None:

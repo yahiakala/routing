@@ -1,7 +1,6 @@
-from re import L, T
-
 from ._loader import load_data
 from ._matcher import Match
+from ._cached import CACHED_FORMS, CACHED_DATA
 
 
 class RoutingContext:
@@ -60,11 +59,14 @@ class RoutingContext:
             handler(**kwargs)
 
     def invalidate(self):
-        if self._current is not self:
-            # TODO: flag that we need to reload the data for next time
-            return
+        # remove ourselves from cached from and cached data
+        CACHED_FORMS.pop(self.match.key, None)
+        CACHED_DATA.pop(self.match.key, None)
 
+        if self._current is not self:
+            return
         self._load_data()
+
 
     @property
     def data(self):
