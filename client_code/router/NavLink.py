@@ -112,21 +112,29 @@ class NavLink(anvil.Container):
         path_params=None,
         hash="",
         nav_args=None,
+        exact_path=False,
+        exact_search=False,
+        exact_hash=False,
+        active=False,
         **properties
     ):
         self._props = dict(
             properties,
+            active=active,
             path=path,
             search_params=search_params,
             search=search,
             path_params=path_params,
             hash=hash,
             nav_args=nav_args,
+            exact_path=exact_path,
+            exact_search=exact_search,
+            exact_hash=exact_hash,
         )
         self._location = None
         self._form = None
         self._href = ""
-        self._link = DefaultLink(**properties)
+        self._link = DefaultLink(**properties, active=active)
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
