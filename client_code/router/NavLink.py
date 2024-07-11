@@ -89,19 +89,19 @@ def _temp_hack_to_get_form(self):
         return match.route.form
 
 
-class NavLink(anvil.Container):
+class NavLink(DefaultLink):
     _anvil_properties_ = [
         {"name": "path", "type": "string", "important": True},
-        {"name": "search_params", "type": "object"},
-        {"name": "search", "type": "string"},
-        {"name": "path_params", "type": "object"},
-        {"name": "hash", "type": "string"},
-        {"name": "text", "type": "string"},
-        {"name": "nav_args", "type": "object"},
-        {"name": "active", "type": "boolean"},
-        {"name": "exact_path", "type": "boolean"},
-        {"name": "exact_search", "type": "boolean"},
-        {"name": "exact_hash", "type": "boolean"},
+        {"name": "search_params", "type": "object", "important": True},
+        {"name": "search", "type": "string", "important": True},
+        {"name": "path_params", "type": "object", "important": True},
+        {"name": "hash", "type": "string", "important": True},
+        {"name": "text", "type": "string", "important": True},
+        {"name": "nav_args", "type": "object", "important": True},
+        {"name": "active", "type": "boolean", "important": True},
+        {"name": "exact_path", "type": "boolean", "group": "active matching"},
+        {"name": "exact_search", "type": "boolean", "group": "active matching"},
+        {"name": "exact_hash", "type": "boolean", "group": "active matching"},
     ]
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
@@ -135,7 +135,7 @@ class NavLink(anvil.Container):
         self._location = None
         self._form = None
         self._href = ""
-        self._link = DefaultLink(**properties, active=active)
+        super().__init__(**properties, active=active)
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
 
@@ -150,7 +150,7 @@ class NavLink(anvil.Container):
         hash = self.hash
         if not path:
             # path must be explicitly set
-            self._href = self._link.href = None
+            self._href = self.href = None
             return
 
         try:
@@ -174,7 +174,7 @@ class NavLink(anvil.Container):
         if in_designer:
             self._form = _temp_hack_to_get_form(self)
         elif location.path is not None:
-            self._link.href = self._href = location.get_url(False)
+            self.href = self._href = location.get_url(False)
 
     @property
     def nav_args(self):
@@ -253,37 +253,38 @@ class NavLink(anvil.Container):
     def exact_hash(self, value):
         self._props["exact_hash"] = value
 
-    @property
-    def active(self):
-        return self._props.get("active")
+    # @property
+    # def active(self):
+    #     return self._props.get("active")
 
-    @active.setter
-    def active(self, value):
-        self._props["active"] = value
-        self._link.active = value
+    # @active.setter
+    # def active(self, value):
+    #     self._props["active"] = value
+    #     self._link.active = value
 
     # def raise_event(self, event_name, **event_args):
     #     super().raise_event(event_name, **event_args)
     #     if event_name != "click":
     #         self._link.raise_event(event_name, **event_args)
 
-    def get_components(self):
-        return self._link.get_components()
+    # def get_components(self):
+    #     return self._link.get_components()
 
-    def add_component(self, component, **properties):
-        self._link.add_component(component, **properties)
+    # def add_component(self, component, **properties):
+    #     self._link.add_component(component, **properties)
 
-    def clear(self):
-        self._link.clear()
+    # def clear(self):
+    #     self._link.clear()
 
-    @property
-    def text(self):
-        return self._props.get("text")
+    # @property
+    # def text(self):
+    #     return self._props.get("text")
 
-    @text.setter
-    def text(self, value):
-        self._props["text"] = value
-        self._link.text = value
+    # @text.setter
+    # def text(self, value):
+    #     self._props["text"] = value
+
+    #     self._link.text = value
 
     def _on_navigate(self, **nav_args):
         curr_location = history.location
@@ -335,8 +336,8 @@ class NavLink(anvil.Container):
         self._do_click(e)
 
     def _setup(self, **event_args):
-        self._link.raise_event("x-anvil-page-added", **event_args)
-        self._el = get_dom_node(self._link)
+        # self._link.raise_event("x-anvil-page-added", **event_args)
+        self._el = get_dom_node(self)
         self._el.addEventListener("click", self._on_click, True)
         self._set_href()
         if in_designer:
@@ -346,7 +347,7 @@ class NavLink(anvil.Container):
             navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
-        self._link.raise_event("x-anvil-page-removed", **event_args)
+        # self._link.raise_event("x-anvil-page-removed", **event_args)
         el = self._el
         if el is None:
             return
@@ -354,14 +355,14 @@ class NavLink(anvil.Container):
         el.removeEventListener("click", self._on_click, True)
         navigation_emitter.unsubscribe(self._on_navigate)
 
-    _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
+    # _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
 
-    @property
-    def _anvil_dom_element_(self):
-        return self._link._anvil_dom_element_
+    # @property
+    # def _anvil_dom_element_(self):
+    #     return self._link._anvil_dom_element_
 
-    _anvil_get_container_design_info_ = wrap_special_method(
-        "_anvil_get_container_design_info_"
-    )
-    _anvil_enable_drop_mode_ = wrap_special_method("_anvil_enable_drop_mode_")
-    _anvil_disable_drop_mode_ = wrap_special_method("_anvil_disable_drop_mode_")
+    # _anvil_get_container_design_info_ = wrap_special_method(
+    #     "_anvil_get_container_design_info_"
+    # )
+    # _anvil_enable_drop_mode_ = wrap_special_method("_anvil_enable_drop_mode_")
+    # _anvil_disable_drop_mode_ = wrap_special_method("_anvil_disable_drop_mode_")
