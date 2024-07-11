@@ -92,16 +92,16 @@ def _temp_hack_to_get_form(self):
 class NavLink(DefaultLink):
     _anvil_properties_ = [
         {"name": "path", "type": "string", "important": True},
-        {"name": "search_params", "type": "object", "important": True},
-        {"name": "search", "type": "string", "important": True},
-        {"name": "path_params", "type": "object", "important": True},
-        {"name": "hash", "type": "string", "important": True},
+        {"name": "search_params", "type": "object", "group": "navigation"},
+        {"name": "search", "type": "string", "group": "navigation"},
+        {"name": "path_params", "type": "object", "group": "navigation"},
+        {"name": "hash", "type": "string", "group": "navigation"},
         {"name": "text", "type": "string", "important": True},
-        {"name": "nav_args", "type": "object", "important": True},
-        {"name": "active", "type": "boolean", "important": True},
-        {"name": "exact_path", "type": "boolean", "group": "active matching"},
-        {"name": "exact_search", "type": "boolean", "group": "active matching"},
-        {"name": "exact_hash", "type": "boolean", "group": "active matching"},
+        {"name": "nav_args", "type": "object", "group": "navigation"},
+        {"name": "active", "type": "boolean", "group": "active"},
+        {"name": "exact_path", "type": "boolean", "group": "active"},
+        {"name": "exact_search", "type": "boolean", "group": "active"},
+        {"name": "exact_hash", "type": "boolean", "group": "active"},
     ]
     _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
@@ -337,7 +337,7 @@ class NavLink(DefaultLink):
 
     def _setup(self, **event_args):
         # self._link.raise_event("x-anvil-page-added", **event_args)
-        self._el = get_dom_node(self)
+        self._el = self._anvil_dom_element_
         self._el.addEventListener("click", self._on_click, True)
         self._set_href()
         if in_designer:
