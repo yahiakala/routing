@@ -350,6 +350,7 @@ class NavLink(DefaultLink):
             if self._form is not None:
                 register_interaction(self, self._el, "dblclick", self._do_click)
         else:
+            print("adding nav emitter")
             navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
