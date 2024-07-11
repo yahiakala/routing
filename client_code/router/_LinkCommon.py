@@ -95,11 +95,10 @@ class LinkMixinCommon(Component):
     def __init__(self, **properties):
         self._props = properties
         filter_props = {k: v for k, v in properties.items() if k in all_props}
-        super().__init__(**filter_props)
         self._location = None
         self._form = None
         self._href = ""
-        super().__init__(**properties)
+        super().__init__(**filter_props)
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
         self.add_event_handler("click", self._on_click)

@@ -1,4 +1,4 @@
-from ._LinkCommon import DefaultLink, active_props, nav_props
+from ._LinkCommon import DefaultLink, LinkMixinCommon, nav_props
 
 # This is just temporary to test using other nav links
 try:
@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 
-class Anchor(DefaultLink):
+class Anchor(LinkMixinCommon, DefaultLink):
     _anvil_properties_ = [
         *nav_props.values(),
         *DefaultLink._anvil_properties_,
