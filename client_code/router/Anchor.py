@@ -63,7 +63,7 @@ def _temp_hack_to_get_form(self):
         return match.route.form
 
 
-class NavLink(DefaultLink):
+class Anchor(DefaultLink):
     _anvil_properties_ = [
         {
             "name": "path",
