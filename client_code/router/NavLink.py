@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-class NavLink(LinkMixinCommon, DefaultLink):
+class NavLink(DefaultLink, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
         *active_props.values(),
@@ -35,7 +35,8 @@ class NavLink(LinkMixinCommon, DefaultLink):
         exact_hash=False,
         **properties,
     ):
-        super().__init__(
+        LinkMixinCommon.__init__(
+            self,
             path=path,
             search_params=search_params,
             search=search,
@@ -47,10 +48,16 @@ class NavLink(LinkMixinCommon, DefaultLink):
             exact_hash=exact_hash,
             **properties,
         )
+        DefaultLink.__init__(self, **properties)
         if not in_designer:
-            self.add_event_handler("x-anvil-page-added", lambda **e: navigation_emitter.subscribe(self._on_navigate))
-            self.add_event_handler("x-anvil-page-removed", lambda **e: navigation_emitter.unsubscribe(self._on_navigate))
-
+            self.add_event_handler(
+                "x-anvil-page-added",
+                lambda **e: navigation_emitter.subscribe(self._on_navigate),
+            )
+            self.add_event_handler(
+                "x-anvil-page-removed",
+                lambda **e: navigation_emitter.unsubscribe(self._on_navigate),
+            )
 
     def _on_navigate(self, **nav_args):
         curr_location = history.location

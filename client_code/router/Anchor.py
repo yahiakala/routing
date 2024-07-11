@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 
-class Anchor(LinkMixinCommon, DefaultLink):
+class Anchor(DefaultLink, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
         *DefaultLink._anvil_properties_,
@@ -27,7 +27,8 @@ class Anchor(LinkMixinCommon, DefaultLink):
         nav_args=None,
         **properties,
     ):
-        super().__init__(
+        LinkMixinCommon.__init__(
+            self,
             path=path,
             search_params=search_params,
             search=search,
@@ -36,3 +37,4 @@ class Anchor(LinkMixinCommon, DefaultLink):
             nav_args=nav_args,
             **properties,
         )
+        DefaultLink.__init__(self, **properties)
