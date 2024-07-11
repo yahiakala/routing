@@ -312,6 +312,7 @@ class NavLink(DefaultLink):
                     active = False
                     break
 
+        print(self, self.text, active)
         self.active = active
 
     def _do_click(self, e):
@@ -333,12 +334,10 @@ class NavLink(DefaultLink):
             )
             return
         e.preventDefault()
-        e.stopPropagation()
         e.stopImmediatePropagation()
         self._do_click(e)
 
     def _setup(self, **event_args):
-        # self._link.raise_event("x-anvil-page-added", **event_args)
         self._set_href()
         from time import sleep
         sleep(0)
@@ -353,7 +352,6 @@ class NavLink(DefaultLink):
             navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
-        # self._link.raise_event("x-anvil-page-removed", **event_args)
         el = self._el
         if el is None:
             return
