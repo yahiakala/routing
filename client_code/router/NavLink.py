@@ -297,7 +297,6 @@ class NavLink(DefaultLink):
     #     self._link.text = value
 
     def _on_navigate(self, **nav_args):
-        print("on_navigate")
         curr_location = history.location
         location = self._location
         active = True
@@ -323,7 +322,6 @@ class NavLink(DefaultLink):
                     active = False
                     break
 
-        print(self, self.text, active)
         self.active = active
 
     def _do_click(self, e):
@@ -342,7 +340,6 @@ class NavLink(DefaultLink):
         print("event", event, event_args)
         if event is None:
             return
-        print("on_click")
         if event.ctrlKey or event.metaKey or event.shiftKey:
             logger.debug(
                 "NavLink clicked, but with modifier keys - letting browser handle"
@@ -365,7 +362,6 @@ class NavLink(DefaultLink):
             if self._form is not None:
                 register_interaction(self, self._el, "dblclick", self._do_click)
         else:
-            print("adding nav emitter")
             navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
