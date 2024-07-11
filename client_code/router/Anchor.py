@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 
-class NavLink(DefaultLink):
+class Anchor(DefaultLink):
     _anvil_properties_ = [
         *nav_props.values(),
         *DefaultLink._anvil_properties_,
