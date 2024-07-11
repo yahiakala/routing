@@ -340,6 +340,8 @@ class NavLink(DefaultLink):
     def _setup(self, **event_args):
         # self._link.raise_event("x-anvil-page-added", **event_args)
         self._set_href()
+        from time import sleep
+        sleep(0)
         self._el = self._anvil_dom_element_
         print(self._el, self.text, self._href)
         self._el.addEventListener("click", self._on_click, True)
