@@ -287,6 +287,7 @@ class NavLink(DefaultLink):
     #     self._link.text = value
 
     def _on_navigate(self, **nav_args):
+        print("on_navigate")
         curr_location = history.location
         location = self._location
         active = True
