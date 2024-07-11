@@ -23,25 +23,21 @@ try:
     utils.set_color_scheme("light")
     DefaultLink = MantineNavLink
 
-    # class DefaultLink(MantineNavLink):
-    #     def __init__(self, text=None, **properties):
-    #         super().__init__(label=text, **properties)
-
-    #     @property
-    #     def text(self):
-    #         return self.label
-
-    #     @text.setter
-    #     def text(self, value):
-    #         self.label = value
-
 except ImportError:
+    pass
+else:
     _DefaultLink = get_design_component(anvil.Link)
 
     class DefaultLink(_DefaultLink):
         def __init__(self, href=None, **properties):
             self._active = False
             super().__init__(url=href, **properties)
+            self._d = get_dom_node(self)
+            self._d.addEventListener("click", self._handle_click, True)
+        
+        def _handle_click(self, e):
+            e.stopImmediatePropagation()
+            self.raise_event("click", event=e)
 
         @property
         def href(self):
@@ -104,15 +100,12 @@ class NavLink(DefaultLink):
         {"name": "search", "type": "string", "group": "navigation"},
         {"name": "path_params", "type": "object", "group": "navigation"},
         {"name": "hash", "type": "string", "group": "navigation"},
-        # {"name": "text", "type": "string", "important": True},
         {"name": "nav_args", "type": "object", "group": "navigation"},
-        # {"name": "active", "type": "boolean", "group": "active"},
         {"name": "exact_path", "type": "boolean", "group": "active"},
         {"name": "exact_search", "type": "boolean", "group": "active"},
         {"name": "exact_hash", "type": "boolean", "group": "active"},
         *DefaultLink._anvil_properties_,
     ]
-    # _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
     def __init__(
         self,
@@ -263,39 +256,6 @@ class NavLink(DefaultLink):
     def exact_hash(self, value):
         self._props["exact_hash"] = value
 
-    # @property
-    # def active(self):
-    #     return self._props.get("active")
-
-    # @active.setter
-    # def active(self, value):
-    #     self._props["active"] = value
-    #     self._link.active = value
-
-    # def raise_event(self, event_name, **event_args):
-    #     super().raise_event(event_name, **event_args)
-    #     if event_name != "click":
-    #         self._link.raise_event(event_name, **event_args)
-
-    # def get_components(self):
-    #     return self._link.get_components()
-
-    # def add_component(self, component, **properties):
-    #     self._link.add_component(component, **properties)
-
-    # def clear(self):
-    #     self._link.clear()
-
-    # @property
-    # def text(self):
-    #     return self._props.get("text")
-
-    # @text.setter
-    # def text(self, value):
-    #     self._props["text"] = value
-
-    #     self._link.text = value
-
     def _on_navigate(self, **nav_args):
         curr_location = history.location
         location = self._location
@@ -336,26 +296,19 @@ class NavLink(DefaultLink):
 
     def _on_click(self, **event_args):
         event = event_args.get("event")
-        print("event", event, event_args)
         if event is None:
-            return
+            raise RuntimeError("Link provider did not pass the event")
         if event.ctrlKey or event.metaKey or event.shiftKey:
             logger.debug(
                 "NavLink clicked, but with modifier keys - letting browser handle"
             )
             return
         event.preventDefault()
-        # e.stopImmediatePropagation()
         self._do_click(event)
 
     def _setup(self, **event_args):
-        # el = get_dom_node(self)
+        # we have to do this when we're on the page in case links are relative
         self._set_href()
-        # from time import sleep
-        # sleep(0)
-        # self._el = self._anvil_dom_element_
-        # print(self._el, self.text, self._href)
-        # self._el.addEventListener("click", self._on_click, True)
 
         if in_designer:
             if self._form is not None:
@@ -365,15 +318,3 @@ class NavLink(DefaultLink):
 
     def _cleanup(self, **event_args):
         navigation_emitter.unsubscribe(self._on_navigate)
-
-    # _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
-
-    # @property
-    # def _anvil_dom_element_(self):
-    #     return self._link._anvil_dom_element_
-
-    # _anvil_get_container_design_info_ = wrap_special_method(
-    #     "_anvil_get_container_design_info_"
-    # )
-    # _anvil_enable_drop_mode_ = wrap_special_method("_anvil_enable_drop_mode_")
-    # _anvil_disable_drop_mode_ = wrap_special_method("_anvil_disable_drop_mode_")
