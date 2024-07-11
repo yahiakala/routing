@@ -331,7 +331,6 @@ class NavLink(DefaultLink):
                 navigate_with_location(self._location, nav_args=self.nav_args)
             else:
                 logger.debug("NavLink clicked, but with invalid path, search or hash")
-            self.raise_event("click", event=e)
         elif self._form is not None:
             start_editing_form(self, self._form)
 
