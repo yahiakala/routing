@@ -93,7 +93,13 @@ def _temp_hack_to_get_form(self):
 
 class NavLink(DefaultLink):
     _anvil_properties_ = [
-        {"name": "path", "type": "string", "group": "navigation"},
+        {
+            "name": "path",
+            "type": "string",
+            "group": "navigation",
+            "priority": 100,
+            "important": True,
+        },
         {"name": "search_params", "type": "object", "group": "navigation"},
         {"name": "search", "type": "string", "group": "navigation"},
         {"name": "path_params", "type": "object", "group": "navigation"},
