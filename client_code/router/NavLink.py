@@ -1,3 +1,4 @@
+from webbrowser import get
 import anvil
 from anvil.js import get_dom_node
 from anvil.history import history, Location
@@ -20,18 +21,19 @@ try:
     from Mantine import utils
 
     utils.set_color_scheme("light")
+    DefaultLink = MantineNavLink
 
-    class DefaultLink(MantineNavLink):
-        def __init__(self, text=None, **properties):
-            super().__init__(label=text, **properties)
+    # class DefaultLink(MantineNavLink):
+    #     def __init__(self, text=None, **properties):
+    #         super().__init__(label=text, **properties)
 
-        @property
-        def text(self):
-            return self.label
+    #     @property
+    #     def text(self):
+    #         return self.label
 
-        @text.setter
-        def text(self, value):
-            self.label = value
+    #     @text.setter
+    #     def text(self, value):
+    #         self.label = value
 
 except ImportError:
     _DefaultLink = get_design_component(anvil.Link)
@@ -91,19 +93,20 @@ def _temp_hack_to_get_form(self):
 
 class NavLink(DefaultLink):
     _anvil_properties_ = [
-        {"name": "path", "type": "string", "important": True},
+        {"name": "path", "type": "string", "group": "navigation"},
         {"name": "search_params", "type": "object", "group": "navigation"},
         {"name": "search", "type": "string", "group": "navigation"},
         {"name": "path_params", "type": "object", "group": "navigation"},
         {"name": "hash", "type": "string", "group": "navigation"},
-        {"name": "text", "type": "string", "important": True},
+        # {"name": "text", "type": "string", "important": True},
         {"name": "nav_args", "type": "object", "group": "navigation"},
-        {"name": "active", "type": "boolean", "group": "active"},
+        # {"name": "active", "type": "boolean", "group": "active"},
         {"name": "exact_path", "type": "boolean", "group": "active"},
         {"name": "exact_search", "type": "boolean", "group": "active"},
         {"name": "exact_hash", "type": "boolean", "group": "active"},
+        *DefaultLink._anvil_properties_,
     ]
-    _anvil_events_ = [{"name": "click", "defaultEvent": True}]
+    # _anvil_events_ = [{"name": "click", "defaultEvent": True}]
 
     def __init__(
         self,
@@ -116,12 +119,12 @@ class NavLink(DefaultLink):
         exact_path=False,
         exact_search=False,
         exact_hash=False,
-        active=False,
+        # active=False,
         **properties,
     ):
         self._props = dict(
             properties,
-            active=active,
+            # active=active,
             path=path,
             search_params=search_params,
             search=search,
@@ -135,9 +138,10 @@ class NavLink(DefaultLink):
         self._location = None
         self._form = None
         self._href = ""
-        super().__init__(**properties, active=active)
+        super().__init__(**properties)
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
+        self.add_event_handler("click", self._on_click)
 
     def _set_href(self):
         self._location = None
@@ -327,24 +331,28 @@ class NavLink(DefaultLink):
         elif self._form is not None:
             start_editing_form(self, self._form)
 
-    def _on_click(self, e):
+    def _on_click(self, **event_args):
+        event = event_args.get("event")
+        if event is None:
+            return
         print("on_click")
-        if e.ctrlKey or e.metaKey or e.shiftKey:
+        if event.ctrlKey or event.metaKey or event.shiftKey:
             logger.debug(
                 "NavLink clicked, but with modifier keys - letting browser handle"
             )
             return
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        self._do_click(e)
+        event.preventDefault()
+        # e.stopImmediatePropagation()
+        self._do_click(event)
 
     def _setup(self, **event_args):
+        # el = get_dom_node(self)
         self._set_href()
-        from time import sleep
-        sleep(0)
-        self._el = self._anvil_dom_element_
-        print(self._el, self.text, self._href)
-        self._el.addEventListener("click", self._on_click, True)
+        # from time import sleep
+        # sleep(0)
+        # self._el = self._anvil_dom_element_
+        # print(self._el, self.text, self._href)
+        # self._el.addEventListener("click", self._on_click, True)
 
         if in_designer:
             if self._form is not None:
@@ -354,11 +362,6 @@ class NavLink(DefaultLink):
             navigation_emitter.subscribe(self._on_navigate)
 
     def _cleanup(self, **event_args):
-        el = self._el
-        if el is None:
-            return
-        self._el = None
-        el.removeEventListener("click", self._on_click, True)
         navigation_emitter.unsubscribe(self._on_navigate)
 
     # _anvil_setup_dom_ = wrap_special_method("_anvil_setup_dom_")
