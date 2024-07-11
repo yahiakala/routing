@@ -326,6 +326,7 @@ class NavLink(DefaultLink):
             start_editing_form(self, self._form)
 
     def _on_click(self, e):
+        print("on_click")
         if e.ctrlKey or e.metaKey or e.shiftKey:
             logger.debug(
                 "NavLink clicked, but with modifier keys - letting browser handle"
