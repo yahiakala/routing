@@ -339,6 +339,7 @@ class NavLink(DefaultLink):
 
     def _on_click(self, **event_args):
         event = event_args.get("event")
+        print("event", event, event_args)
         if event is None:
             return
         print("on_click")
