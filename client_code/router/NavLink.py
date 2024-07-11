@@ -24,8 +24,6 @@ try:
     DefaultLink = MantineNavLink
 
 except ImportError:
-    pass
-else:
     _DefaultLink = get_design_component(anvil.Link)
 
     class DefaultLink(_DefaultLink):
