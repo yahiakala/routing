@@ -35,6 +35,7 @@ class _NavigationEmitter:
         self._subscribers.discard(fn)
 
     def emit(self, event_name, **kwargs):
+        print("emit", event_name, self._subscribers)
         kwargs["event_name"] = event_name
         for fn in self._subscribers:
             fn(**kwargs)
