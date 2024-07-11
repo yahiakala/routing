@@ -76,7 +76,7 @@ def _temp_hack_to_get_form(self):
 
     try:
         from SimpleRoutingExample import routes
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         pass
 
     if self._location is None:
