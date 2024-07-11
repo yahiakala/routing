@@ -342,6 +342,7 @@ class NavLink(anvil.Container):
         if in_designer:
             print("register interaction", self._form)
             if self._form is not None:
+                print("registering interaction", self._form)
                 register_interaction(self, self._el, "dblclick", self._do_click)
         else:
             navigation_emitter.subscribe(self._on_navigate)
