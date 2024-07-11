@@ -336,14 +336,12 @@ class NavLink(anvil.Container):
 
     def _setup(self, **event_args):
         self._link.raise_event("x-anvil-page-added", **event_args)
-        self._el = get_dom_node(self._link)
+        self._el = self._anvil_dom_element_
         self._el.addEventListener("click", self._on_click, True)
         self._set_href()
         if in_designer:
-            print("register interaction", self._form)
             if self._form is not None:
-                print("registering interaction", self._form)
-                register_interaction(self, self._el, "dblclick", self._do_click)
+                register_interaction(self, self._anvil_dom_element_, "dblclick", self._do_click)
         else:
             navigation_emitter.subscribe(self._on_navigate)
 
