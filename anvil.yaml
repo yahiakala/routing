@@ -20,3 +20,5 @@ toolbox_sections:
   items:
   - title: NavLink
     component: {type: routing.router.NavLink}
+  - title: Anchor
+    component: {type: routing.router.Anchor}

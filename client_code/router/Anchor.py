@@ -16,11 +16,10 @@ from ._logger import logger
 
 # This is just temporary to test using other nav links
 try:
-    from Mantine.NavLink import NavLink as MantineNavLink
+    from Mantine.Anchor import Anchor as DefaultLink
     from Mantine import utils
 
     utils.set_color_scheme("light")
-    DefaultLink = MantineNavLink
 
 except ImportError:
     _DefaultLink = get_design_component(anvil.Link)
@@ -31,7 +30,7 @@ except ImportError:
             super().__init__(url=href, **properties)
             self._d = get_dom_node(self)
             self._d.addEventListener("click", self._handle_click, True)
-        
+
         def _handle_click(self, e):
             e.stopImmediatePropagation()
             self.raise_event("click", event=e)
@@ -43,15 +42,6 @@ except ImportError:
         @href.setter
         def href(self, value):
             self.url = value
-
-        @property
-        def active(self):
-            return self._active
-
-        @active.setter
-        def active(self, value):
-            self._active = value
-            self.role = "selected" if value else None
 
 
 def _temp_hack_to_get_form(self):
@@ -87,9 +77,6 @@ class NavLink(DefaultLink):
         {"name": "path_params", "type": "object", "group": "navigation"},
         {"name": "hash", "type": "string", "group": "navigation"},
         {"name": "nav_args", "type": "object", "group": "navigation"},
-        {"name": "exact_path", "type": "boolean", "group": "active"},
-        {"name": "exact_search", "type": "boolean", "group": "active"},
-        {"name": "exact_hash", "type": "boolean", "group": "active"},
         *DefaultLink._anvil_properties_,
     ]
 
@@ -101,24 +88,16 @@ class NavLink(DefaultLink):
         path_params=None,
         hash="",
         nav_args=None,
-        exact_path=False,
-        exact_search=False,
-        exact_hash=False,
-        # active=False,
         **properties,
     ):
         self._props = dict(
             properties,
-            # active=active,
             path=path,
             search_params=search_params,
             search=search,
             path_params=path_params,
             hash=hash,
             nav_args=nav_args,
-            exact_path=exact_path,
-            exact_search=exact_search,
-            exact_hash=exact_hash,
         )
         self._location = None
         self._form = None
@@ -218,58 +197,6 @@ class NavLink(DefaultLink):
         self._props["hash"] = value
         self._set_href()
 
-    @property
-    def exact_path(self):
-        return self._props.get("exact_path")
-
-    @exact_path.setter
-    def exact_path(self, value):
-        self._props["exact_path"] = value
-
-    @property
-    def exact_search(self):
-        return self._props.get("exact_search")
-
-    @exact_search.setter
-    def exact_search(self, value):
-        self._props["exact_search"] = value
-
-    @property
-    def exact_hash(self):
-        return self._props.get("exact_hash")
-
-    @exact_hash.setter
-    def exact_hash(self, value):
-        self._props["exact_hash"] = value
-
-    def _on_navigate(self, **nav_args):
-        curr_location = history.location
-        location = self._location
-        active = True
-
-        if location is None:
-            active = False
-        elif self.exact_path and curr_location.path != location.path:
-            active = False
-        elif self.exact_search and curr_location.search != location.search:
-            active = False
-        elif self.exact_hash and curr_location.hash != location.hash:
-            active = False
-        elif curr_location.path != location.path:
-            # check if the current location is a parent of the new location
-            curr_segments = Segment.from_path(curr_location.path)
-            location_segments = Segment.from_path(location.path)
-            if len(location_segments) > len(curr_segments):
-                active = False
-            else:
-                for gbl, loc in zip(curr_segments, location_segments):
-                    if gbl.value == loc.value or loc.is_param():
-                        continue
-                    active = False
-                    break
-
-        self.active = active
-
     def _do_click(self, e):
         if not in_designer:
             if self._location is not None:
@@ -296,11 +223,8 @@ class NavLink(DefaultLink):
         # we have to do this when we're on the page in case links are relative
         self._set_href()
 
-        if in_designer:
-            if self._form is not None:
-                register_interaction(self, self._el, "dblclick", self._do_click)
-        else:
-            navigation_emitter.subscribe(self._on_navigate)
+        if in_designer and self._form is not None:
+            register_interaction(self, self._el, "dblclick", self._do_click)
 
     def _cleanup(self, **event_args):
-        navigation_emitter.unsubscribe(self._on_navigate)
+        pass
