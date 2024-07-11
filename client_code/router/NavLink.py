@@ -341,7 +341,7 @@ class NavLink(DefaultLink):
         # self._link.raise_event("x-anvil-page-added", **event_args)
         self._set_href()
         self._el = self._anvil_dom_element_
-        print(self._el, self.text)
+        print(self._el, self.text, self._href)
         self._el.addEventListener("click", self._on_click, True)
 
         if in_designer:
