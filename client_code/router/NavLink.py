@@ -340,6 +340,7 @@ class NavLink(anvil.Container):
         self._el.addEventListener("click", self._on_click, True)
         self._set_href()
         if in_designer:
+            print("register interaction", self._form)
             if self._form is not None:
                 register_interaction(self, self._el, "dblclick", self._do_click)
         else:
