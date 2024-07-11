@@ -333,6 +333,7 @@ class NavLink(DefaultLink):
             )
             return
         e.preventDefault()
+        e.stopPropagation()
         e.stopImmediatePropagation()
         self._do_click(e)
 
