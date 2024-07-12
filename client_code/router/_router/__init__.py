@@ -1,3 +1,4 @@
+# ruff:noqa: F401
 import anvil
 
 if anvil.is_server_side():

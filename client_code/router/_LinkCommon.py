@@ -51,7 +51,7 @@ def _temp_hack_to_get_form(self):
         return None
 
     try:
-        from SimpleRoutingExample import routes
+        from SimpleRoutingExample import routes  # noqa: F401
     except (ImportError, ModuleNotFoundError, AttributeError):
         pass
 

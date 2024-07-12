@@ -1,3 +1,4 @@
+# ruff:noqa: F401
 import anvil
 
 from .._constants import TIMEOUT

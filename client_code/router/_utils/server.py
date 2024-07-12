@@ -1,9 +1,15 @@
+# ruff: noqa: F401
 from urllib.parse import urlencode
 
 try:
-    from anvil.http import url_decode, url_encode
+    from anvil.http import (
+        url_decode,
+        url_encode,
+    )
 except ImportError:
-    pass
+    from urllib.parse import quote as url_encode
+    from urllib.parse import unquote as url_decode
+
 
 try:
     from async_promises import Promise
