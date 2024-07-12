@@ -35,7 +35,6 @@ class _NavigationEmitter:
         self._subscribers.discard(fn)
 
     def emit(self, event_name, **kwargs):
-        print("emit", event_name, self._subscribers)
         kwargs["event_name"] = event_name
         for fn in self._subscribers:
             fn(**kwargs)
@@ -201,10 +200,13 @@ def on_navigate():
     context.data = data
 
     form = route.form
-    with ViewTransition():
-        rv = anvil.open_form(form, routing_context=context, **context.form_properties)
-    if route.cache_form:
-        CACHED_FORMS[match.key] = rv
+    try:
+        with ViewTransition():
+            rv = anvil.open_form(form, routing_context=context, **context.form_properties)
+        if route.cache_form:
+            CACHED_FORMS[match.key] = rv
+    except Exception as e:
+        return handle_error("error_form", e)
     # TODO: decide how to cache the form
 
 

@@ -23,8 +23,6 @@ def _create_server_route(cls):
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
-        return anvil.server.LoadAppResponse(data=None)
-    
         request = anvil.server.request
         path = request.path
         search = encode_search_params(request.query_params)
