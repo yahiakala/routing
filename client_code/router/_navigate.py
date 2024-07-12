@@ -81,10 +81,16 @@ def navigate(
     hash="",
     replace=False,
     nav_args=None,
-    current_form_properties=None,
+    form_properties=None,
 ):
     logger.debug(
-        f"navigate called with: path={path!r} search={search_params!r} path_params={path_params!r} hash={hash!r} replace={replace!r} nav_args={nav_args!r}"
+        f"navigate called with: path={path!r} "
+        "search={search_params!r} "
+        "path_params={path_params!r} "
+        "hash={hash!r} "
+        "replace={replace!r} "
+        "nav_args={nav_args!r} "
+        "form_properties={form_properties!r}"
     )
     location = nav_args_to_location(
         path=path, search_params=search_params, path_params=path_params, hash=hash
@@ -92,7 +98,7 @@ def navigate(
     logger.debug(f"navigate location: {location}")
 
     nav_args = ensure_dict(nav_args, "nav_args")
-    form_properties = ensure_dict(current_form_properties, "form_properties")
+    form_properties = ensure_dict(form_properties, "form_properties")
 
     return navigate_with_location(
         location, replace=replace, nav_args=nav_args, form_properties=form_properties
