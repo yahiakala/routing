@@ -23,6 +23,7 @@ def _create_server_route(cls):
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
+        return {"foo": "bar"}
         return anvil.server.LoadAppResponse(data={"cache": {}})
     
         request = anvil.server.request
