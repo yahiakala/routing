@@ -47,7 +47,7 @@ def nav_args_to_location(*, path, search_params, path_params, hash):
     return Location(path=path, search=search, hash=hash)
 
 
-_current_nav_args = None
+_current_nav_args = {}
 
 
 def navigate_with_location(location, replace=False, nav_args=None):
@@ -85,5 +85,10 @@ def navigate(
         path=path, search_params=search_params, path_params=path_params, hash=hash
     )
     logger.debug(f"navigate location: {location}")
+
+    if nav_args is None:
+        nav_args = {}
+    elif not isinstance(nav_args, dict):
+        raise TypeError("nav_args must be a dict")
 
     return navigate_with_location(location, replace=replace, nav_args=nav_args)

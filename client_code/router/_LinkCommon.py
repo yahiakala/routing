@@ -137,6 +137,10 @@ class LinkMixinCommon(Component):
 
     @nav_args.setter
     def nav_args(self, value):
+        if value is None:
+            value = {}
+        elif not isinstance(value, dict):
+            raise TypeError("nav_args must be a dict")
         self._props["nav_args"] = value
 
     @property
