@@ -55,6 +55,10 @@ def navigate_with_location(
     location, replace=False, nav_args=None, form_properties=None
 ):
     global _current_nav_args, _current_form_properties
+
+    nav_args = ensure_dict(nav_args, "nav_args")
+    form_properties = ensure_dict(form_properties, "form_properties")
+
     _current_nav_args = nav_args
     _current_form_properties = form_properties
     current_location = history.location
