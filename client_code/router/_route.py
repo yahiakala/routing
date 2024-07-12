@@ -40,7 +40,12 @@ def _create_server_route(cls):
         try:
             route.before_load()
         except Redirect as r:
-            location = nav_args_to_location(**r.__dict__)
+            location = nav_args_to_location(
+                path=r.path,
+                search_params=r.search_params,
+                path_params=r.path_params,
+                hash=r.hash,
+            )
             url = (
                 anvil.server.get_app_origin()
                 + location.path
