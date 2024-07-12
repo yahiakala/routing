@@ -19,7 +19,7 @@ class Segment:
 
     def is_static(self):
         return self.type == self.STATIC
-    
+
     def is_param(self):
         return self.type == self.PARAM
 
@@ -34,4 +34,3 @@ class Segment:
             else:
                 segments.append(Segment.static(part))
         return segments
-

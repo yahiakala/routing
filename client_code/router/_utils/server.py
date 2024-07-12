@@ -1,11 +1,9 @@
 from urllib.parse import urlencode
 
 try:
-    from anvil.http import url_decode
-    from anvil.http import url_encode
+    from anvil.http import url_decode, url_encode
 except ImportError:
-    from urllib.parse import unquote as url_decode
-    from urllib.parse import quote as url_encode
+    pass
 
 try:
     from async_promises import Promise

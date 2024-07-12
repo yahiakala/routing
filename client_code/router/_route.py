@@ -1,12 +1,10 @@
 import anvil.server
 
+from ._constants import NETWORK_FIRST
+from ._exceptions import NotFound, Redirect
 from ._navigate import nav_args_to_location
-from ._exceptions import Redirect, NotFound
-
 from ._segments import Segment
-from ._utils import trim_path, encode_search_params
-from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
-
+from ._utils import encode_search_params, trim_path
 
 sorted_routes = []
 
@@ -14,6 +12,7 @@ sorted_routes = []
 def _create_server_route(cls):
     # local for now while anvil uplink doesn't have history
     from anvil.history import Location
+
     from ._loader import CachedData
     from ._matcher import get_match
 
@@ -21,7 +20,6 @@ def _create_server_route(cls):
 
     if path is None:
         return
-
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
@@ -50,7 +48,7 @@ def _create_server_route(cls):
                 + location.hash
             )
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
-        except (NotFound, Exception) as e:
+        except (NotFound, Exception):
             # TODO: handle error on the client
             return anvil.server.LoadAppResponse(data={"cache": cache})
 
@@ -62,7 +60,7 @@ def _create_server_route(cls):
                 deps=deps,
             )
 
-        except (NotFound, Exception) as e:
+        except (NotFound, Exception):
             # TODO: handle error on the client
             return anvil.server.LoadAppResponse(data={"cache": cache})
 

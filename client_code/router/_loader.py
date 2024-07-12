@@ -1,24 +1,13 @@
-from time import sleep
 from datetime import datetime
-from ._non_blocking import call_async
-from ._constants import STALE_WHILE_REVALIDATE, NETWORK_FIRST
-from ._cached import IN_FLIGHT_DATA, CACHED_DATA
-from ._logger import logger
+from time import sleep
+
 import anvil.server
 
-
-try:
-    from anvil.js.window import Promise
-    from anvil.js import await_promise
-    from anvil.js import report_exceptions
-except ImportError:
-    from async_promises import Promise
-
-    def await_promise(promise):
-        return promise.get()
-
-    def report_exceptions(fn):
-        return fn
+from ._cached import CACHED_DATA, IN_FLIGHT_DATA
+from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._logger import logger
+from ._non_blocking import call_async
+from ._utils import await_promise, report_exceptions
 
 
 @anvil.server.portable_class
@@ -54,15 +43,13 @@ def load_data_promise(context, force=False):
     def clean_up_inflight(result=None):
         try:
             del IN_FLIGHT_DATA[key]
-        except KeyError as e:
+        except KeyError:
             pass
 
         return result
 
     @report_exceptions
     def on_result(data):
-        from ._context import RoutingContext
-
         logger.debug(f"data loaded: {key}")
         cached = CachedData(data=data, location=location, mode=route.cache_mode)
         CACHED_DATA[key] = cached

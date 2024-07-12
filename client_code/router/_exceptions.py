@@ -1,4 +1,4 @@
-from anvil.server import _register_exception_type, AnvilWrappedError
+from anvil.server import AnvilWrappedError, _register_exception_type
 
 
 class Redirect(AnvilWrappedError):
@@ -12,8 +12,10 @@ class Redirect(AnvilWrappedError):
 class NotFound(AnvilWrappedError):
     pass
 
+
 class InvalidPathParams(Exception):
     pass
+
 
 _register_exception_type(f"{Redirect.__module__}.Redirect", Redirect)
 _register_exception_type(f"{NotFound.__module__}.NotFound", NotFound)

@@ -1,7 +1,9 @@
-from client_code.router._loader import load_data
 from time import sleep
+
+from client_code.router._loader import load_data
 from client_code.router._matcher import get_match
-from tests.deps import routes, Location, get_page
+from tests.deps import Location, get_page
+
 
 def test_loader(routes):
     [HomeRoute, ArticlesRoute, ArticleRoute] = routes
@@ -20,11 +22,11 @@ def test_loader(routes):
 
     data_1_0 = load_data(match_1)
     data_2_0 = load_data(match_2)
-    sleep(.1)
+    sleep(0.1)
     # time is now stale - we use the cached data then fetch in the background
     data_1_1 = load_data(match_1)
     data_2_1 = load_data(match_2)
-    sleep(.1)
+    sleep(0.1)
     data_1_2 = load_data(match_1)
     data_2_2 = load_data(match_2)
     assert data_1_0["id"] == 123
@@ -49,7 +51,7 @@ def test_loader(routes):
 
     data_1_0 = load_data(articles_match_1)
     data_2_0 = load_data(articles_match_2)
-    sleep(.1)
+    sleep(0.1)
     # time is now stale - we use the cached data then fetch in the background
     data_1_1 = load_data(articles_match_1)
     data_1_2 = load_data(articles_match_1)
@@ -60,4 +62,3 @@ def test_loader(routes):
 
     assert data_1_0 is data_1_1
     assert data_1_0 is not data_1_2
-

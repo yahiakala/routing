@@ -1,6 +1,6 @@
+from ._cached import CACHED_DATA, CACHED_FORMS
 from ._loader import load_data
 from ._matcher import Match
-from ._cached import CACHED_FORMS, CACHED_DATA
 
 
 class RoutingContext:

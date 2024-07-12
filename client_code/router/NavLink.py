@@ -1,8 +1,9 @@
 from anvil.designer import in_designer
 from anvil.history import history
-from ._segments import Segment
-from ._router import navigation_emitter
+
 from ._LinkCommon import DefaultLink, LinkMixinCommon, active_props, nav_props
+from ._router import navigation_emitter
+from ._segments import Segment
 
 # This is just temporary to test using other nav links
 try:
@@ -49,6 +50,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
             **properties,
         )
         DefaultLink.__init__(self, **properties)
+
         if not in_designer:
             self.add_event_handler(
                 "x-anvil-page-added",

@@ -1,11 +1,12 @@
-from anvil.history import history, Location
 import json
 
-from ._segments import Segment
-from ._utils import trim_path, url_encode, encode_search_params
+from anvil.history import Location, history
+
 from ._constants import NOT_FOUND
 from ._exceptions import InvalidPathParams
 from ._logger import logger
+from ._segments import Segment
+from ._utils import encode_search_params, url_encode
 
 
 def clean_path(path, path_params):

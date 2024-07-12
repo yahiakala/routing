@@ -1,17 +1,14 @@
-import pytest
 from time import sleep
 from urllib.parse import parse_qs, urlparse
 
-
-from client_code.router._route import Route, sorted_routes
-from client_code.router._matcher import get_match
+import pytest
 from client_code.router._loader import clear_cache
+from client_code.router._route import Route, sorted_routes
 
 try:
     from anvil.history import Location
 
 except ImportError:
-
     from urllib.parse import parse_qs, urlparse
 
     def decode_search_params(url):
@@ -86,7 +83,7 @@ def routes():
             sleep(self.stale_time / 2)
             id = loader_args.get("path_params", {}).get("id", 1)
             return {**articles[id - 1]}
-    
+
     yield [HomeRoute, ArticlesRoute, ArticleRoute]
 
     sorted_routes.clear()

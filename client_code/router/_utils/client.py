@@ -1,16 +1,12 @@
+from anvil.designer import in_designer
+from anvil.js.window import Promise, URLSearchParams, setTimeout
+
 from .._constants import TIMEOUT
 
-from anvil.js.window import Promise, setTimeout, URLSearchParams, document
-from anvil.js import await_promise
-from anvil.js import report_exceptions
-from anvil.designer import in_designer
-
 if in_designer:
-    from anvil.js.window import encodeURIComponent as url_encode
-    from anvil.js.window import decodeURIComponent as url_decode
+    pass
 else:
-    from anvil.http import url_encode
-    from anvil.http import url_decode
+    pass
 
 
 def timeout(s=0):
@@ -28,4 +24,3 @@ def encode_search_params(search_params):
         return ""
 
     return "?" + URLSearchParams(search_params).toString()
-

@@ -1,18 +1,18 @@
 import anvil
-from .._constants import TIMEOUT
 
+from .._constants import TIMEOUT
 
 if anvil.is_server_side():
     from .server import (
         Promise,
         await_promise,
-        report_exceptions,
-        timeout,
-        encode_search_params,
-        setTimeout,
         document,
-        url_encode,
+        encode_search_params,
+        report_exceptions,
+        setTimeout,
+        timeout,
         url_decode,
+        url_encode,
     )
 
     # TODO: remove this at some point
@@ -31,13 +31,13 @@ else:
     from .client import (
         Promise,
         await_promise,
-        report_exceptions,
-        timeout,
-        encode_search_params,
-        setTimeout,
         document,
-        url_encode,
+        encode_search_params,
+        report_exceptions,
+        setTimeout,
+        timeout,
         url_decode,
+        url_encode,
     )
 
 

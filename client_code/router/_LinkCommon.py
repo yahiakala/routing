@@ -1,20 +1,18 @@
 import anvil
 from anvil import Component
-from anvil.js import get_dom_node
-from anvil.history import history, Location
 from anvil.designer import (
-    in_designer,
     get_design_component,
-    start_editing_form,
+    in_designer,
     register_interaction,
+    start_editing_form,
 )
-from ._navigate import nav_args_to_location, navigate_with_location
-from ._matcher import get_match
-from ._exceptions import InvalidPathParams
-from ._segments import Segment
-from ._router import navigation_emitter
-from ._logger import logger
+from anvil.history import Location
+from anvil.js import get_dom_node
 
+from ._exceptions import InvalidPathParams
+from ._logger import logger
+from ._matcher import get_match
+from ._navigate import nav_args_to_location, navigate_with_location
 
 _DefaultLink = get_design_component(anvil.Link)
 
@@ -246,4 +244,3 @@ class LinkMixinCommon(Component):
             self._form = _temp_hack_to_get_form(self)
         elif location.path is not None:
             self.href = self._href = location.get_url(False)
-

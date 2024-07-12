@@ -1,8 +1,7 @@
-import re
-from anvil.js.window import Function, Promise
-from anvil.js import report_exceptions as _report
 from functools import partial
 
+from anvil.js import report_exceptions as _report
+from anvil.js.window import Function, Promise
 
 _JS_Objects = """
 class Deferred {
@@ -60,6 +59,7 @@ return [Deferred, AsyncCall];
 
 
 Deferred, _JsAsyncCall = Function(_JS_Objects)()
+
 
 class _Result:
     # dicts may come back as javascript object literals

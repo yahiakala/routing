@@ -1,5 +1,5 @@
 from client_code.router._matcher import get_match
-from tests.deps import Location, routes
+from tests.deps import Location
 
 
 def test_match(routes):

@@ -1,8 +1,7 @@
 import json
-from re import search
 
-from ._utils import trim_path, url_decode
 from ._route import Route, sorted_routes
+from ._utils import trim_path, url_decode
 
 
 class Match:
@@ -26,7 +25,6 @@ def get_match(location):
     parts = path.split("/")
 
     for route in sorted_routes:
-
         iter_segments = iter(route.segments)
         path_params = {}
 
