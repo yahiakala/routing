@@ -1,6 +1,6 @@
 allow_embedding: false
 package_name: routing
-name: Routing API Design
+name: routing
 runtime_options:
   version: 3
   client_version: '3'
