@@ -23,6 +23,8 @@ def _create_server_route(cls):
 
     @anvil.server.route("/" + path)
     def route_handler(*args, **kwargs):
+        return anvil.server.LoadAppResponse(data={"cache": {}})
+    
         request = anvil.server.request
         path = request.path
         search = encode_search_params(request.query_params)
@@ -37,6 +39,7 @@ def _create_server_route(cls):
         deps = match.deps
 
         cache = {}
+
         try:
             route.before_load()
         except Redirect as r:
