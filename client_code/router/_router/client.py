@@ -103,6 +103,7 @@ def on_navigate():
     logger.debug("navigating")
     key = location.key
     nav_args = _navigate._current_nav_args
+    form_properties = _navigate._current_form_properties
 
     def is_stale():
         stale = key != history.location.key
@@ -129,7 +130,9 @@ def on_navigate():
         anvil.open_form(form)
         return
 
-    context = RoutingContext(match=match, nav_args=nav_args)
+    context = RoutingContext(
+        match=match, nav_args=nav_args, form_properties=form_properties
+    )
 
     route = match.route
     pending_form = route.pending_form
@@ -199,7 +202,7 @@ def on_navigate():
 
     form = route.form
     with ViewTransition():
-        rv = anvil.open_form(form, routing_context=context)
+        rv = anvil.open_form(form, routing_context=context, **context.form_properties)
     if route.cache_form:
         CACHED_FORMS[match.key] = rv
     # TODO: decide how to cache the form

@@ -94,6 +94,7 @@ def load_data_promise(context, force=False):
             deps=deps,
             # router_context=context,
             nav_args=context.nav_args,
+            from_properties=context.form_properties,
         )
         async_call.on_result(on_result)
         async_call.on_error(on_error)

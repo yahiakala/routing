@@ -13,13 +13,14 @@ class RoutingContext:
         "hash_changed",
     ]
 
-    def __init__(self, match: Match, data=None, nav_args=None):
+    def __init__(self, match: Match, data=None, nav_args=None, form_properties=None):
         self.match = match
         self.location = match.location
         self.path_params = match.path_params
         self.search_params = match.search_params
         self.route = match.route
         self.nav_args = nav_args
+        self.form_properties = form_properties
         self.error = None
         self._data = data
         self._listeners = {}

@@ -50,3 +50,11 @@ def trim_path(path):
     while end > start and path[end - 1] == "/":
         end -= 1
     return path[start:end]
+
+
+def ensure_dict(value, name):
+    if value is None:
+        return {}
+    elif not isinstance(value, dict):
+        raise TypeError(f"{name} must be a dict")
+    return value

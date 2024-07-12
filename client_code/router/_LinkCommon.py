@@ -13,6 +13,7 @@ from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._matcher import get_match
 from ._navigate import nav_args_to_location, navigate_with_location
+from ._utils import ensure_dict
 
 _DefaultLink = get_design_component(anvil.Link)
 
@@ -78,6 +79,11 @@ nav_props = {
     "path_params": {"name": "path_params", "type": "object", "group": "navigation"},
     "hash": {"name": "hash", "type": "string", "group": "navigation"},
     "nav_args": {"name": "nav_args", "type": "object", "group": "navigation"},
+    "form_properties": {
+        "name": "form_properties",
+        "type": "object",
+        "group": "navigation",
+    },
 }
 
 active_props = {
@@ -103,7 +109,11 @@ class LinkMixinCommon(Component):
         if not in_designer:
             if self._location is not None:
                 logger.debug(f"NavLink clicked, navigating to {self._location}")
-                navigate_with_location(self._location, nav_args=self.nav_args)
+                navigate_with_location(
+                    self._location,
+                    nav_args=self.nav_args,
+                    form_properties=self.form_properties,
+                )
             else:
                 logger.debug("NavLink clicked, but with invalid path, search or hash")
         elif self._form is not None:
@@ -137,11 +147,17 @@ class LinkMixinCommon(Component):
 
     @nav_args.setter
     def nav_args(self, value):
-        if value is None:
-            value = {}
-        elif not isinstance(value, dict):
-            raise TypeError("nav_args must be a dict")
+        value = ensure_dict(value, "nav_args")
         self._props["nav_args"] = value
+
+    @property
+    def form_properties(self):
+        return self._props.get("form_properties")
+
+    @form_properties.setter
+    def form_properties(self, value):
+        value = ensure_dict(value, "form_properties")
+        self._props["form_properties"] = value
 
     @property
     def path(self):

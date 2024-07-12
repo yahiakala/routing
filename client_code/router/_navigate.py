@@ -6,7 +6,7 @@ from ._constants import NOT_FOUND
 from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
-from ._utils import encode_search_params, url_encode
+from ._utils import encode_search_params, ensure_dict, url_encode
 
 
 def clean_path(path, path_params):
@@ -48,11 +48,15 @@ def nav_args_to_location(*, path, search_params, path_params, hash):
 
 
 _current_nav_args = {}
+_current_form_properties = {}
 
 
-def navigate_with_location(location, replace=False, nav_args=None):
-    global _current_nav_args
+def navigate_with_location(
+    location, replace=False, nav_args=None, form_properties=None
+):
+    global _current_nav_args, _current_form_properties
     _current_nav_args = nav_args
+    _current_form_properties = form_properties
     current_location = history.location
 
     if (
@@ -77,6 +81,7 @@ def navigate(
     hash="",
     replace=False,
     nav_args=None,
+    current_form_properties=None,
 ):
     logger.debug(
         f"navigate called with: path={path!r} search={search_params!r} path_params={path_params!r} hash={hash!r} replace={replace!r} nav_args={nav_args!r}"
@@ -86,9 +91,9 @@ def navigate(
     )
     logger.debug(f"navigate location: {location}")
 
-    if nav_args is None:
-        nav_args = {}
-    elif not isinstance(nav_args, dict):
-        raise TypeError("nav_args must be a dict")
+    nav_args = ensure_dict(nav_args, "nav_args")
+    form_properties = ensure_dict(current_form_properties, "form_properties")
 
-    return navigate_with_location(location, replace=replace, nav_args=nav_args)
+    return navigate_with_location(
+        location, replace=replace, nav_args=nav_args, form_properties=form_properties
+    )
