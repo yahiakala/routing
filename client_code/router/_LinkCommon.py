@@ -263,6 +263,4 @@ class LinkMixinCommon(Component):
         if in_designer:
             self._form = _temp_hack_to_get_form(self)
         elif location.path is not None:
-            debugger
             self.href = self._href = location.get_url(True)
-            print(self._href)
