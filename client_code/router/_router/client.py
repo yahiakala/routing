@@ -161,6 +161,8 @@ def on_navigate():
         return handle_error("error_form", e)
 
     RoutingContext._current = context
+    # TODO: emit an event when the context is set
+
     # TODO: decide what to do if only search params change or only hash changes
     # if only search params change, we need to load data
     # but the form might be using navigate_on_search_change=False
