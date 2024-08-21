@@ -15,9 +15,10 @@ def clean_path(path, path_params):
 
     # remove leading dots
     segments = Segment.from_path(path)
-    path = ""
 
     leading_dots = path.startswith(".")
+
+    path = ""
 
     for segment in segments:
         if segment.is_static():
