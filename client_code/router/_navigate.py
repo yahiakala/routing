@@ -17,7 +17,7 @@ def clean_path(path, path_params):
     segments = Segment.from_path(path)
     path = ""
 
-    leading_dots = path.startswith("..")
+    leading_dots = path.startswith(".")
 
     for segment in segments:
         if segment.is_static():
