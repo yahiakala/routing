@@ -13,8 +13,11 @@ def clean_path(path, path_params):
     if path is None:
         return None
 
+    # remove leading dots
     segments = Segment.from_path(path)
     path = ""
+
+    leading_dots = path.startswith("..")
 
     for segment in segments:
         if segment.is_static():
@@ -24,6 +27,9 @@ def clean_path(path, path_params):
             if value is NOT_FOUND:
                 raise InvalidPathParams(f"No path param for {segment.value}")
             path += "/" + url_encode(str(value))
+
+    if leading_dots:
+        path = path[1:]
 
     return path
 
