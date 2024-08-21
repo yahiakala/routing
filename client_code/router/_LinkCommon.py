@@ -87,12 +87,18 @@ nav_props = {
 }
 
 active_props = {
+    "active": {"name": "active", "type": "boolean", "important": True},
     "exact_path": {"name": "exact_path", "type": "boolean", "group": "active"},
     "exact_search": {"name": "exact_search", "type": "boolean", "group": "active"},
     "exact_hash": {"name": "exact_hash", "type": "boolean", "group": "active"},
 }
 
 all_props = {**nav_props, **active_props}
+
+ignore_props = ["href", *all_props]
+
+def filter_props(prop_list):
+    return filter(lambda prop: prop["name"] not in ignore_props, prop_list)
 
 
 class LinkMixinCommon(Component):

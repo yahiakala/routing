@@ -1,7 +1,13 @@
 from anvil.designer import in_designer
 from anvil.history import history
 
-from ._LinkCommon import DefaultLink, LinkMixinCommon, active_props, nav_props
+from ._LinkCommon import (
+    DefaultLink,
+    LinkMixinCommon,
+    active_props,
+    filter_props,
+    nav_props,
+)
 from ._router import navigation_emitter
 from ._segments import Segment
 
@@ -20,7 +26,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
         *active_props.values(),
-        *DefaultLink._anvil_properties_,
+        *filter_props(DefaultLink._anvil_properties_),
     ]
 
     def __init__(
