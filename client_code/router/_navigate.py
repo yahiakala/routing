@@ -11,7 +11,7 @@ from ._utils import encode_search_params, ensure_dict, url_encode
 
 def clean_path(path, path_params):
     if path is None:
-        return None
+        return history.location.path
 
     # remove leading dots
     segments = Segment.from_path(path)
@@ -31,8 +31,6 @@ def clean_path(path, path_params):
 
     if leading_dots:
         path = path[1:]
-
-    logger.debug(f"cleaned path: {path}")
 
     return path
 

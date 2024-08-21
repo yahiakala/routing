@@ -122,6 +122,8 @@ def on_navigate():
     if match is None:
         raise Exception(f"No match {location}")
 
+    logger.debug(f"Match key {match.key}")
+
     if match.key in CACHED_FORMS:
         form = CACHED_FORMS[match.key]
         # TODO: update the context probably
