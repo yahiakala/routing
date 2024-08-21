@@ -120,7 +120,6 @@ def navigate(
 
         path = location.path
         search_params = search_params or location.search_params
-        path_params = path_params or location.path_params
         hash = hash or location.hash
 
     location = nav_args_to_location(
