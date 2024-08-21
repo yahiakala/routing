@@ -31,6 +31,8 @@ def clean_path(path, path_params):
     if leading_dots:
         path = path[1:]
 
+    logger.debug(f"cleaned path: {path}")
+
     return path
 
 
