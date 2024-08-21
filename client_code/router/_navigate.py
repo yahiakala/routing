@@ -109,22 +109,31 @@ def navigate(
     )
     if location_or_url_or_path is not None:
         if isinstance(location_or_url_or_path, Location):
-            location = location_or_url_or_path
+            temp_location = location_or_url_or_path
         elif isinstance(location_or_url_or_path, str):
-            location = Location.from_url(location_or_url_or_path)
+            temp_location = Location.from_url(location_or_url_or_path)
+        else:
+            raise TypeError("location_or_url_or_path must be a string or a Location")
 
         if path is not None:
-            raise TypeError(
-                "cannot set named argument path if a first argument is set"
-            )
+            raise TypeError("cannot set named argument path if a first argument is set")
 
-        path = location.path
-        search_params = search_params or location.search_params
-        hash = hash or location.hash
+        location = nav_args_to_location(
+            path=temp_location.path,
+            search_params=search_params,
+            path_params=path_params,
+            hash=hash or temp_location.hash,
+        )
 
-    location = nav_args_to_location(
-        path=path, search_params=search_params, path_params=path_params, hash=hash
-    )
+        # search params on a raw location are a bit gnarly
+        # they are json stringified so we would be json stringifying again - let's not do that
+        if not location.search and temp_location.search:
+            location.search = temp_location.search
+
+    else:
+        location = nav_args_to_location(
+            path=path, search_params=search_params, path_params=path_params, hash=hash
+        )
     logger.debug(f"navigate location: {location}")
 
     nav_args = ensure_dict(nav_args, "nav_args")
