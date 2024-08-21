@@ -87,6 +87,7 @@ def navigate_with_location(
 
 
 def navigate(
+    location_or_url_or_path=None,
     *,
     path=None,
     search_params=None,
@@ -97,7 +98,8 @@ def navigate(
     form_properties=None,
 ):
     logger.debug(
-        f"navigate called with: path={path!r} "
+        f"navigate called with: {location_or_url_or_path!r} "
+        f"path={path!r} "
         f"search={search_params!r} "
         f"path_params={path_params!r} "
         f"hash={hash!r} "
@@ -105,6 +107,22 @@ def navigate(
         f"nav_args={nav_args!r} "
         f"form_properties={form_properties!r}"
     )
+    if location_or_url_or_path is not None:
+        if isinstance(location_or_url_or_path, Location):
+            location = location_or_url_or_path
+        elif isinstance(location_or_url_or_path, str):
+            location = Location.from_url(location_or_url_or_path)
+
+        if path is not None:
+            raise TypeError(
+                "cannot set named argument path if a first argument is set"
+            )
+
+        path = location.path
+        search_params = search_params or location.search_params
+        path_params = path_params or location.path_params
+        hash = hash or location.hash
+
     location = nav_args_to_location(
         path=path, search_params=search_params, path_params=path_params, hash=hash
     )
