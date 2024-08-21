@@ -37,6 +37,8 @@ def clean_search_params(search_params):
     for key in keys:
         real_search_params[key] = json.dumps(search_params[key], sort_keys=True)
 
+    return real_search_params
+
 
 def nav_args_to_location(*, path, search_params, path_params, hash):
     path_params = path_params or {}
