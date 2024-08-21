@@ -3,6 +3,7 @@ from anvil.history import history as _history
 
 from ._cached import clear_cache
 from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
 from ._logger import debug_logging
 from ._navigate import navigate
