@@ -2,7 +2,7 @@ import anvil.server
 
 from ._constants import NETWORK_FIRST
 from ._exceptions import NotFound, Redirect
-from ._navigate import nav_args_to_location
+from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
 from ._utils import encode_search_params, trim_path
 
@@ -144,3 +144,24 @@ class Route:
 
         if anvil.is_server_side():
             _create_server_route(cls)
+
+
+def open_form(form, **form_properties):
+    if anvil.is_server_side():
+        raise RuntimeError("open_form is not available on the server")
+
+    if not isinstance(form, str):
+        raise TypeError("form must be a string")
+
+    for route in sorted_routes:
+        if route.form != form:
+            continue
+
+        if any(segment.is_param() for segment in route.segments):
+            raise ValueError(
+                f"Tried to call open_form with {form} but {route.path} requires path params"
+            )
+
+        return navigate(path=route.path, form_properties=form_properties)
+
+    raise ValueError(f"No route found for form {form}")
