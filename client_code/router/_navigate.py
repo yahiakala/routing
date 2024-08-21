@@ -89,12 +89,12 @@ def navigate(
 ):
     logger.debug(
         f"navigate called with: path={path!r} "
-        "search={search_params!r} "
-        "path_params={path_params!r} "
-        "hash={hash!r} "
-        "replace={replace!r} "
-        "nav_args={nav_args!r} "
-        "form_properties={form_properties!r}"
+        f"search={search_params!r} "
+        f"path_params={path_params!r} "
+        f"hash={hash!r} "
+        f"replace={replace!r} "
+        f"nav_args={nav_args!r} "
+        f"form_properties={form_properties!r}"
     )
     location = nav_args_to_location(
         path=path, search_params=search_params, path_params=path_params, hash=hash
