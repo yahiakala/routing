@@ -25,6 +25,16 @@ class RoutingContext:
         self._data = data
         self._listeners = {}
         self._blockers = set()
+    
+    def _update(self, match: Match, nav_args=None, form_properties=None):
+        self.match = match
+        self.nav_args = nav_args
+        self.form_properties = form_properties
+        self.location = match.location
+        self.path_params = match.path_params
+        self.search_params = match.search_params
+        self.route = match.route
+
 
     def _prevent_unload(self):
         for blocker in self._blockers:

@@ -3,6 +3,7 @@ from time import sleep
 import anvil
 from anvil.history import history
 from anvil.js import window
+from anvil.js.window import WeakMap
 
 from .. import _navigate
 from .._cached import CACHED_FORMS
@@ -23,6 +24,14 @@ current = {"delta": None}
 navigation_blockers = set()
 before_unload_blockers = set()
 
+form_to_context = WeakMap()
+
+
+def get_context(form) -> RoutingContext:
+    rv = form_to_context.get(form)
+    if rv is None:
+        raise ValueError(f"No context for form {form}")
+    return rv
 
 class _NavigationEmitter:
     def __init__(self):
@@ -126,6 +135,8 @@ def on_navigate():
 
     if match.key in CACHED_FORMS:
         form = CACHED_FORMS[match.key]
+        context = get_context(form)
+        context._update(match=match, nav_args=nav_args, form_properties=form_properties)
         # TODO: update the context probably
         logger.debug(f"found a cached form for this location: {form}")
         anvil.open_form(form)
@@ -209,6 +220,7 @@ def on_navigate():
             rv = anvil.open_form(form, routing_context=context, **context.form_properties)
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
+            form_to_context.set(rv, context)
     except Exception as e:
         return handle_error("error_form", e)
     # TODO: decide how to cache the form
