@@ -128,7 +128,7 @@ def navigate(
         elif isinstance(context_or_path_or_url, str):
             temp_location = Location.from_url(context_or_path_or_url)
         else:
-            raise TypeError("location_or_url_or_path must be a string or a Location")
+            raise TypeError("location_or_url_or_path must be a string or a Routing Context")
 
         if path is not None:
             raise TypeError("cannot set named argument path if a first argument is set")

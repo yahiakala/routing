@@ -15,6 +15,7 @@ class RoutingContext:
 
     def __init__(self, match: Match, data=None, nav_context=None, form_properties=None):
         self.match = match
+        self.deps = match.deps
         self.location = match.location
         self.path = match.path
         self.params = match.params
@@ -30,6 +31,7 @@ class RoutingContext:
 
     def _update(self, match: Match, nav_context=None, form_properties=None):
         self.match = match
+        self.deps = match.deps
         self.nav_context = nav_context
         self.form_properties = form_properties
         self.location = match.location
