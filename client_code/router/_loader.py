@@ -34,8 +34,8 @@ def load_data_promise(context, force=False):
 
     route = match.route
     location = match.location
-    search_params = match.search_params
-    path_params = match.path_params
+    query = match.query
+    params = match.params
     deps = match.deps
     key = match.key
     logger.debug(f"loading data for {key}")
@@ -89,8 +89,8 @@ def load_data_promise(context, force=False):
         async_call = call_async(
             wrapped_loader,
             location=location,
-            search_params=search_params,
-            path_params=path_params,
+            query=query,
+            params=params,
             deps=deps,
             # router_context=context,
             nav_args=context.nav_args,

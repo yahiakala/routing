@@ -4,7 +4,7 @@ from ._constants import NETWORK_FIRST
 from ._exceptions import NotFound, Redirect
 from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
-from ._utils import encode_search_params, trim_path
+from ._utils import encode_query_params, trim_path
 
 sorted_routes = []
 
@@ -25,15 +25,15 @@ def _create_server_route(cls):
     def route_handler(*args, **kwargs):
         request = anvil.server.request
         path = request.path
-        search = encode_search_params(request.query_params)
+        search = encode_query_params(request.query_params)
         location = Location(path=path, search=search, key="default")
         match = get_match(location=location)
         if match is None:
             raise Exception("No match")
 
         route = match.route
-        search_params = match.search_params
-        path_params = match.path_params
+        query = match.query
+        params = match.params
         deps = match.deps
 
         cache = {}
@@ -43,8 +43,8 @@ def _create_server_route(cls):
         except Redirect as r:
             location = nav_args_to_location(
                 path=r.path,
-                search_params=r.search_params,
-                path_params=r.path_params,
+                query=r.query,
+                params=r.params,
                 hash=r.hash,
             )
             url = (
@@ -61,8 +61,8 @@ def _create_server_route(cls):
         try:
             data = route.loader(
                 location=location,
-                search_params=search_params,
-                path_params=path_params,
+                params=params,
+                query=query,
                 deps=deps,
             )
 
@@ -112,17 +112,17 @@ class Route:
     def loader(self, **loader_args):
         return None
 
-    def parse_path_params(self, path_params):
-        return path_params
+    def parse_params(self, params):
+        return params
 
-    def prepare_path_params(self, path_params):
-        return path_params
+    # def params(self, params):
+    #     return params
 
-    def parse_search_params(self, search_params):
-        return search_params
+    def parse_query(self, query):
+        return query
 
-    def prepare_search_params(self, search_params):
-        return search_params
+    # def prepare_query(self, query):
+    #     return query
 
     def __init_subclass__(cls) -> None:
         if cls.path is not None:

@@ -20,9 +20,9 @@ class Anchor(DefaultLink, LinkMixinCommon):
     def __init__(
         self,
         path="",
-        search_params=None,
+        query=None,
         search="",
-        path_params=None,
+        params=None,
         hash="",
         nav_args=None,
         **properties,
@@ -30,9 +30,9 @@ class Anchor(DefaultLink, LinkMixinCommon):
         LinkMixinCommon.__init__(
             self,
             path=path,
-            search_params=search_params,
+            query=query,
             search=search,
-            path_params=path_params,
+            params=params,
             hash=hash,
             nav_args=nav_args,
             **properties,

@@ -6,10 +6,10 @@ from ._constants import NOT_FOUND
 from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
-from ._utils import encode_search_params, ensure_dict, url_encode
+from ._utils import encode_query_params, ensure_dict, url_encode
 
 
-def clean_path(path, path_params):
+def clean_path(path, params):
     if path is None:
         return history.location.path
 
@@ -24,7 +24,7 @@ def clean_path(path, path_params):
         if segment.is_static():
             path += "/" + url_encode(segment.value)
         elif segment.is_param():
-            value = path_params.get(segment.value, NOT_FOUND)
+            value = params.get(segment.value, NOT_FOUND)
             if value is NOT_FOUND:
                 raise InvalidPathParams(f"No path param for {segment.value}")
             path += "/" + url_encode(str(value))
@@ -38,7 +38,7 @@ def clean_path(path, path_params):
 def stringify_value(val):
     if not isinstance(val, str):
         return json.dumps(val, sort_keys=True)
-    
+
     try:
         # this way strings are flat like foo=bar
         # and already jsonified strings are returned as is
@@ -48,23 +48,23 @@ def stringify_value(val):
         return val
 
 
-def clean_search_params(search_params):
-    if not search_params:
+def clean_query_params(query):
+    if not query:
         return {}
 
-    real_search_params = {}
-    keys = sorted(search_params.keys())
+    real_query = {}
+    keys = sorted(query.keys())
     for key in keys:
-        real_search_params[key] = stringify_value(search_params[key])
+        real_query[key] = stringify_value(query[key])
 
-    return real_search_params
+    return real_query
 
 
-def nav_args_to_location(*, path, search_params, path_params, hash):
-    path_params = path_params or {}
-    search_params = clean_search_params(search_params)
-    search = encode_search_params(search_params)
-    path = clean_path(path, path_params)
+def nav_args_to_location(*, path, query, params, hash):
+    params = params or {}
+    query = clean_query_params(query)
+    search = encode_query_params(query)
+    path = clean_path(path, params)
 
     return Location(path=path, search=search, hash=hash)
 
@@ -103,8 +103,8 @@ def navigate(
     location_or_url_or_path=None,
     *,
     path=None,
-    search_params=None,
-    path_params=None,
+    params=None,
+    query=None,
     hash="",
     replace=False,
     nav_args=None,
@@ -113,8 +113,8 @@ def navigate(
     logger.debug(
         f"navigate called with: {location_or_url_or_path!r} "
         f"path={path!r} "
-        f"search={search_params!r} "
-        f"path_params={path_params!r} "
+        f"params={params!r} "
+        f"query={query!r} "
         f"hash={hash!r} "
         f"replace={replace!r} "
         f"nav_args={nav_args!r} "
@@ -133,8 +133,8 @@ def navigate(
 
         location = nav_args_to_location(
             path=temp_location.path,
-            search_params=search_params,
-            path_params=path_params,
+            query=query,
+            params=params,
             hash=hash or temp_location.hash,
         )
 
@@ -145,7 +145,7 @@ def navigate(
 
     else:
         location = nav_args_to_location(
-            path=path, search_params=search_params, path_params=path_params, hash=hash
+            path=path, query=query, params=params, hash=hash
         )
     logger.debug(f"navigate location: {location}")
 

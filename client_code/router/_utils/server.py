@@ -112,10 +112,10 @@ def setTimeout(fn, ms):
     fn()
 
 
-def encode_search_params(search_params):
-    if not search_params:
+def encode_query_params(query):
+    if not query:
         return ""
-    return "?" + urlencode(search_params)
+    return "?" + urlencode(query)
 
 
 document = object()

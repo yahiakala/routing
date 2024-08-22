@@ -34,8 +34,8 @@ def timeout(s=0):
     return Promise(wait_async)
 
 
-def encode_search_params(search_params):
-    if not search_params:
+def encode_query_params(query):
+    if not query:
         return ""
 
-    return "?" + URLSearchParams(search_params).toString()
+    return "?" + URLSearchParams(query).toString()

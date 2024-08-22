@@ -49,7 +49,7 @@ def routes():
         path = "/articles"
         form = "ArticlesForm"
 
-        def parse_search_params(self, search_params):
+        def parse_query(self, search_params):
             page = search_params.get("page", 1)
             try:
                 page = int(page)
@@ -71,7 +71,7 @@ def routes():
         form = "ArticleForm"
         stale_time = 0.1
 
-        def parse_path_params(self, path_params):
+        def parse_params(self, path_params):
             id = path_params.get("id", 1)
             try:
                 id = int(id)

@@ -5,14 +5,12 @@ from ._utils import trim_path, url_decode
 
 
 class Match:
-    def __init__(self, location, path_params, search_params, route: Route) -> None:
+    def __init__(self, location, params, query, route: Route) -> None:
         self.location = location
-        self.path_params = path_params
-        self.search_params = search_params
+        self.params = params
+        self.query = query
         self.route = route
-        self.deps = route.loader_deps(
-            location=location, search_params=search_params, path_params=path_params
-        )
+        self.deps = route.loader_deps(location=location, params=params, query=query)
         self.key = f"{self.location.path}:{json.dumps(self.deps, sort_keys=True)}"
 
 
@@ -26,7 +24,7 @@ def get_match(location):
 
     for route in sorted_routes:
         iter_segments = iter(route.segments)
-        path_params = {}
+        params = {}
 
         if len(parts) != len(route.segments):
             # todo splat
@@ -39,41 +37,41 @@ def get_match(location):
                     if part != segment.value:
                         break
                 elif segment.is_param():
-                    path_params[segment.value] = url_decode(part)
+                    params[segment.value] = url_decode(part)
                 else:
                     raise Exception("Unknown segment type")
             except StopIteration:
                 break
 
         else:  # if no break
-            path_params = parse_path(route, path_params)
-            search_params = parse_search(route, location.search_params)
-            return Match(location, path_params, search_params, route)
+            params = parse_path(route, params)
+            query = parse_query(route, location.search_params)
+            return Match(location, params, query, route)
 
     return None
 
 
-def parse_search(route: Route, search_params: dict):
-    for key, value in dict(search_params).items():
+def parse_query(route: Route, query: dict):
+    for key, value in dict(query).items():
         try:
-            search_params[key] = json.loads(value)
+            query[key] = json.loads(value)
         except Exception:
-            search_params[key] = value
+            query[key] = value
 
-    parser = route.parse_search_params
+    parser = route.parse_query
     if callable(parser):
-        return parser(search_params)
+        return parser(query)
     elif hasattr(parser, "parse"):
-        return parser.parse(search_params)
+        return parser.parse(query)
     else:
-        return search_params
+        return query
 
 
-def parse_path(route: Route, path_params: dict):
-    parser = route.parse_path_params
+def parse_path(route: Route, params: dict):
+    parser = route.parse_params
     if callable(parser):
-        return parser(path_params)
+        return parser(params)
     elif hasattr(parser, "parse"):
-        return parser.parse(path_params)
+        return parser.parse(params)
     else:
-        return path_params
+        return params

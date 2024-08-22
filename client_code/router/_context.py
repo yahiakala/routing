@@ -16,8 +16,8 @@ class RoutingContext:
     def __init__(self, match: Match, data=None, nav_args=None, form_properties=None):
         self.match = match
         self.location = match.location
-        self.path_params = match.path_params
-        self.search_params = match.search_params
+        self.params = match.params
+        self.query = match.query
         self.route = match.route
         self.nav_args = nav_args
         self.form_properties = form_properties
@@ -31,8 +31,8 @@ class RoutingContext:
         self.nav_args = nav_args
         self.form_properties = form_properties
         self.location = match.location
-        self.path_params = match.path_params
-        self.search_params = match.search_params
+        self.params = match.params
+        self.query = match.query
         self.route = match.route
 
 

@@ -74,9 +74,9 @@ nav_props = {
         "priority": 100,
         "important": True,
     },
-    "search_params": {"name": "search_params", "type": "object", "group": "navigation"},
-    "search": {"name": "search", "type": "string", "group": "navigation"},
-    "path_params": {"name": "path_params", "type": "object", "group": "navigation"},
+    "query": {"name": "query", "type": "object", "group": "navigation"},
+    # "search": {"name": "search", "type": "string", "group": "navigation"},
+    "params": {"name": "params", "type": "object", "group": "navigation"},
     "hash": {"name": "hash", "type": "string", "group": "navigation"},
     "nav_args": {"name": "nav_args", "type": "object", "group": "navigation"},
     "form_properties": {
@@ -175,30 +175,30 @@ class LinkMixinCommon(Component):
         self._set_href()
 
     @property
-    def search_params(self):
-        return self._props.get("search_params")
+    def query(self):
+        return self._props.get("query")
 
-    @search_params.setter
-    def search_params(self, value):
-        self._props["search_params"] = value
+    @query.setter
+    def query(self, value):
+        self._props["query"] = value
         self._set_href()
 
+    # @property
+    # def search(self):
+    #     return self._props.get("search")
+
+    # @search.setter
+    # def search(self, value):
+    #     self._props["search"] = value
+    #     self._set_href()
+
     @property
-    def search(self):
-        return self._props.get("search")
+    def params(self):
+        return self._props.get("params")
 
-    @search.setter
-    def search(self, value):
-        self._props["search"] = value
-        self._set_href()
-
-    @property
-    def path_params(self):
-        return self._props.get("path_params")
-
-    @path_params.setter
-    def path_params(self, value):
-        self._props["path_params"] = value
+    @params.setter
+    def params(self, value):
+        self._props["params"] = value
         self._set_href()
 
     @property
@@ -239,9 +239,9 @@ class LinkMixinCommon(Component):
         self._form = None
 
         path = self.path
-        search = self.search
-        path_params = self.path_params
-        search_params = self.search_params
+        # search = self.search
+        params = self.params
+        query = self.query
         hash = self.hash
         # if not path:
         #     # path must be explicitly set
@@ -251,18 +251,18 @@ class LinkMixinCommon(Component):
         try:
             location = nav_args_to_location(
                 path=path,
-                path_params=path_params,
-                search_params=search_params,
+                params=params,
+                query=query,
                 hash=hash,
             )
         except InvalidPathParams as e:
             if not in_designer:
                 raise e
             else:
-                location = Location(path=path, search=search, hash=hash)
-        if not location.search and search:
-            # search was set by the search attribute rather than the search_params
-            location = Location(path=location.path, search=search, hash=location.hash)
+                location = Location(path=path, hash=hash)
+        # if not location.search and search:
+        #     # search was set by the search attribute rather than the query
+        #     location = Location(path=location.path, search=search, hash=location.hash)
 
         self._location = location
 
