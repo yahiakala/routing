@@ -239,7 +239,7 @@ class LinkMixinCommon(Component):
         self._location = None
         self._form = None
 
-        path = self.path
+        path = self.path or None
         # search = self.search
         params = self.params
         query = self.query
