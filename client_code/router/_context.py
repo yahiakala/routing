@@ -9,7 +9,7 @@ class RoutingContext:
         "data_loaded",
         "data_loading",
         "data_error",
-        "search_changed",
+        "query_changed",
         "hash_changed",
     ]
 
