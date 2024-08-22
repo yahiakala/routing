@@ -26,3 +26,7 @@ def forward():
 
 def reload():
     return _history.reload()
+
+
+def get_routing_context():
+    return RoutingContext._current
