@@ -13,28 +13,32 @@ class RoutingContext:
         "hash_changed",
     ]
 
-    def __init__(self, match: Match, data=None, nav_args=None, form_properties=None):
+    def __init__(self, match: Match, data=None, nav_context=None, form_properties=None):
         self.match = match
         self.location = match.location
+        self.path = match.path
         self.params = match.params
         self.query = match.query
+        self.hash = match.hash
         self.route = match.route
-        self.nav_args = nav_args
+        self.nav_context = nav_context
         self.form_properties = form_properties
         self.error = None
         self._data = data
         self._listeners = {}
         self._blockers = set()
-    
-    def _update(self, match: Match, nav_args=None, form_properties=None):
+
+    def _update(self, match: Match, nav_context=None, form_properties=None):
         self.match = match
-        self.nav_args = nav_args
+        self.nav_context = nav_context
         self.form_properties = form_properties
         self.location = match.location
+        self.path = match.path
         self.params = match.params
         self.query = match.query
         self.route = match.route
-
+        self.hash = match.hash
+        # TODO: raise an event if the location has changed
 
     def _prevent_unload(self):
         for blocker in self._blockers:

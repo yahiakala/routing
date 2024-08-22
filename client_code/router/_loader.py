@@ -89,11 +89,12 @@ def load_data_promise(context, force=False):
         async_call = call_async(
             wrapped_loader,
             location=location,
+            path=location.path,
             query=query,
             params=params,
             deps=deps,
             # router_context=context,
-            nav_args=context.nav_args,
+            nav_context=context.nav_context,
             from_properties=context.form_properties,
         )
         async_call.on_result(on_result)

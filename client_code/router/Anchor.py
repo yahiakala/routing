@@ -24,7 +24,7 @@ class Anchor(DefaultLink, LinkMixinCommon):
         search="",
         params=None,
         hash="",
-        nav_args=None,
+        nav_context=None,
         **properties,
     ):
         LinkMixinCommon.__init__(
@@ -34,7 +34,7 @@ class Anchor(DefaultLink, LinkMixinCommon):
             search=search,
             params=params,
             hash=hash,
-            nav_args=nav_args,
+            nav_context=nav_context,
             **properties,
         )
         DefaultLink.__init__(self, **properties)

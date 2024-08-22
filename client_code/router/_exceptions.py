@@ -11,14 +11,14 @@ class Redirect(AnvilWrappedError):
         query=None,
         params=None,
         hash="",
-        nav_args=None,
+        nav_context=None,
         form_properties=None,
     ):
         self.path = path
         self.query = query
         self.params = params
         self.hash = hash
-        self.nav_args = ensure_dict(nav_args, "nav_args")
+        self.nav_context = ensure_dict(nav_context, "nav_context")
         self.form_properties = ensure_dict(form_properties, "form_properties")
 
 

@@ -3,6 +3,7 @@ import json
 from anvil.history import Location, history
 
 from ._constants import NOT_FOUND
+from ._context import RoutingContext
 from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
@@ -69,19 +70,19 @@ def nav_args_to_location(*, path, query, params, hash):
     return Location(path=path, search=search, hash=hash)
 
 
-_current_nav_args = {}
+_current_nav_context = {}
 _current_form_properties = {}
 
 
 def navigate_with_location(
-    location, replace=False, nav_args=None, form_properties=None
+    location, replace=False, nav_context=None, form_properties=None
 ):
-    global _current_nav_args, _current_form_properties
+    global _current_nav_context, _current_form_properties
 
-    nav_args = ensure_dict(nav_args, "nav_args")
+    nav_context = ensure_dict(nav_context, "nav_context")
     form_properties = ensure_dict(form_properties, "form_properties")
 
-    _current_nav_args = nav_args
+    _current_nav_context = nav_context
     _current_form_properties = form_properties
     current_location = history.location
 
@@ -100,31 +101,31 @@ def navigate_with_location(
 
 
 def navigate(
-    location_or_url_or_path=None,
+    context_or_path_or_url=None,
     *,
     path=None,
     params=None,
     query=None,
     hash="",
     replace=False,
-    nav_args=None,
+    nav_context=None,
     form_properties=None,
 ):
     logger.debug(
-        f"navigate called with: {location_or_url_or_path!r} "
+        f"navigate called with: {context_or_path_or_url!r} "
         f"path={path!r} "
         f"params={params!r} "
         f"query={query!r} "
         f"hash={hash!r} "
         f"replace={replace!r} "
-        f"nav_args={nav_args!r} "
+        f"nav_context={nav_context!r} "
         f"form_properties={form_properties!r}"
     )
-    if location_or_url_or_path is not None:
-        if isinstance(location_or_url_or_path, Location):
-            temp_location = location_or_url_or_path
-        elif isinstance(location_or_url_or_path, str):
-            temp_location = Location.from_url(location_or_url_or_path)
+    if context_or_path_or_url is not None:
+        if isinstance(context_or_path_or_url, RoutingContext):
+            temp_location = context_or_path_or_url.location
+        elif isinstance(context_or_path_or_url, str):
+            temp_location = Location.from_url(context_or_path_or_url)
         else:
             raise TypeError("location_or_url_or_path must be a string or a Location")
 
@@ -149,9 +150,12 @@ def navigate(
         )
     logger.debug(f"navigate location: {location}")
 
-    nav_args = ensure_dict(nav_args, "nav_args")
+    nav_context = ensure_dict(nav_context, "nav_context")
     form_properties = ensure_dict(form_properties, "form_properties")
 
     return navigate_with_location(
-        location, replace=replace, nav_args=nav_args, form_properties=form_properties
+        location,
+        replace=replace,
+        nav_context=nav_context,
+        form_properties=form_properties,
     )

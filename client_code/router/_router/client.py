@@ -111,7 +111,7 @@ def on_navigate():
     location = history.location
     logger.debug("navigating")
     key = location.key
-    nav_args = _navigate._current_nav_args
+    nav_context = _navigate._current_nav_context
     form_properties = _navigate._current_form_properties
 
     def is_stale():
@@ -137,14 +137,16 @@ def on_navigate():
     if match.key in CACHED_FORMS:
         form = CACHED_FORMS[match.key]
         context = get_context(form)
-        context._update(match=match, nav_args=nav_args, form_properties=form_properties)
+        context._update(
+            match=match, nav_context=nav_context, form_properties=form_properties
+        )
         # TODO: update the context probably
         logger.debug(f"found a cached form for this location: {form}")
         anvil.open_form(form)
         return
 
     context = RoutingContext(
-        match=match, nav_args=nav_args, form_properties=form_properties
+        match=match, nav_context=nav_context, form_properties=form_properties
     )
 
     route = match.route

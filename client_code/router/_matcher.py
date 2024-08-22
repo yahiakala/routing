@@ -7,11 +7,22 @@ from ._utils import trim_path, url_decode
 class Match:
     def __init__(self, location, params, query, route: Route) -> None:
         self.location = location
+        self.path = location.path
         self.params = params
+        self.hash = location.hash
         self.query = query
         self.route = route
-        self.deps = route.loader_deps(location=location, params=params, query=query)
-        self.key = f"{self.location.path}:{json.dumps(self.deps, sort_keys=True)}"
+        self.deps = route.loader_deps(
+            path=self.path, params=params, query=query, hash=self.hash
+        )
+        if not isinstance(self.deps, dict):
+            raise TypeError("loader_deps must return a dict")
+        try:
+            json_deps = json.dumps(self.deps, sort_keys=True)
+        except Exception:
+            raise TypeError("loader_deps must return a json serializable dict")
+
+        self.key = f"{self.path}:{json_deps}"
 
 
 def get_segments(path):

@@ -78,7 +78,7 @@ nav_props = {
     # "search": {"name": "search", "type": "string", "group": "navigation"},
     "params": {"name": "params", "type": "object", "group": "navigation"},
     "hash": {"name": "hash", "type": "string", "group": "navigation"},
-    "nav_args": {"name": "nav_args", "type": "object", "group": "navigation"},
+    "nav_context": {"name": "nav_context", "type": "object", "group": "navigation"},
     "form_properties": {
         "name": "form_properties",
         "type": "object",
@@ -117,7 +117,7 @@ class LinkMixinCommon(Component):
                 logger.debug(f"NavLink clicked, navigating to {self._location}")
                 navigate_with_location(
                     self._location,
-                    nav_args=self.nav_args,
+                    nav_context=self.nav_context,
                     form_properties=self.form_properties,
                 )
             else:
@@ -148,13 +148,13 @@ class LinkMixinCommon(Component):
         pass
 
     @property
-    def nav_args(self):
-        return self._props.get("nav_args")
+    def nav_context(self):
+        return self._props.get("nav_context")
 
-    @nav_args.setter
-    def nav_args(self, value):
-        value = ensure_dict(value, "nav_args")
-        self._props["nav_args"] = value
+    @nav_context.setter
+    def nav_context(self, value):
+        value = ensure_dict(value, "nav_context")
+        self._props["nav_context"] = value
 
     @property
     def form_properties(self):
