@@ -89,7 +89,7 @@ nav_props = {
 active_props = {
     "active": {"name": "active", "type": "boolean", "important": True},
     "exact_path": {"name": "exact_path", "type": "boolean", "group": "active"},
-    "exact_search": {"name": "exact_search", "type": "boolean", "group": "active"},
+    "exact_query": {"name": "exact_query", "type": "boolean", "group": "active"},
     "exact_hash": {"name": "exact_hash", "type": "boolean", "group": "active"},
 }
 
@@ -220,12 +220,12 @@ class LinkMixinCommon(Component):
         self._props["exact_path"] = value
 
     @property
-    def exact_search(self):
-        return self._props.get("exact_search")
+    def exact_query(self):
+        return self._props.get("exact_query")
 
-    @exact_search.setter
-    def exact_search(self, value):
-        self._props["exact_search"] = value
+    @exact_query.setter
+    def exact_query(self, value):
+        self._props["exact_query"] = value
 
     @property
     def exact_hash(self):

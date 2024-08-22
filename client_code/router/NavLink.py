@@ -39,7 +39,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
         hash="",
         nav_context=None,
         exact_path=False,
-        exact_search=False,
+        exact_query=False,
         exact_hash=False,
         **properties,
     ):
@@ -52,7 +52,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
             hash=hash,
             nav_context=nav_context,
             exact_path=exact_path,
-            exact_search=exact_search,
+            exact_query=exact_query,
             exact_hash=exact_hash,
             **properties,
         )
@@ -77,7 +77,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
             active = False
         elif self.exact_path and curr_context.path != location.path:
             active = False
-        elif self.exact_search and curr_context.query != self.query:
+        elif self.exact_query and curr_context.query != self.query:
             active = False
         elif self.exact_hash and curr_context.hash != location.hash:
             active = False
