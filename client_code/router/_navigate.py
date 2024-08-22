@@ -30,6 +30,7 @@ def clean_path(path, params):
             path += "/" + url_encode(str(value))
 
     if leading_dots:
+        # remove the leasing slash
         path = path[1:]
 
     return path

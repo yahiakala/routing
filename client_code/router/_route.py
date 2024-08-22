@@ -21,7 +21,7 @@ def _create_server_route(cls):
     if path is None:
         return
 
-    @anvil.server.route("/" + path)
+    @anvil.server.route(path)
     def route_handler(*args, **kwargs):
         request = anvil.server.request
         path = request.path
@@ -126,8 +126,19 @@ class Route:
 
     def __init_subclass__(cls) -> None:
         if cls.path is not None:
-            cls.path = trim_path(cls.path)
-            cls.segments = Segment.from_path(cls.path)
+            if not isinstance(cls.path, str):
+                raise TypeError("path must be a string")
+
+            trimmed_path = trim_path(cls.path)
+            cls.segments = Segment.from_path(trimmed_path)
+            if trimmed_path.startswith("."):
+                raise ValueError("Route path cannot be relative")
+
+            if not trimmed_path.startswith("/"):
+                cls.path = "/" + trimmed_path
+            else:
+                cls.path = trimmed_path
+
             sorted_routes.append(cls())
 
         server_fn = cls.__dict__.get("server_fn")
