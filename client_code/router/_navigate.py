@@ -3,7 +3,6 @@ import json
 from anvil.history import Location, history
 
 from ._constants import NOT_FOUND
-from ._context import RoutingContext
 from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
@@ -122,6 +121,8 @@ def navigate(
         f"form_properties={form_properties!r}"
     )
     if context_or_path_or_url is not None:
+        from ._context import RoutingContext  # circular import
+
         if isinstance(context_or_path_or_url, RoutingContext):
             temp_location = context_or_path_or_url.location
         elif isinstance(context_or_path_or_url, str):

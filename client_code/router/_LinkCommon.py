@@ -97,6 +97,7 @@ all_props = {**nav_props, **active_props}
 
 ignore_props = ["href", *all_props]
 
+
 def filter_props(prop_list):
     return filter(lambda prop: prop["name"] not in ignore_props, prop_list)
 
