@@ -10,6 +10,7 @@ from ._LinkCommon import (
 )
 from ._router import navigation_emitter
 from ._segments import Segment
+from ._context import RoutingContext
 
 # This is just temporary to test using other nav links
 try:
@@ -68,21 +69,21 @@ class NavLink(DefaultLink, LinkMixinCommon):
             )
 
     def _on_navigate(self, **nav_args):
-        curr_location = history.location
+        curr_context: RoutingContext = RoutingContext._current
         location = self._location
         active = True
 
         if location is None:
             active = False
-        elif self.exact_path and curr_location.path != location.path:
+        elif self.exact_path and curr_context.path != location.path:
             active = False
-        elif self.exact_search and curr_location.search != location.search:
+        elif self.exact_search and curr_context.query != self.query:
             active = False
-        elif self.exact_hash and curr_location.hash != location.hash:
+        elif self.exact_hash and curr_context.hash != location.hash:
             active = False
-        elif curr_location.path != location.path:
+        elif curr_context.path != location.path:
             # check if the current location is a parent of the new location
-            curr_segments = Segment.from_path(curr_location.path)
+            curr_segments = Segment.from_path(curr_context.path)
             location_segments = Segment.from_path(location.path)
             if len(location_segments) > len(curr_segments):
                 active = False
