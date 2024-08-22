@@ -33,6 +33,7 @@ def get_context(form) -> RoutingContext:
         raise ValueError(f"No context for form {form}")
     return rv
 
+
 class _NavigationEmitter:
     def __init__(self):
         self._subscribers = set()
@@ -217,7 +218,9 @@ def on_navigate():
     form = route.form
     try:
         with ViewTransition():
-            rv = anvil.open_form(form, routing_context=context, **context.form_properties)
+            rv = anvil.open_form(
+                form, routing_context=context, **context.form_properties
+            )
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
             form_to_context.set(rv, context)

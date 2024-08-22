@@ -243,10 +243,10 @@ class LinkMixinCommon(Component):
         path_params = self.path_params
         search_params = self.search_params
         hash = self.hash
-        if not path:
-            # path must be explicitly set
-            self._href = self.href = None
-            return
+        # if not path:
+        #     # path must be explicitly set
+        #     self._href = self.href = None
+        #     return
 
         try:
             location = nav_args_to_location(
