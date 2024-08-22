@@ -35,6 +35,19 @@ def clean_path(path, path_params):
     return path
 
 
+def stringify_value(val):
+    if not isinstance(val, str):
+        return json.dumps(val, sort_keys=True)
+    
+    try:
+        # this way strings are flat like foo=bar
+        # and already jsonified strings are returned as is
+        val = json.loads(val)
+        return json.dumps(val)
+    except Exception:
+        return val
+
+
 def clean_search_params(search_params):
     if not search_params:
         return {}
@@ -42,7 +55,7 @@ def clean_search_params(search_params):
     real_search_params = {}
     keys = sorted(search_params.keys())
     for key in keys:
-        real_search_params[key] = json.dumps(search_params[key], sort_keys=True)
+        real_search_params[key] = stringify_value(search_params[key])
 
     return real_search_params
 
