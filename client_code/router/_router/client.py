@@ -141,6 +141,9 @@ def on_navigate():
             match=match, nav_context=nav_context, form_properties=form_properties
         )
         RoutingContext._current = context
+        logger.debug(f"cached form is already open: {form}")
+        if anvil.get_open_form() is form:
+            return
         # TODO: update the context probably
         logger.debug(f"found a cached form for this location: {form}")
         anvil.open_form(form)
