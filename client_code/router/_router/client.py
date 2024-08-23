@@ -132,23 +132,6 @@ def on_navigate():
     if match is None:
         raise Exception(f"No match {location}")
 
-    logger.debug(f"Match key {match.key}")
-
-    if match.key in CACHED_FORMS:
-        form = CACHED_FORMS[match.key]
-        context = get_context(form)
-        context._update(
-            match=match, nav_context=nav_context, form_properties=form_properties
-        )
-        RoutingContext._current = context
-        logger.debug(f"cached form is already open: {form}")
-        if anvil.get_open_form() is form:
-            return
-        # TODO: update the context probably
-        logger.debug(f"found a cached form for this location: {form}")
-        anvil.open_form(form)
-        return
-
     context = RoutingContext(
         match=match, nav_context=nav_context, form_properties=form_properties
     )
@@ -181,6 +164,28 @@ def on_navigate():
         return handle_error("error_form", e)
 
     RoutingContext._current = context
+
+    if match.key in CACHED_FORMS:
+        form = CACHED_FORMS[match.key]
+        cached_context = get_context(form)
+        cached_context._update(context)
+        RoutingContext._current = cached_context
+        logger.debug(f"cached form is already open: {form}")
+        if anvil.get_open_form() is form:
+            return
+        # TODO: update the context probably
+        logger.debug(f"found a cached form for this location: {form}")
+        anvil.open_form(form)
+        return
+
+    logger.debug(f"Match key {match.key}")
+    if prev_context is not None and match.key == prev_context.match.key:
+        form = anvil.get_open_form()
+        if form is not None and form_to_context.get(form) is prev_context:
+            prev_context._update(context)
+            logger.debug(f"navigation would return the same form: {form}")
+            return
+
     # TODO: emit an event when the context is set
 
     # TODO: decide what to do if only search params change or only hash changes
@@ -227,9 +232,10 @@ def on_navigate():
             rv = anvil.open_form(
                 form, routing_context=context, **context.form_properties
             )
+        form_to_context.set(rv, context)
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
-            form_to_context.set(rv, context)
+
     except Exception as e:
         return handle_error("error_form", e)
     # TODO: decide how to cache the form

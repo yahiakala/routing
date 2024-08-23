@@ -29,17 +29,17 @@ class RoutingContext:
         self._listeners = {}
         self._blockers = set()
 
-    def _update(self, match: Match, nav_context=None, form_properties=None):
-        self.match = match
-        self.deps = match.deps
-        self.nav_context = nav_context
-        self.form_properties = form_properties
-        self.location = match.location
-        self.path = match.path
-        self.params = match.params
-        self.query = match.query
-        self.route = match.route
-        self.hash = match.hash
+    def _update(self, context):
+        self.match = context.match
+        self.deps = context.match.deps
+        self.nav_context = context.nav_context
+        self.form_properties = context.form_properties
+        self.location = context.match.location
+        self.path = context.match.path
+        self.params = context.match.params
+        self.query = context.match.query
+        self.route = context.match.route
+        self.hash = context.match.hash
         # TODO: raise an event if the location has changed
 
     def _prevent_unload(self):
