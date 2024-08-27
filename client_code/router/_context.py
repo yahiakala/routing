@@ -1,4 +1,4 @@
-from ._cached import CACHED_DATA, CACHED_FORMS
+from ._invalidate import invalidate
 from ._loader import load_data
 from ._matcher import Match
 
@@ -75,15 +75,9 @@ class RoutingContext:
         for handler in self._listeners.get(event, []):
             handler(**kwargs)
 
-    def invalidate(self):
+    def invalidate(self, exact=False):
         # remove ourselves from cached from and cached data
-        key = self.match.key
-        CACHED_FORMS.pop(key, None)
-        CACHED_DATA.pop(key, None)
-
-        if self._current is not self:
-            return
-        return self._load_data()
+        invalidate(self, exact=exact)
 
     @property
     def data(self):
@@ -99,6 +93,12 @@ class RoutingContext:
 
     def _on_data_error(self, error):
         self._emit("data_error", error=error)
+    
+    def reload(self):
+        self.invalidate(exact=True)
+        if self._current is not self:
+            return
+        return self._load_data()
 
     def _load_data(self):
         from ._non_blocking import call_async

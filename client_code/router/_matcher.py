@@ -1,7 +1,7 @@
 import json
 
 from ._route import Route, sorted_routes
-from ._utils import trim_path, url_decode
+from ._utils import make_key, trim_path, url_decode
 
 
 class Match:
@@ -15,14 +15,7 @@ class Match:
         self.deps = route.loader_deps(
             path=self.path, params=params, query=query, hash=self.hash
         )
-        if not isinstance(self.deps, dict):
-            raise TypeError("loader_deps must return a dict")
-        try:
-            json_deps = json.dumps(self.deps, sort_keys=True)
-        except Exception:
-            raise TypeError("loader_deps must return a json serializable dict")
-
-        self.key = f"{self.path}:{json_deps}"
+        self.key = make_key(self.path, self.deps)
 
 
 def get_segments(path):

@@ -20,6 +20,9 @@ class CachedData:
 
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
+    
+    def invalidate(self):
+        self.fetched_at = datetime.min()
 
 
 _inital_request = True

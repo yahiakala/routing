@@ -1,0 +1,72 @@
+from ._cached import CACHED_DATA, CACHED_FORMS
+from ._context import RoutingContext
+from ._utils import decode_key, ensure_dict, make_key, valid_absolute_path
+
+
+def get_invalid_keys(start_path, start_deps):
+    keys = []
+
+    if start_path == "/":
+        start_parts = []
+    else:
+        start_parts = start_path.split("/")
+
+    for key in CACHED_DATA.keys():
+        path, deps = decode_key(key)
+        if path == "/":
+            parts = []
+        else:
+            parts = path.split("/")
+
+        if parts[: len(start_parts)] != start_parts:
+            continue
+
+        match = True
+        for dep_key in start_deps.keys():
+            if start_deps[dep_key] != deps[dep_key]:
+                match = False
+                break
+
+        if match:
+            keys.append(key)
+
+        return keys
+
+
+def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
+    if isinstance(context_or_path, RoutingContext):
+        path = context_or_path.path
+        deps = context_or_path.deps
+        if path is not None:
+            raise TypeError("cannot set named argument path if a first argument is set")
+        if deps is not None:
+            raise TypeError(
+                "cannot set named argument deps if a first argument is a RoutingContext"
+            )
+    else:
+        if context_or_path is not None:
+            if not isinstance(context_or_path, str):
+                raise TypeError("context_or_path must be a string or a Routing Context")
+            if path is not None:
+                raise TypeError(
+                    "cannot set named argument path if a first argument is set"
+                )
+            path = context_or_path
+        elif path is None:
+            raise TypeError("path must be set")
+
+        path = valid_absolute_path(path)
+        deps = ensure_dict(deps, "deps")
+
+    key = make_key(path, deps)
+
+    if exact:
+        keys = [make_key(path, deps)]
+
+    else:
+        keys = get_invalid_keys(path, deps)
+
+    for key in keys:
+        CACHED_FORMS.pop(key, None)
+        CACHED_DATA.pop(key, None)
+        # TODO - consider other behavior - like refetch, remove
