@@ -147,7 +147,7 @@ def on_navigate():
         if is_stale():
             return
         logger.debug(f"navigation error: {error}")
-        context.error = error
+        context.set_data(None, error)
 
         form = getattr(route, form_attr, None)
         if form is None:
