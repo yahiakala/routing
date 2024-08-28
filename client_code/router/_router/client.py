@@ -154,7 +154,7 @@ def on_navigate():
             raise error
 
         with ViewTransition():
-            anvil.open_form(form, context=context)
+            anvil.open_form(form, routing_context=context)
 
     try:
         route.before_load(**context._loader_args)
