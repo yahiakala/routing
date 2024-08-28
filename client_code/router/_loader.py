@@ -111,7 +111,7 @@ def load_data_promise(context, force=False):
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
-            data_promise = cached.data
+            data_promise = [cached.data, None]
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
                 logger.debug(
