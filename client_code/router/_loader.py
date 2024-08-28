@@ -45,12 +45,12 @@ def load_data_promise(context, force=False):
     @report_exceptions
     def on_result(result):
         data, error = result
+        clean_up_inflight()
 
         if error is not None:
             logger.debug(f"data load error: {error}")
+            # TODO: is this the right thing to do?
             context.set_data(None, error)
-            # raise error
-            # TODO: handle error
             return
         else:
             logger.debug(f"data loaded: {key}")
@@ -58,16 +58,6 @@ def load_data_promise(context, force=False):
             CACHED_DATA[key] = cached
             context.set_data(data)
 
-        clean_up_inflight()
-
-    def on_error(error):
-        # TODO: handle error
-        from ._context import RoutingContext
-
-        logger.debug(f"load error {key}: {error}")
-        if RoutingContext._current is not None:
-            if key == RoutingContext._current.match.key:
-                RoutingContext._current.data = None
 
     def wrapped_loader(retries=0, **loader_args):
         try:

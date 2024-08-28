@@ -101,6 +101,13 @@ class RoutingContext:
     def error(self):
         return self._error
 
+    def raise_events(self):
+        self._emit("data_loaded", data=self.data, error=self.error)
+        if self.error is not None:
+            self._emit("data_error", error=self.error)
+        self._emit("query_changed", query=self.query)
+        self._emit("hash_changed", hash=self.hash)
+
     def refetch(self):
         self.invalidate(exact=True)
         if self._current is not self:
