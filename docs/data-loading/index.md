@@ -42,6 +42,21 @@ In the above example, if a user goes directly to the url `/articles/123`, the in
 
 Note that during normal navigation, i.e. when the user clicks a link, we can take advantage of the `form_properties` attribute to ensure we do not load unnecessary data.
 
+```python
+class RowTemplate(RowTemplateTemplate):
+    def __init__(self, **properties):
+        self.init_components(**properties)
+
+    def on_button_click(self, **event_args):
+        router.navigate(
+            path="/articles/:id",
+            params={"id": self.item["id"]},
+            form_properties={"item": self.item}
+        )
+
+
+```
+
 **With a loader method**
 
 ```python
@@ -71,12 +86,30 @@ class ArticleForm(ArticleFormTemplate):
 
 ```
 
-In the above example, the `loader` method is called when the data is needed. If a user navigates directly to the url `/articles/123`, the initial page request will come in, the loader method will be called (on the server), and the user will be directed to the `ArticleForm` with the data already loaded. During normal navigation, i.e. when the user clicks a link, we can take advantage of the `nav_context` (or `form_properties`) attribute to ensure we do not load unnecessary data.
+In the above example, the `loader` method is called when the data is needed. If a user navigates directly to the url `/articles/123`, the initial page request will come in, the loader method will be called (on the server), and the user will be directed to the `ArticleForm` with the data already loaded. During normal navigation, i.e. when the user clicks a link, we can take advantage of the `nav_context` (or `form_properties`) attribute to ensure we do not load unnecessary data during client side navigation.
 
+```python
+
+class RowTemplate(RowTemplateTemplate):
+    def __init__(self, **properties):
+        self.init_components(**properties)
+
+    def on_button_click(self, **event_args):
+        router.navigate(
+            path="/articles/:id",
+            params={"id": self.item["id"]},
+            nav_context={"row": self.item}
+        )
+
+```
 
 ## Handling Errors
 
-TODO
+If the loader method raises an exception, the router will behave differently depending on the `cache_mode` attribute on the route.
+
+Regardless of the `cache_mode` attribute, if there is no data in the cache, and the loader method raises an exception, the router will call `anvil.open_form` on the matching route's error form. If there is no error form, the router will raise the exception.
+
+If there is a cached form or cached data, then the router will load the form using the cache. If the loader method raises an exception, the `router_context` will raise the `"data_loaded"` event with `data=None` and `error=<The Exception>`, as well as the `"data_error"` event.
 
 
 ## Invalidating Data
@@ -87,7 +120,7 @@ See [Invalidating Cache](/caching#invalidating-cache).
 
 When data is loading for the first time, a user can provide a loading form. This form will be shown during the initial data load, or subsequent data loads if using `NETWORK_FIRST` mode.
 
-The pending form is determined by the `Route.pending_form` attribute. When the data is loading, the  routing library will wait for the `pending_delay` seconds before showing the pending form. It will show the pending form for at least `pending_min` seconds.
+The pending form is determined by the `Route.pending_form` attribute. When the data is loading, the routing library will wait for the `pending_delay` seconds before showing the pending form. It will show the pending form for at least `pending_min` seconds.
 
 ```python
 from routing.router import Route
@@ -119,6 +152,3 @@ class LoadingForm(LoadingFormTemplate):
         self.loading_indicator.stop()
 
 ```
-
-
-

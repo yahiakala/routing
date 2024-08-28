@@ -85,10 +85,3 @@ from ...routes import AuthorRoute
 navigate(path=AuthorRoute.path, params={"id": 123})
 ```
 
-```python
-from routing.router import navigate
-from ...routes import AuthorRoute
-
-navigate(AuthorRoute, params={"id": 123})
-```
-

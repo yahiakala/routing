@@ -33,6 +33,8 @@ class IndexRoute(Route):
 class EnsureUserMixin:
     def before_load(self, **loader_args):
         if not anvil.users.get_user():
+            # Note this will make a server call
+            # so you may want to cache the call to anvil.users.get_user()
             raise Redirect(path="/login")
 
 class DashboardRoute(EnsureUserMixin, Route):

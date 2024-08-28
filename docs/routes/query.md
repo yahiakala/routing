@@ -21,10 +21,10 @@ from routing.router import navigate, RoutingContext
 
 class Dashboard(DashboardTemplate):
     def __init__(self, routing_context: RoutingContext, **properties):
-        self.routing_context = routing_context
-        self.routing_context.add_event_handler("query_changed", self.on_query_change)
-        self.set_tab_from_query()
         self.init_components(**properties)
+        self.routing_context = routing_context
+        routing_context.add_event_handler("query_changed", self.on_query_change)
+        routing_context.raise_init_events() # raises the query_changed event
 
     def set_tab_from_query(self, **event_args):
         query = self.routing_context.query

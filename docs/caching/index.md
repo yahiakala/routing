@@ -36,9 +36,6 @@ The data caching behavior is determined by the `cache_mode` attribute on the rou
 
     If there is a `loader` method, and there is no data in the cache, then the data will be loaded from the server before the form is instantiated.
 
-**TODO: data error behaviour**
-
-
 
 ### Network First
 

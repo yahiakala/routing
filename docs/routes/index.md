@@ -50,7 +50,7 @@ Adding the `RoutingContext` type definition will allow anvil to show autocomplet
 
 ## Caching Forms
 
-By default, the `open_form` will NOT cache the form. This means a new instance of the form will be created every time the user navigates to the route. If you want to cache the form, you can set the `cache_form` attribute to `True` on the route.
+By default, the routing library will NOT cache forms. This means a new instance of the form will be created every time the user navigates to the route. If you want to cache the form, you can set the `cache_form` attribute to `True` on the route.
 
 You can set this attribute on specific routes.
 
@@ -89,6 +89,24 @@ Route.not_found_form = "Pages.NotFound"
 
 ```
 
+
+```python
+# Pages.NotFound
+import anvil
+
+class NotFound(NotFoundTemplate):
+    def __init__(self, routing_context: RoutingContext, **properties):
+        self.init_components(**properties)
+        self.routing_context = routing_context
+        self.label.text = f"404: No route found for {routing_context.path!r}"
+
+    def form_show(self, **event_args):
+        if anvil.app.environment.name.startswith("Debug"):
+            raise self.routing_context.error
+
+```
+
+
 ## Error Form
 
 When a route throws an exception, the router will call `anvil.open_form` on the matching route's error form.
@@ -110,6 +128,23 @@ class IndexRoute(Route):
 
 ```
 
+```python
+# Pages.Error
+import anvil
+
+class Error(ErrorTemplate):
+    def __init__(self, routing_context: RoutingContext, **properties):
+        self.init_components(**properties)
+        self.routing_context = routing_context
+        self.label.text = (
+            f"Error when navigating to {routing_context.path!r}, got {routing_context.error!r}"
+        )
+
+    def form_show(self, **event_args):
+        if anvil.app.environment.name.startswith("Debug"):
+            raise self.routing_context.error
+
+```
 
 ## Ordering Routes
 

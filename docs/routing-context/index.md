@@ -50,7 +50,7 @@ class IndexTemplate(IndexTemplate):
 
 `error`
 
-: The error that occurred when loading the data, or the current route. This is particularly useful when displaying error messages in your error form.
+: The error that occurred when loading the form or loading the data. This is particularly useful when displaying error messages in your error form.
 
 `data`
 
@@ -80,7 +80,7 @@ The `RoutingContext` instance will emit events when the route changes.
 
 `data_loaded`
 
-: Emitted when the data has been loaded.
+: Emitted when the data has been loaded, or when the data has an error. To determine if the data is loaded successfully, check the `error` property is `None`.
 
 `data_error`
 
@@ -93,3 +93,20 @@ The `RoutingContext` instance will emit events when the route changes.
 `hash_changed`
 
 : Emitted when the hash changes.
+
+
+## Methods
+
+`invalidate(exact=False)`
+
+: Invalidates any cached data or forms for this routing context. If `exact` is `True`, then the path and deps must match exactly. By default this is `False`. If `False` then any path or deps that are a subset of path and deps arguments will be invalidated.
+
+`refetch()`
+
+: Invalidates the data for this routing context (with exact=True) and then loads the data again.
+
+`raise_init_events()`
+
+: Raises the `data_loaded`, `data_loading`, `data_error`, `query_changed` and `hash_changed` events.
+This event is useful during instantiation of the form. First setup your event handlers, then call `raise_init_events()`.
+

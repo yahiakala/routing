@@ -70,12 +70,12 @@ You should now be able to run the app and navigate to different pages by changin
 In `Layouts.Main`, include a `SideBar` and add 3 `NavLink` components.
 (The `NavLink` component should come from the routing library)
 
-In the designer, set the `text` and `path` properties of the `NavLink`.
+Ensure the nav links have the following properties set:
 
--   The first `NavLink` should have the `text="Home"` and the `path="/"`.
--   The second `NavLink` should have the `text="About"` and the `path="/about"`.
--   The third `NavLink` should have the `text="Contact"` and the `path="/contact"`.
+-   The first `NavLink` should have the `path="/"`.
+-   The second `NavLink` should have the `path="/about"`.
+-   The third `NavLink` should have the `path="/contact"`.
 
 Add a title `slot` to the `Layouts.Main` form. And inside `Pages.Index`, add a label component to the title slot with the `text` property set to `"Home"`. Do the same for `Pages.About` and `Pages.Contact`.
 
-You should now be able to navigate using the side bar nav links. As you navigate to the different pages, you should see that the title of the page changes.
+You should now be able to navigate using the side bar nav links. 
