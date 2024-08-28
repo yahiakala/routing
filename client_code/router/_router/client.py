@@ -223,7 +223,9 @@ def on_navigate():
         sleep(pending_min)
 
     try:
-        data = await_promise(data_promise)
+        data, error = await_promise(data_promise)
+        if error is not None:
+            raise error
     except NotFound as e:
         return handle_error("not_found_form", e)
     except Exception as e:
