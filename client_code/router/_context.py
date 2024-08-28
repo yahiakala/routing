@@ -101,7 +101,7 @@ class RoutingContext:
     def error(self):
         return self._error
 
-    def raise_events(self):
+    def raise_init_events(self):
         self._emit("data_loaded", data=self.data, error=self.error)
         if self.error is not None:
             self._emit("data_error", error=self.error)
