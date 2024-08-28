@@ -21,14 +21,10 @@ class CachedData:
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
 
-    def invalidate(self):
-        self.fetched_at = datetime.min()
-
 
 _initial_request = True
 
 
-# @report_exceptions
 def load_data_promise(context, force=False):
     match = context.match
     global _initial_request
@@ -40,18 +36,15 @@ def load_data_promise(context, force=False):
     key = match.key
     logger.debug(f"loading data for {key}")
 
-    def clean_up_inflight(result=None):
+    def clean_up_inflight():
         try:
             del IN_FLIGHT_DATA[key]
         except KeyError:
             pass
 
-        return result
-
     @report_exceptions
     def on_result(result):
         data, error = result
-        print("on_result", result, data, error)
 
         if error is not None:
             logger.debug(f"data load error: {error}")
@@ -112,7 +105,7 @@ def load_data_promise(context, force=False):
 
         if is_initial:
             # data came in with startup data
-            data_promise = cached.data
+            data_promise = [cached.data, None]
         if mode == NETWORK_FIRST:
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")
             data_promise = create_in_flight_data_promise()
