@@ -12,8 +12,9 @@ from .._exceptions import NotFound, Redirect
 from .._loader import CACHED_DATA, load_data_promise
 from .._logger import logger
 from .._matcher import get_match
+from .._meta import update_meta_tags
 from .._navigate import navigate
-from .._utils import TIMEOUT, Promise, await_promise, timeout
+from .._utils import TIMEOUT, Promise, await_promise, ensure_dict, timeout
 from .._view_transition import ViewTransition
 
 waiting = False
@@ -137,6 +138,7 @@ def on_navigate():
     )
 
     route = match.route
+
     pending_form = route.pending_form
     pending_delay = route.pending_delay
     pending_min = route.pending_min
@@ -155,7 +157,7 @@ def on_navigate():
             anvil.open_form(form, context=context)
 
     try:
-        route.before_load(context=context)
+        route.before_load(**context._loader_args)
     except Redirect as r:
         return navigate(**r.__dict__, replace=True)
     except NotFound as e:
@@ -163,8 +165,14 @@ def on_navigate():
     except Exception as e:
         return handle_error("error_form", e)
 
+    # Optimistically update meta tags before opening the form
+    meta = route.meta(**context._loader_args)
+    ensure_dict(meta, "meta")
+    update_meta_tags(meta)
+
     RoutingContext._current = context
 
+    # TODO: how does cached forms work with cache modes for data?
     if match.key in CACHED_FORMS:
         form = CACHED_FORMS[match.key]
         cached_context = get_context(form)

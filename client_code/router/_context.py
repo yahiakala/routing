@@ -106,3 +106,15 @@ class RoutingContext:
         ac = call_async(load_data, self, force=True)
         self._emit("data_loading")
         return ac
+
+    @property
+    def _loader_args(self):
+        return {
+            "location": self.location,
+            "path": self.path,
+            "query": self.query,
+            "params": self.params,
+            "deps": self.deps,
+            "nav_context": self.nav_context,
+            "form_properties": self.form_properties,
+        }

@@ -20,26 +20,23 @@ class CachedData:
 
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
-    
+
     def invalidate(self):
         self.fetched_at = datetime.min()
 
 
-_inital_request = True
+_initial_request = True
 
 
 # @report_exceptions
 def load_data_promise(context, force=False):
     match = context.match
-    global _inital_request
-    is_initial = _inital_request
-    _inital_request = False
+    global _initial_request
+    is_initial = _initial_request
+    _initial_request = False
 
     route = match.route
     location = match.location
-    query = match.query
-    params = match.params
-    deps = match.deps
     key = match.key
     logger.debug(f"loading data for {key}")
 
@@ -89,17 +86,7 @@ def load_data_promise(context, force=False):
             logger.debug(f"{key} data already loading in flight")
             return IN_FLIGHT_DATA[key]
 
-        async_call = call_async(
-            wrapped_loader,
-            location=location,
-            path=location.path,
-            query=query,
-            params=params,
-            deps=deps,
-            # router_context=context,
-            nav_context=context.nav_context,
-            from_properties=context.form_properties,
-        )
+        async_call = call_async(wrapped_loader, **context._loader_args)
         async_call.on_result(on_result)
         async_call.on_error(on_error)
 

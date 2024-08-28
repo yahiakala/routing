@@ -2,6 +2,7 @@ import anvil.server
 
 from ._constants import NETWORK_FIRST
 from ._exceptions import NotFound, Redirect
+from ._meta import default_description, default_title
 from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
 from ._utils import encode_query_params, trim_path
@@ -39,7 +40,7 @@ def _create_server_route(cls):
         cache = {}
 
         try:
-            route.before_load()
+            route.before_load(path=path, query=query, params=params, hash=match.hash)
         except Redirect as r:
             location = nav_args_to_location(
                 path=r.path,
@@ -111,6 +112,9 @@ class Route:
 
     def loader(self, **loader_args):
         return None
+
+    def meta(self, **loader_args):
+        return {"title": default_title, "description": default_description}
 
     def parse_params(self, params):
         return params
