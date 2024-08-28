@@ -4,7 +4,7 @@ from ._matcher import Match
 
 
 class RoutingContext:
-    _current = None
+    _current: "RoutingContext" = None
     _events = [
         "data_loaded",
         "data_loading",

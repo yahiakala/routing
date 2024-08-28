@@ -75,7 +75,6 @@ nav_props = {
         "important": True,
     },
     "query": {"name": "query", "type": "object", "group": "navigation"},
-    # "search": {"name": "search", "type": "string", "group": "navigation"},
     "params": {"name": "params", "type": "object", "group": "navigation"},
     "hash": {"name": "hash", "type": "string", "group": "navigation"},
     "nav_context": {"name": "nav_context", "type": "object", "group": "navigation"},
@@ -122,7 +121,7 @@ class LinkMixinCommon(Component):
                     form_properties=self.form_properties,
                 )
             else:
-                logger.debug("NavLink clicked, but with invalid path, search or hash")
+                logger.debug("NavLink clicked, but with invalid path, query or hash")
         elif self._form is not None:
             start_editing_form(self, self._form)
 
@@ -184,15 +183,6 @@ class LinkMixinCommon(Component):
         self._props["query"] = value
         self._set_href()
 
-    # @property
-    # def search(self):
-    #     return self._props.get("search")
-
-    # @search.setter
-    # def search(self, value):
-    #     self._props["search"] = value
-    #     self._set_href()
-
     @property
     def params(self):
         return self._props.get("params")
@@ -240,7 +230,6 @@ class LinkMixinCommon(Component):
         self._form = None
 
         path = self.path or None
-        # search = self.search
         params = self.params
         query = self.query
         hash = self.hash
@@ -261,9 +250,6 @@ class LinkMixinCommon(Component):
                 raise e
             else:
                 location = Location(path=path, hash=hash)
-        # if not location.search and search:
-        #     # search was set by the search attribute rather than the query
-        #     location = Location(path=location.path, search=search, hash=location.hash)
 
         self._location = location
 

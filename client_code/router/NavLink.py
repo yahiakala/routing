@@ -1,6 +1,6 @@
 from anvil.designer import in_designer
-from anvil.history import history
 
+from ._context import RoutingContext
 from ._LinkCommon import (
     DefaultLink,
     LinkMixinCommon,
@@ -10,7 +10,6 @@ from ._LinkCommon import (
 )
 from ._router import navigation_emitter
 from ._segments import Segment
-from ._context import RoutingContext
 
 # This is just temporary to test using other nav links
 try:
