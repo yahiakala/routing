@@ -49,11 +49,18 @@ def load_data_promise(context, force=False):
         return result
 
     @report_exceptions
-    def on_result(data):
-        logger.debug(f"data loaded: {key}")
-        cached = CachedData(data=data, location=location, mode=route.cache_mode)
-        CACHED_DATA[key] = cached
-        context.data = data
+    def on_result(result):
+        data, error = result
+        if error is not None:
+            logger.debug(f"data load error: {error}")
+            raise error
+            # TODO: handle error
+            return
+        else:
+            logger.debug(f"data loaded: {key}")
+            cached = CachedData(data=data, location=location, mode=route.cache_mode)
+            CACHED_DATA[key] = cached
+            context.data = data
 
         clean_up_inflight()
 
@@ -88,7 +95,6 @@ def load_data_promise(context, force=False):
 
         async_call = call_async(wrapped_loader, **context._loader_args)
         async_call.on_result(on_result)
-        async_call.on_error(on_error)
 
         data_promise = async_call.promise
         IN_FLIGHT_DATA[key] = data_promise

@@ -1,4 +1,4 @@
-from functools import partial
+from functools import partial, wraps
 
 from anvil.js import report_exceptions as _report
 from anvil.js.window import Function, Promise
@@ -60,57 +60,42 @@ return [Deferred, AsyncCall];
 
 Deferred, _JsAsyncCall = Function(_JS_Objects)()
 
+class Result:
+    def __init__(self, ok=None, error=None):
+        self.ok = ok
+        self.error = error
+    
+    def __iter__(self):
+        return [self.ok, self.error].__iter__()
+    
 
-class _Result:
-    # dicts may come back as javascript object literals
-    # so wrap the results in a more opaque python object
-    def __init__(self, value):
-        self.value = value
+def wrap_result(fn):
 
-    @staticmethod
-    def wrap(fn):
-        def wrapper():
-            return _Result(fn())
+    @wraps(fn)
+    def wrapper(*args, **kws):
+        try:
+            result = fn(*args, **kws)
+        except Exception as e:
+            return Result(error=e)
+        return wrap_result(result)
 
-        return wrapper
-
-    @staticmethod
-    def unwrap(fn):
-        def unwrapper(res):
-            return fn(res.value)
-
-        return unwrapper
-
+    return wrapper
 
 class _AsyncCall:
     def __init__(self, fn, *args, **kws):
         self._fn = partial(fn, *args, **kws)
-        self._async_call = _JsAsyncCall(_Result.wrap(self._fn))
-
-    def _check_pending(self):
-        if self._async_call.status == "PENDING":
-            raise RuntimeError("the async call is still pending")
+        self._async_call = _JsAsyncCall(wrap_result(self._fn))
 
     @property
     def promise(self):
-        # annoyingly if the result is a dict then the result here will be a proxyobject
-        def promise_handler(resolve, reject):
-            return self._async_call.promise.then(_Result.unwrap(resolve), reject)
+        return self._async_call.promise
 
-        return Promise(promise_handler)
-
-    def on_result(self, result_handler, error_handler=None):
-        error_handler = error_handler and _report(error_handler)
-        result_handler = _Result.unwrap(_report(result_handler))
-        self._async_call.on_result(result_handler, error_handler)
-        return self
-
-    def on_error(self, error_handler):
-        self._async_call.on_error(_report(error_handler))
+    def on_result(self, result_handler):
+        self._async_call.on_result(result_handler)
         return self
 
     def await_result(self):
-        return self._async_call.await_result().value
+        return self._async_call.await_result()
 
     def __repr__(self):
         fn_repr = repr(self._fn).replace("functools.partial", "")
