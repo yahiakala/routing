@@ -1,5 +1,4 @@
 from ._cached import CACHED_DATA, CACHED_FORMS
-from ._context import RoutingContext
 from ._utils import decode_key, ensure_dict, make_key, valid_absolute_path
 
 
@@ -34,6 +33,8 @@ def get_invalid_keys(start_path, start_deps):
 
 
 def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
+    from ._context import RoutingContext
+
     if isinstance(context_or_path, RoutingContext):
         path = context_or_path.path
         deps = context_or_path.deps
