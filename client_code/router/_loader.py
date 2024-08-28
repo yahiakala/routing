@@ -50,6 +50,7 @@ def load_data_promise(context, force=False):
 
     @report_exceptions
     def on_result(result):
+        print("on_result", result)
         data, error = result
         if error is not None:
             logger.debug(f"data load error: {error}")
