@@ -30,6 +30,8 @@ class RoutingContext:
         self._blockers = set()
 
     def _update(self, context):
+        prev_match = self.match
+
         self.match = context.match
         self.deps = context.match.deps
         self.nav_context = context.nav_context
@@ -40,7 +42,11 @@ class RoutingContext:
         self.query = context.match.query
         self.route = context.match.route
         self.hash = context.match.hash
-        # TODO: raise an event if the location has changed
+
+        if prev_match.query != self.query:
+            self.emit("query_changed", query=self.query)
+        if prev_match.hash != self.hash:
+            self.emit("hash_changed", hash=self.hash)
 
     def _prevent_unload(self):
         for blocker in self._blockers:
@@ -78,23 +84,24 @@ class RoutingContext:
     def invalidate(self, exact=False):
         # remove ourselves from cached from and cached data
         invalidate(self, exact=exact)
+    
+
+    def set_data(self, data, error=None):
+        self._data = data
+        self._error = error
+        self._emit("data_loaded", data=data, error=error)
+        if error is not None:
+            self._emit("data_error", error=error)
 
     @property
     def data(self):
         return self._data
 
-    @data.setter
-    def data(self, data):
-        self._data = data
-        self._emit("data_loaded", data=data)
-
-    def _on_data_loaded(self, data):
-        self.data = data
-
-    def _on_data_error(self, error):
-        self._emit("data_error", error=error)
+    @property
+    def error(self):
+        return self._error
     
-    def reload(self):
+    def refetch(self):
         self.invalidate(exact=True)
         if self._current is not self:
             return

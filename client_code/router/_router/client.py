@@ -194,14 +194,6 @@ def on_navigate():
             logger.debug(f"navigation would return the same form: {form}")
             return
 
-    # TODO: emit an event when the context is set
-
-    # TODO: decide what to do if only search params change or only hash changes
-    # if only search params change, we need to load data
-    # but the form might be using navigate_on_search_change=False
-    # so we need to emit the search_changed event
-    # if hash changes, just emit the hash_changed event
-
     data_promise = load_data_promise(context)
 
     try:
@@ -223,7 +215,7 @@ def on_navigate():
         sleep(pending_min)
 
     try:
-        data, error = await_promise(data_promise)
+        _, error = await_promise(data_promise)
         if error is not None:
             raise error
     except NotFound as e:
@@ -233,8 +225,6 @@ def on_navigate():
 
     if is_stale():
         return
-
-    context.data = data
 
     form = route.form
     try:

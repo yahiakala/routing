@@ -48,14 +48,15 @@ def load_data_promise(context, force=False):
 
         if error is not None:
             logger.debug(f"data load error: {error}")
-            raise error
+            context.set_data(None, error)
+            # raise error
             # TODO: handle error
             return
         else:
             logger.debug(f"data loaded: {key}")
             cached = CachedData(data=data, location=location, mode=route.cache_mode)
             CACHED_DATA[key] = cached
-            context.data = data
+            context.set_data(data)
 
         clean_up_inflight()
 
