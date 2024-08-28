@@ -77,7 +77,7 @@ def wrap_result(fn):
             result = fn(*args, **kws)
         except Exception as e:
             return Result(error=e)
-        return wrap_result(result)
+        return Result(result)
 
     return wrapper
 
