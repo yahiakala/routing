@@ -24,7 +24,7 @@ class RoutingContext:
         self.route = match.route
         self.nav_context = nav_context
         self.form_properties = form_properties
-        self.error = None
+        self._error = None
         self._data = data
         self._listeners = {}
         self._blockers = set()
@@ -100,7 +100,7 @@ class RoutingContext:
     @property
     def error(self):
         return self._error
-    
+
     def refetch(self):
         self.invalidate(exact=True)
         if self._current is not self:
