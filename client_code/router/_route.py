@@ -36,7 +36,7 @@ def _create_server_route(cls):
         search = encode_query_params(request.query_params)
         location = Location(path=path, search=search, key="default")
         match = get_match(location=location)
-        logger.debug("serving route from the server")
+        logger.debug(f"serving route from the server: {location}")
         if match is None:
             raise Exception(f"No match for {location}")
 
@@ -66,7 +66,7 @@ def _create_server_route(cls):
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
         except Exception as e:
             # TODO: handle error on the client
-            logger.debug(f"error serving route from the server: {e!r}")
+            logger.debug(f"{location}: error serving route from the server: {e!r}")
             return LoadAppResponse(data={"cache": cache})
 
         try:

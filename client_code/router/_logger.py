@@ -8,6 +8,7 @@
 import sys
 from datetime import datetime as _datetime
 
+import anvil
 from anvil.history import history
 
 __version__ = "2.6.2"
@@ -110,7 +111,11 @@ class Logger:
 
 class RouterLogger(Logger):
     def get_format_params(self, **params):
-        location = history.location
+        if anvil.is_server_side():
+            location = "<server>"
+        else:
+            location = history.location
+
         return super().get_format_params(location=location, **params)
 
 
