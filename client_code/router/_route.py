@@ -1,7 +1,7 @@
 import anvil.server
 
 from ._constants import NETWORK_FIRST
-from ._exceptions import NotFound, Redirect
+from ._exceptions import Redirect
 from ._logger import logger
 from ._meta import default_description, default_title
 from ._navigate import nav_args_to_location, navigate
