@@ -2,6 +2,7 @@ import anvil.server
 
 from ._constants import NETWORK_FIRST
 from ._exceptions import NotFound, Redirect
+from ._logger import logger
 from ._meta import default_description, default_title
 from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
@@ -35,8 +36,9 @@ def _create_server_route(cls):
         search = encode_query_params(request.query_params)
         location = Location(path=path, search=search, key="default")
         match = get_match(location=location)
+        logger.debug("serving route from the server")
         if match is None:
-            raise Exception("No match")
+            raise Exception(f"No match for {location}")
 
         route = match.route
         query = match.query
@@ -54,6 +56,7 @@ def _create_server_route(cls):
                 params=r.params,
                 hash=r.hash,
             )
+            logger.debug(f"redirecting to {location}")
             url = (
                 anvil.server.get_app_origin()
                 + location.path
@@ -61,8 +64,9 @@ def _create_server_route(cls):
                 + location.hash
             )
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
-        except (NotFound, Exception):
+        except Exception as e:
             # TODO: handle error on the client
+            logger.debug(f"error serving route from the server: {e!r}")
             return LoadAppResponse(data={"cache": cache})
 
         try:
@@ -73,7 +77,8 @@ def _create_server_route(cls):
                 deps=deps,
             )
 
-        except (NotFound, Exception):
+        except Exception as e:
+            logger.debug(f"error loading data for {location}, got {e}")
             # TODO: handle error on the client
             return LoadAppResponse(data={"cache": cache})
 
