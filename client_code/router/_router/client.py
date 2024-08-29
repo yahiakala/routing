@@ -123,7 +123,7 @@ def on_navigate():
 
     prev_context = RoutingContext._current
     if prev_context is not None:
-        with NavigationBlocker():
+        with NavigationBlocker(True):
             if prev_context._prevent_unload():
                 logger.debug(f"navigation blocked by {prev_context.location}")
                 stop_unload()

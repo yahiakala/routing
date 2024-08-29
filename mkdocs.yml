@@ -6,12 +6,6 @@ markdown_extensions:
   - toc:
       permalink: true
   - def_list
-
-nav:
-  - Overview: index.md
-  - Quick Start: quick-start.md
-  - API Reference:
-    - Route Class: routes/index.md
-    - Navigation: navigating/index.md
-    - Data Loading: data-loading/index.md
-    - Caching: caching/index.md
+plugins:
+  - search
+  - mkdocs-nav-weight

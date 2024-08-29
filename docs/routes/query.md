@@ -26,7 +26,7 @@ class Dashboard(DashboardTemplate):
         routing_context.add_event_handler("query_changed", self.on_query_change)
         routing_context.raise_init_events() # raises the query_changed event
 
-    def set_tab_from_query(self, **event_args):
+    def on_query_change(self, **event_args):
         query = self.routing_context.query
         self.tab_1.value = query.get("tab", "income")
 
@@ -96,7 +96,9 @@ e.g. `?foo=bar&baz=1&eggs=true` will be decoded as `{"foo": "bar", "baz": 1, "eg
 
     If you have numbers in your query parameters, but these should actually be strings, you can convert these to `str` in your `parse_query` method.
 
-For nested, json-able objects, i.e. `lists` and `dicts`, the routing library will encode the object as a json string.
+For nested, json-able objects, i.e. `lists` and `dicts`, the routing library will encode the object as a json string in the query string.
+
+e.g. `foo=%5B1%2C+%22a%22%2C+true%5D'` will be decoded as `{"foo": [1, "a", true]}`. 
 
 ## Loading a new instance of a form
 
@@ -104,7 +106,7 @@ By default the routing library will not load a new instance of a form when the q
 
 If you wish to load a new instance of a form when certain query parameters change, you can use the `loader_deps` method.
 
-This method should return a `dict` of dependencies, which determine when a form and it's data should be loaded. The return value from `loader_deps` should be json-able.
+This method should return a `dict` of dependencies, which determine when a form and its data should be loaded. The return value from `loader_deps` should be json-able.
 
 
 ```python

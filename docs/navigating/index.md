@@ -1,10 +1,24 @@
+---
+weight: -9
+---
+
 # Navigation
 
-There are two ways to navigate. The first is with the `navigate` and the second is with a [navigation component](/navigating/Navigation%20Components).
+There are two ways to navigate. The first is with the `navigate` function, and the second is with a [navigation component](/navigating/Navigation%20Components).
 
 ## Navigating with `navigate`
 
 The `navigate` function is a function that you will likely call from a click handler.
+
+```python
+
+from routing.router import navigate
+
+class Form(FormTemplate):
+    def nav_button_click(self, **event_args):
+        navigate(path="/articles/:id", params={"id": 123})
+
+```
 
 ### Call Signatures
 
@@ -16,7 +30,6 @@ The `navigate` function is a function that you will likely call from a click han
     _the first argument ca be a url_
 -   `navigate(routing_context, **kws)`
     _the first argument can be a routing context_
-
 
 ### Arguments
 
@@ -47,7 +60,6 @@ The `navigate` function is a function that you will likely call from a click han
 `form_properties`
 
 : The form properties to pass to the form when it is opened.
-
 
 ### Use of `form_properties`
 
@@ -113,5 +125,3 @@ class FooForm(FooFormTemplate):
             router.navigate(path="/")
 
 ```
-
-

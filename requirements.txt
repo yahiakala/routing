@@ -3,3 +3,4 @@ pytest
 promise
 async_promises
 mkdocs
+mkdocs-nav-weight

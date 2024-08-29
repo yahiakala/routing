@@ -81,14 +81,14 @@ class Route:
     path = None
     segments = []
     form = None
-    stale_time = 0
-    pending_form = None
-    pending_min = 0.5
-    pending_delay = 1
-    cache_mode = NETWORK_FIRST
-    cache_form = False
     error_form = None
     not_found_form = None
+    pending_form = None
+    pending_delay = 1
+    pending_min = 0.5
+    cache_mode = NETWORK_FIRST
+    stale_time = 0
+    cache_form = False
     server_fn = None
     server_silent = False
 

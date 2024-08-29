@@ -86,7 +86,7 @@ class ArticleForm(ArticleFormTemplate):
 
 ```
 
-In the above example, the `loader` method is called when the data is needed. If a user navigates directly to the url `/articles/123`, the initial page request will come in, the loader method will be called (on the server), and the user will be directed to the `ArticleForm` with the data already loaded. During normal navigation, i.e. when the user clicks a link, we can take advantage of the `nav_context` (or `form_properties`) attribute to ensure we do not load unnecessary data during client side navigation.
+In the above example, the `loader` is called whenever the user navigates. If a user navigates directly to the url `/articles/123`, the initial page request will come in, the loader method will be called (on the server), and the user will be directed to the `ArticleForm` with the data already loaded. During normal navigation, i.e. when the user clicks a link, we can take advantage of the `nav_context` (or `form_properties`) attribute to ensure we do not make unnecessary server calls during client side navigation.
 
 ```python
 

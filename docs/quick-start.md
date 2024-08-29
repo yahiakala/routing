@@ -1,3 +1,6 @@
+---
+weight: -9.1
+---
 # Quick Start
 
 ## From a Clone

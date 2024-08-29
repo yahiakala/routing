@@ -1,3 +1,6 @@
+---
+weight: -8
+---
 # Route Class
 
 The `Route` class is used to define routes for your app. When a user navigates to a path, the router will look for a matching route. The router will call `anvil.open_form` on the matching route's form.
@@ -30,49 +33,62 @@ AboutRoute = Route.create(path="/about", form="Pages.About")
 ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 ```
 
-## Form instantiation
+## Route Attributes
 
-When a form is instantiated, the router will pass a `routing_context` property to the form. This property holds information about the current route and the current navigation context.
+`path`
+: The path to navigate to. e.g. `/`, `/articles` or `/articles/:id`.
 
-```python
-from ._anvil_designer import IndexTemplate
+`form`
+: The form to open when the route is matched. e.g. `Pages.Index`.
 
-from routing.router import RoutingContext
+`error_form (optional)`
+: The form to open when an error occurs. e.g. `Pages.Error`.
 
-class IndexTemplate(IndexTemplate):
-    def __init__(self, routing_context: RoutingContext, **properties):
-        self.routing_context = routing_context
-        self.init_components(**properties)
+`not_found_form (optional)`
+: The form to open when the route is not found. e.g. `Pages.NotFound`.
 
-```
+`pending_form (optional)`
+: The form to open when the data is loading. e.g. `Pages.Loading`.
 
-Adding the `RoutingContext` type definition will allow anvil to show autocompletion for the `routing_context` property.
+`pending_delay=1`
+: The delay before showing the pending form when the data is loading.
 
-## Caching Forms
+`pending_min=0.5`
+: The minimum time to show the pending form when the data is loading.
 
-By default, the routing library will NOT cache forms. This means a new instance of the form will be created every time the user navigates to the route. If you want to cache the form, you can set the `cache_form` attribute to `True` on the route.
+`cache_mode=NETWORK_FIRST`
+: The cache mode to use when loading data. e.g. `NETWORK_FIRST` or `STALE_WHILE_REVALIDATE`.
 
-You can set this attribute on specific routes.
+`stale_time=0`
+: The time in seconds that determines when the data is stale.
 
-```python
-class IndexRoute(Route):
-    path = "/"
-    form = "Pages.Index"
-    cache_form = True
-```
+`server_fn (optional)`
+: The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `loader` method. Note this is optional and equivalent to defining a `loader` method the calls the same server function.
 
-Or you can set this attribute for all routes by setting the `cache_form` attribute on the `Route` class.
+`server_silent=False`
+: If `True` then the server function will be called using `anvil.server.call_s`. By default this is `False`.
 
-```python
-from routing.router import Route
 
-# override the default behavior for all routes
-Route.cache_form = True
+## Route Methods
 
-class IndexRoute(Route):
-    path = "/"
-    form = "Pages.Index"
-```
+`before_load`
+: Called before the route is matched. This method can raise a `Redirect` exception to redirect to a different route. By default this returns `None`.
+
+`loader_deps`
+: Caching is determined by the `path` and the dictionary returned by the `loader_deps` method. If there is no `loader_deps` method, then any two routes with the same `path` are considered to be the same route. By default this returns an empty dictionary.
+
+`loader`
+: Called when the route is matched. The return value will be available in the `data` property of the `RoutingContext` instance. By default this returns `None`.
+
+`meta`
+: should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
+
+`parse_query`
+: should return a dictionary of query parameters. By default this returns the original query parameters.
+
+`parse_params`
+: should return a dictionary of path parameters. By default this returns the original path parameters.
+
 
 ## Not Found Form
 
