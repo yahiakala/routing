@@ -1,17 +1,25 @@
 from anvil.js.window import setTimeout, Function
 
 # We need to make sure the .then method doesn't return a Promise to avoid suspensions
-PromiseLike = Function("""
+PromiseLike, Deferred = Function("""
 class PromiseLike extends Promise {
     then(...args) {
         Promise.prototype.then.apply(this, args);
     }
 }
-return PromiseLike;
+class Deferred {
+    constructor() {
+        this.promise = new PromiseLike((resolve, reject) => {
+            this.resolve = resolve;
+            this.reject = reject;
+        });
+}
+                                 
+return PromiseLike, Deferred;
 """)
 
 
-class Deferred:
+class Deferred_:
     def __init__(self):
         def callback(resolve, reject):
             self.resolve = resolve
