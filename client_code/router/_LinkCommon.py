@@ -106,7 +106,7 @@ class LinkMixinCommon(Component):
         self._props = properties
         self._location = None
         self._form = None
-        self._href = ""
+        self._invalid = None
         self.add_event_handler("x-anvil-page-added", self._setup)
         self.add_event_handler("x-anvil-page-removed", self._cleanup)
         self.add_event_handler("click", self._on_click)
@@ -120,6 +120,8 @@ class LinkMixinCommon(Component):
                     nav_context=self.nav_context,
                     form_properties=self.form_properties,
                 )
+            elif self._invalid is not None:
+                raise self._invalid
             else:
                 logger.debug("NavLink clicked, but with invalid path, query or hash")
         elif self._form is not None:
@@ -233,10 +235,6 @@ class LinkMixinCommon(Component):
         params = self.params
         query = self.query
         hash = self.hash
-        # if not path:
-        #     # path must be explicitly set
-        #     self._href = self.href = None
-        #     return
 
         try:
             location = nav_args_to_location(
@@ -247,13 +245,17 @@ class LinkMixinCommon(Component):
             )
         except InvalidPathParams as e:
             if not in_designer:
-                raise e
+                self._invalid = e
+                self.href = ""
+                return
             else:
                 location = Location(path=path, hash=hash)
+        else:
+            self._invalid = None
 
         self._location = location
 
         if in_designer:
             self._form = _temp_hack_to_get_form(self)
         elif location.path is not None:
-            self.href = self._href = location.get_url(True)
+            self.href = location.get_url(True)
