@@ -7,6 +7,7 @@ class PromiseLike extends Promise {
         Promise.prototype.then.apply(this, args);
     }
 }
+return PromiseLike;
 class Deferred {
     constructor() {
         this.promise = new PromiseLike((resolve, reject) => {
@@ -17,10 +18,10 @@ class Deferred {
 }
                                  
 return [PromiseLike, Deferred];
-""")
+""")()
 
 
-class Deferred_:
+class Deferred:
     def __init__(self):
         def callback(resolve, reject):
             self.resolve = resolve
