@@ -117,9 +117,9 @@ class RoutingContext:
     def _load_data(self):
         from ._non_blocking import call_async
 
-        ac = call_async(load_data, self, force=True)
+        data_promise = call_async(load_data, self, force=True)
         self._emit("data_loading")
-        return ac
+        return data_promise
 
     @property
     def _loader_args(self):

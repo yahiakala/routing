@@ -79,10 +79,8 @@ def load_data_promise(context, force=False):
             logger.debug(f"{key} data already loading in flight")
             return IN_FLIGHT_DATA[key]
 
-        async_call = call_async(wrapped_loader, **context._loader_args)
-        async_call.on_result(on_result)
-
-        data_promise = async_call.promise
+        data_promise = call_async(wrapped_loader, **context._loader_args)
+        data_promise.then(on_result)
         IN_FLIGHT_DATA[key] = data_promise
 
         return data_promise
