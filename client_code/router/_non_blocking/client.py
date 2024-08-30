@@ -15,7 +15,7 @@ class Deferred {
         });
 }
                                  
-return PromiseLike, Deferred;
+return [PromiseLike, Deferred];
 """)
 
 
