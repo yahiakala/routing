@@ -31,10 +31,10 @@ class NavLink(DefaultLink, LinkMixinCommon):
 
     def __init__(
         self,
-        path="",
+        path=None,
         query=None,
         params=None,
-        hash="",
+        hash=None,
         nav_context=None,
         exact_path=False,
         exact_query=False,

@@ -84,23 +84,18 @@ class Logger:
         self._write(out)
 
     def debug(self, msg):
-        """outputs the msg only if the level is set to logging.DEBUG"""
         self.log(DEBUG, msg)
 
     def info(self, msg):
-        """outputs the msg only if the level is set to logging.INFO or logging.DEBUG"""
         self.log(INFO, msg)
 
     def warning(self, msg):
-        """outputs the msg only if the level is set to logging.INFO, logging.DEBUG or logging.WARNING"""
         self.log(WARNING, msg)
 
     def error(self, msg):
-        """outputs the msg only if the level is set to logging.ERROR or below"""
         self.log(ERROR, msg)
 
     def critical(self, msg):
-        """always outputs a message"""
         self.log(CRITICAL, msg)
 
     def __repr__(self):
@@ -122,5 +117,5 @@ class RouterLogger(Logger):
 logger = RouterLogger("**router**", format="{name}({location}): {msg}", level=INFO)
 
 
-def debug_logging(debug=True):
-    logger.level = DEBUG if debug else INFO
+def debug_logging(enable=True):
+    logger.level = DEBUG if enable else INFO

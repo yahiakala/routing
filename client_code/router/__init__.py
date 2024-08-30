@@ -1,15 +1,17 @@
-# ruff: noqa: F401
+# ruff: noqa: F401, F811
 from anvil.history import history as _history
 
 from ._cached import clear_cache
 from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
 from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
+from ._invalidate import invalidate
 from ._logger import debug_logging
 from ._navigate import navigate
 from ._route import Route, open_form
-from ._router import NavigationBlocker, UnloadBlocker, launch
+from ._router import NavigationBlocker, launch
 from ._url import get_url
+from ._view_transition import use_transitions
 
 
 def go(n=0):
@@ -30,3 +32,12 @@ def reload():
 
 def get_routing_context():
     return RoutingContext._current
+
+
+def reload(hard=False):
+    if hard:
+        return _history.reload()
+    else:
+        invalidate(path=_history.location.path)
+        _history.replace(_history.location)
+

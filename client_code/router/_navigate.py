@@ -62,12 +62,70 @@ def clean_query_params(query):
 
 
 def nav_args_to_location(*, path, query, params, hash):
-    params = params or {}
-    query = clean_query_params(query)
-    search = encode_query_params(query)
-    path = clean_path(path, params)
+    if path is not None:
+        path = clean_path(path, params or {})
+        query = clean_query_params(query)
+        search = encode_query_params(query)
+        Location(path=path, search=search, hash=hash)
+    elif query is not None:
+        # use the current location as the base
+        path = history.location.path
+        query = clean_query_params(query)
+        search = encode_query_params(query)
+        return Location(path=path, search=search, hash=hash)
+    elif hash is not None:
+        return Location(
+            path=history.location.path,
+            search=history.location.search,
+            hash=hash,
+        )
+    else:
+        return history.location
 
-    return Location(path=path, search=search, hash=hash)
+
+def get_nav_location(context_or_path_or_url, *, path, query, params, hash):
+    if context_or_path_or_url is not None:
+        # do we need to worry about path params here?
+        # currently we just ignore them
+        # potentially we could do path params with a context
+        # but we'd need to use the context.route.path
+
+        from ._context import RoutingContext  # circular import
+
+        if isinstance(context_or_path_or_url, RoutingContext):
+            temp_location = context_or_path_or_url.location
+        elif isinstance(context_or_path_or_url, str):
+            temp_location = Location.from_url(context_or_path_or_url)
+        else:
+            raise TypeError(
+                "location_or_url_or_path must be a string or a Routing Context"
+            )
+
+        if path is not None:
+            raise TypeError("cannot set named argument path if a first argument is set")
+
+        location = nav_args_to_location(
+            path=temp_location.path,
+            query=query,
+            params=params,
+            hash=hash,
+        )
+
+        # search params on a raw location are a bit gnarly
+        # they are json stringified so we would be json stringifying again - let's not do that
+        if hash is None and query is None:
+            location.search = temp_location.search
+            location.hash = temp_location.hash
+        elif query is None:
+            location.search = temp_location.search
+
+
+    else:
+        location = nav_args_to_location(
+            path=path, query=query, params=params, hash=hash
+        )
+
+    return location
 
 
 _current_nav_context = {}
@@ -106,50 +164,31 @@ def navigate(
     path=None,
     params=None,
     query=None,
-    hash="",
+    hash=None,
     replace=False,
     nav_context=None,
     form_properties=None,
 ):
     logger.debug(
-        f"navigate called with: {context_or_path_or_url!r} "
-        f"path={path!r} " if path is not None else ""
-        f"params={params!r} " if params is not None else ""
-        f"query={query!r} " if query is not None else ""
-        f"hash={hash!r} " if hash else ""
-        f"replace={replace!r} " if replace else ""
-        f"nav_context={nav_context!r} " if nav_context is not None else ""
-        f"form_properties={form_properties!r} " if form_properties is not None else ""
+        f"navigate called with: {context_or_path_or_url!r} " f"path={path!r} "
+        if path is not None
+        else "" f"params={params!r} "
+        if params is not None
+        else "" f"query={query!r} "
+        if query is not None
+        else "" f"hash={hash!r} "
+        if hash
+        else "" f"replace={replace!r} "
+        if replace
+        else "" f"nav_context={nav_context!r} "
+        if nav_context is not None
+        else "" f"form_properties={form_properties!r} "
+        if form_properties is not None
+        else ""
     )
-    if context_or_path_or_url is not None:
-        from ._context import RoutingContext  # circular import
-
-        if isinstance(context_or_path_or_url, RoutingContext):
-            temp_location = context_or_path_or_url.location
-        elif isinstance(context_or_path_or_url, str):
-            temp_location = Location.from_url(context_or_path_or_url)
-        else:
-            raise TypeError("location_or_url_or_path must be a string or a Routing Context")
-
-        if path is not None:
-            raise TypeError("cannot set named argument path if a first argument is set")
-
-        location = nav_args_to_location(
-            path=temp_location.path,
-            query=query,
-            params=params,
-            hash=hash or temp_location.hash,
-        )
-
-        # search params on a raw location are a bit gnarly
-        # they are json stringified so we would be json stringifying again - let's not do that
-        if not location.search and temp_location.search:
-            location.search = temp_location.search
-
-    else:
-        location = nav_args_to_location(
-            path=path, query=query, params=params, hash=hash
-        )
+    location = get_nav_location(
+        context_or_path_or_url, path=path, query=query, params=params, hash=hash
+    )
     logger.debug(f"navigate location: {location}")
 
     nav_context = ensure_dict(nav_context, "nav_context")

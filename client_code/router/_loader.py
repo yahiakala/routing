@@ -6,7 +6,7 @@ import anvil.server
 from ._cached import CACHED_DATA, IN_FLIGHT_DATA
 from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
 from ._logger import logger
-from ._non_blocking import call_async
+from ._non_blocking import call_async, Result
 from ._utils import await_promise, report_exceptions
 
 
@@ -94,12 +94,12 @@ def load_data_promise(context, force=False):
 
         if is_initial:
             # data came in with startup data
-            data_promise = [cached.data, None]
+            data_promise = Result(cached.data)
         if mode == NETWORK_FIRST:
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
-            data_promise = [cached.data, None]
+            data_promise = Result(cached.data)
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
             if is_stale:
                 logger.debug(

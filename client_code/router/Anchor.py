@@ -19,10 +19,10 @@ class Anchor(DefaultLink, LinkMixinCommon):
 
     def __init__(
         self,
-        path="",
+        path=None,
         query=None,
         params=None,
-        hash="",
+        hash=None,
         nav_context=None,
         **properties,
     ):

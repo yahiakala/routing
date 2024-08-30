@@ -40,8 +40,8 @@ class RoutingContext:
         self.path = context.match.path
         self.params = context.match.params
         self.query = context.match.query
-        self.route = context.match.route
         self.hash = context.match.hash
+        self.route = context.match.route
 
         if prev_match.query != self.query:
             self.emit("query_changed", query=self.query)
@@ -82,7 +82,7 @@ class RoutingContext:
             handler(**kwargs)
 
     def invalidate(self, exact=False):
-        # remove ourselves from cached from and cached data
+        # remove ourselves from cached forms and cached data
         invalidate(self, exact=exact)
     
 
@@ -113,6 +113,9 @@ class RoutingContext:
         if self._current is not self:
             return
         return self._load_data()
+    
+    def get_url(self, full=False):
+        return self.location.get_url(full)
 
     def _load_data(self):
         from ._non_blocking import call_async

@@ -10,7 +10,7 @@ class Redirect(AnvilWrappedError):
         path=None,
         query=None,
         params=None,
-        hash="",
+        hash=None,
         nav_context=None,
         form_properties=None,
     ):
