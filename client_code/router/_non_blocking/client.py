@@ -13,6 +13,7 @@ class Deferred {
             this.resolve = resolve;
             this.reject = reject;
         });
+    }
 }
                                  
 return [PromiseLike, Deferred];
