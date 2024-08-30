@@ -142,7 +142,7 @@ class LinkMixinCommon(Component):
         self._set_href()
 
         if in_designer and self._form is not None:
-            register_interaction(self, self._el, "dblclick", self._do_click)
+            register_interaction(self, get_dom_node(self), "dblclick", self._do_click)
 
     def _cleanup(self, **event_args):
         pass
