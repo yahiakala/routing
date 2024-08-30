@@ -66,21 +66,23 @@ def nav_args_to_location(*, path, query, params, hash):
         path = clean_path(path, params or {})
         query = clean_query_params(query)
         search = encode_query_params(query)
-        Location(path=path, search=search, hash=hash)
-    elif query is not None:
+        return Location(path=path, search=search, hash=hash)
+
+    if query is not None:
         # use the current location as the base
         path = history.location.path
         query = clean_query_params(query)
         search = encode_query_params(query)
         return Location(path=path, search=search, hash=hash)
-    elif hash is not None:
+
+    if hash is not None:
         return Location(
             path=history.location.path,
             search=history.location.search,
             hash=hash,
         )
-    else:
-        return history.location
+
+    return history.location
 
 
 def get_nav_location(context_or_path_or_url, *, path, query, params, hash):
@@ -118,7 +120,6 @@ def get_nav_location(context_or_path_or_url, *, path, query, params, hash):
             location.hash = temp_location.hash
         elif query is None:
             location.search = temp_location.search
-
 
     else:
         location = nav_args_to_location(
