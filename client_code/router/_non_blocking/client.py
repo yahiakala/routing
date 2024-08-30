@@ -7,17 +7,8 @@ class PromiseLike extends Promise {
         Promise.prototype.then.apply(this, args);
     }
 }
+
 return PromiseLike;
-class Deferred {
-    constructor() {
-        this.promise = new PromiseLike((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
-        });
-    }
-}
-                                 
-return [PromiseLike, Deferred];
 """)()
 
 
