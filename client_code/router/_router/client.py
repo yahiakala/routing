@@ -14,7 +14,7 @@ from .._logger import logger
 from .._matcher import get_match
 from .._meta import update_meta_tags
 from .._navigate import navigate
-from .._utils import TIMEOUT, Promise, await_promise, ensure_dict, timeout
+from .._utils import TIMEOUT, Promise, await_promise, ensure_dict, setTimeout, timeout
 from .._view_transition import ViewTransition
 
 waiting = False
@@ -246,6 +246,8 @@ def on_navigate():
 def listener(**listener_args):
     global waiting, undoing, redirect, current
 
+    setTimeout(lambda: navigation_emitter.emit("navigate", **listener_args))
+
     if undoing:
         undoing = False
     elif waiting:
@@ -264,7 +266,6 @@ def listener(**listener_args):
         else:
             redirect = True
 
-    navigation_emitter.emit("navigate", **listener_args)
 
 
 def launch():
