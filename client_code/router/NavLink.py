@@ -56,6 +56,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
         DefaultLink.__init__(self, **properties)
 
         if not in_designer:
+            self.add_event_handler("x-anvil-page-added", self._on_navigate)
             self.add_event_handler(
                 "x-anvil-page-added",
                 lambda **e: navigation_emitter.subscribe(self._on_navigate),
@@ -67,6 +68,8 @@ class NavLink(DefaultLink, LinkMixinCommon):
 
     def _on_navigate(self, **nav_args):
         curr_context: RoutingContext = RoutingContext._current
+        if curr_context is None:
+            return
         location = self._location
         active = True
 
