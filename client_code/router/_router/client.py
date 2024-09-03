@@ -175,12 +175,13 @@ def on_navigate():
 
 
     logger.debug(f"Match key {match.key}")
-    if prev_context is not None and match.key == prev_context.match.key:
-        form = anvil.get_open_form()
-        if form is not None and form_to_context.get(form) is prev_context:
-            prev_context._update(context)
-            logger.debug(f"navigation would return the same form: {form}")
-            return
+    # don't do this because it prevents reloading the same form
+    # if prev_context is not None and match.key == prev_context.match.key:
+    #     form = anvil.get_open_form()
+    #     if form is not None and form_to_context.get(form) is prev_context:
+    #         prev_context._update(context)
+    #         logger.debug(f"navigation would return the same form: {form}")
+    #         return
 
     # TODO: how does cached forms work with cache modes for data?
     data_promise = load_data_promise(context)
