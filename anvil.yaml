@@ -1,24 +1,24 @@
 allow_embedding: false
-package_name: routing
 name: routing
-runtime_options:
-  version: 3
-  client_version: '3'
-  server_version: python3-full
-  server_spec: null
-  legacy_features: {class_names: true, bootstrap3: true, __dict__: true, root_container: true}
-services:
-- source: /runtime/services/tables.yml
-  client_config: {enable_v2: true}
-  server_config: {}
-startup_form: null
-startup: {type: module, module: startup}
 native_deps: null
+package_name: routing
+runtime_options:
+  client_version: '3'
+  legacy_features: {__dict__: true, bootstrap3: true, class_names: true, root_container: true}
+  server_spec: null
+  server_version: python3-full
+  version: 3
+services:
+- client_config: {enable_v2: true}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup: {module: router, type: module}
+startup_form: null
 toolbox_sections:
-- packageName: routing
+- items:
+  - component: {type: routing.router.NavLink}
+    title: NavLink
+  - component: {type: routing.router.Anchor}
+    title: Anchor
+  packageName: routing
   title: Routing
-  items:
-  - title: NavLink
-    component: {type: routing.router.NavLink}
-  - title: Anchor
-    component: {type: routing.router.Anchor}
