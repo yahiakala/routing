@@ -29,7 +29,7 @@ def get_invalid_keys(start_path, start_deps):
         if match:
             keys.append(key)
 
-        return keys
+    return keys
 
 
 def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
