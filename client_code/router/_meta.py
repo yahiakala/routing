@@ -40,7 +40,17 @@ else:
     default_description = meta_description.content
 
 
+def get_default_meta():
+    rv = {}
+    if default_title:
+        rv["title"] = default_title
+    if default_description:
+        rv["description"] = default_description
+    return rv
+
+
 def update_meta_tags(meta):
+    return
     title = meta.get("title") or default_title
     description = meta.get("description") or default_description
     title_tag.textContent = title

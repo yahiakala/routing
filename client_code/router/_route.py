@@ -1,14 +1,39 @@
 import anvil.server
 
 from ._constants import NETWORK_FIRST
+from ._context import RoutingContext
 from ._exceptions import Redirect
 from ._logger import logger
-from ._meta import default_description, default_title
+from ._meta import get_default_meta
 from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
 from ._utils import encode_query_params, trim_path
 
 sorted_routes = []
+LoadAppResponse = None
+
+
+def _get_load_app_response():
+    global LoadAppResponse
+
+    if LoadAppResponse is not None:
+        return LoadAppResponse
+
+    try:
+        from anvil.server import LoadAppResponse as LAR
+    except ImportError:
+        from anvil.server import _LoadAppResponse as LAR
+
+    try:
+        LAR(data={}, meta={})
+    except TypeError:
+        # meta not yet supported
+        def LoadAppResponse(data=None, meta=None):
+            return LAR(data=data)
+    else:
+        LoadAppResponse = LAR
+
+    return LoadAppResponse
 
 
 def _create_server_route(cls):
@@ -22,12 +47,8 @@ def _create_server_route(cls):
 
     if path is None:
         return
-    
-    try:
-        LoadAppResponse = anvil.server.LoadAppResponse
-    except AttributeError:
-        LoadAppResponse = anvil.server._LoadAppResponse
-    
+
+    LoadAppResponse = _get_load_app_response()
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
@@ -38,17 +59,16 @@ def _create_server_route(cls):
         match = get_match(location=location)
         logger.debug(f"serving route from the server: {location}")
         if match is None:
+            # this shouldn't happen
             raise Exception(f"No match for {location}")
 
         route = match.route
-        query = match.query
-        params = match.params
-        deps = match.deps
+        context = RoutingContext(match=match)
 
         cache = {}
 
         try:
-            route.before_load(path=path, query=query, params=params, hash=match.hash)
+            route.before_load(**context._loader_args)
         except Redirect as r:
             location = nav_args_to_location(
                 path=r.path,
@@ -57,12 +77,7 @@ def _create_server_route(cls):
                 hash=r.hash,
             )
             logger.debug(f"redirecting to {location}")
-            url = (
-                anvil.server.get_app_origin()
-                + location.path
-                + location.search
-                + location.hash
-            )
+            url = location.get_url(True)
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
         except Exception as e:
             # TODO: handle error on the client
@@ -70,22 +85,22 @@ def _create_server_route(cls):
             return LoadAppResponse(data={"cache": cache})
 
         try:
-            data = route.loader(
-                location=location,
-                params=params,
-                query=query,
-                deps=deps,
-            )
-
+            meta = route.meta(**context._loader_args)
         except Exception as e:
-            logger.debug(f"error loading data for {location}, got {e}")
+            logger.debug(f"error getting meta data for {location}: got {e!r}")
+            meta = None
+
+        try:
+            data = route.loader(**context._loader_args)
+        except Exception as e:
+            logger.debug(f"error loading data for {location}, got {e!r}")
             # TODO: handle error on the client
-            return LoadAppResponse(data={"cache": cache})
+            return LoadAppResponse(data={"cache": cache}, meta=meta)
 
         cached_data = CachedData(data=data, location=location, mode=route.cache_mode)
         cache = {match.key: cached_data}
 
-        return LoadAppResponse(data={"cache": cache})
+        return LoadAppResponse(data={"cache": cache}, meta=meta)
 
 
 class Route:
@@ -125,7 +140,7 @@ class Route:
         return None
 
     def meta(self, **loader_args):
-        return {"title": default_title, "description": default_description}
+        return get_default_meta()
 
     def parse_params(self, params):
         return params
