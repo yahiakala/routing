@@ -59,7 +59,7 @@ If you are using the default NavLink component, then `active` means it will set 
 
 `exact_query`
 
-: If `True` then the query must match exactly. By default this is `False`.
+: If `True` then the query must inclusively match the current routing context's query. By default this is `False`.
 
 `exact_hash`
 

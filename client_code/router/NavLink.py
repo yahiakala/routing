@@ -22,6 +22,16 @@ except ImportError:
     pass
 
 
+def _query_inclusively_equal(a, b):
+    """check if all the keys in a are in b and have the same value"""
+    for key in a:
+        if key not in b:
+            return False
+        if a[key] != b[key]:
+            return False
+    return True
+
+
 class NavLink(DefaultLink, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
@@ -77,7 +87,9 @@ class NavLink(DefaultLink, LinkMixinCommon):
             active = False
         elif self.exact_path and curr_context.path != location.path:
             active = False
-        elif self.exact_query and curr_context.query != self.query:
+        elif self.exact_query and _query_inclusively_equal(
+            self.query, curr_context.query
+        ):
             active = False
         elif self.exact_hash and curr_context.hash != location.hash:
             active = False
