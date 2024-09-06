@@ -44,9 +44,9 @@ class RoutingContext:
         self.route = context.match.route
 
         if prev_match.query != self.query:
-            self.emit("query_changed", query=self.query)
+            self._emit("query_changed", query=self.query)
         if prev_match.hash != self.hash:
-            self.emit("hash_changed", hash=self.hash)
+            self._emit("hash_changed", hash=self.hash)
 
     def _prevent_unload(self):
         for blocker in self._blockers:
