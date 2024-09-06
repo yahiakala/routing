@@ -96,9 +96,10 @@ def load_data_promise(context, force=False):
         mode = cached.mode
 
         if is_initial:
+            logger.debug("initial request, using cache")
             # data came in with startup data
             data_promise = Result(cached.data)
-        if mode == NETWORK_FIRST:
+        elif mode == NETWORK_FIRST:
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")
             data_promise = create_in_flight_data_promise()
         elif mode == STALE_WHILE_REVALIDATE:
