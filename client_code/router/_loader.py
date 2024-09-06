@@ -22,7 +22,7 @@ class CachedData:
         self.__dict__.update(data, fetched_at=datetime.now())
     
     def __repr__(self):
-        return f"<CachedData {self.location!r} data={self.data!r}>"
+        return f"<CachedData {self.location} data={self.data!r}>"
 
 
 _initial_request = True
