@@ -218,7 +218,9 @@ def on_navigate():
         sleep(pending_min)
 
     try:
-        _, error = await_promise(data_promise)
+        data, error = await_promise(data_promise)
+        context.set_data(data, error)
+        # if it failed we can't be using the cached data
         if error is not None:
             raise error
     except NotFound as e:
