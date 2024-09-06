@@ -14,4 +14,11 @@ mkdocs serve
 
 Then visit http://localhost:8000
 
-```
+## Third party dependency
+
+To use as a third party dependency, use the code `3PIDO5P3H4VPEMPL`
+
+## Clone from github
+
+Copy the url and clone the app anonymously from github in the anvil designer.
+
