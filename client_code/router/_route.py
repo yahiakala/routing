@@ -37,6 +37,8 @@ def _get_load_app_response():
 
 def _create_server_route(cls):
     # local for now while anvil uplink doesn't have history
+    import traceback
+
     from anvil.history import Location
 
     from ._context import RoutingContext
@@ -81,19 +83,28 @@ def _create_server_route(cls):
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
         except Exception as e:
             # TODO: handle error on the client
-            logger.debug(f"{location}: error serving route from the server: {e!r}")
+            logger.error(
+                f"{location}: error serving route from the server: {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             return LoadAppResponse(data={"cache": cache})
 
         try:
             meta = route.meta(**context._loader_args)
         except Exception as e:
-            logger.debug(f"error getting meta data for {location}: got {e!r}")
+            logger.error(
+                f"error getting meta data for {location}: got {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             meta = None
 
         try:
             data = route.loader(**context._loader_args)
         except Exception as e:
-            logger.debug(f"error loading data for {location}, got {e!r}")
+            logger.error(
+                f"error loading data for {location}, got {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             # TODO: handle error on the client
             return LoadAppResponse(data={"cache": cache}, meta=meta)
 
