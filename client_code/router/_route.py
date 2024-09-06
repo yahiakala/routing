@@ -1,7 +1,6 @@
 import anvil.server
 
 from ._constants import NETWORK_FIRST
-from ._context import RoutingContext
 from ._exceptions import Redirect
 from ._logger import logger
 from ._meta import get_default_meta
@@ -40,6 +39,7 @@ def _create_server_route(cls):
     # local for now while anvil uplink doesn't have history
     from anvil.history import Location
 
+    from ._context import RoutingContext
     from ._loader import CachedData
     from ._matcher import get_match
 
