@@ -1,6 +1,7 @@
 from ._invalidate import invalidate
 from ._loader import load_data
 from ._matcher import Match
+from ._utils import ensure_dict
 
 
 class RoutingContext:
@@ -22,8 +23,8 @@ class RoutingContext:
         self.query = match.query
         self.hash = match.hash
         self.route = match.route
-        self.nav_context = nav_context
-        self.form_properties = form_properties
+        self.nav_context = ensure_dict(nav_context, "nav_context")
+        self.form_properties = ensure_dict(form_properties, "form_properties")
         self._error = None
         self._data = data
         self._listeners = {}
@@ -84,7 +85,6 @@ class RoutingContext:
     def invalidate(self, exact=False):
         # remove ourselves from cached forms and cached data
         invalidate(self, exact=exact)
-    
 
     def set_data(self, data, error=None):
         self._data = data
@@ -113,7 +113,7 @@ class RoutingContext:
         if self._current is not self:
             return
         return self._load_data()
-    
+
     def get_url(self, full=False):
         return self.location.get_url(full)
 
