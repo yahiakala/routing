@@ -26,9 +26,6 @@ def forward():
     return _history.go(1)
 
 
-def reload():
-    return _history.reload()
-
 
 def get_routing_context():
     return RoutingContext._current
