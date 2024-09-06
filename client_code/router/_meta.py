@@ -50,7 +50,6 @@ def get_default_meta():
 
 
 def update_meta_tags(meta):
-    return
     title = meta.get("title") or default_title
     description = meta.get("description") or default_description
     title_tag.textContent = title
