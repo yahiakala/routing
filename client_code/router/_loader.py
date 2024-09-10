@@ -20,9 +20,7 @@ class CachedData:
         self.fetched_at = datetime.now()
 
     def _should_gc(self):
-        return datetime.now() - self.fetched_at > datetime.timedelta(
-            seconds=self.gc_time
-        )
+        return datetime.now() - self.fetched_at > timedelta(seconds=self.gc_time)
 
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
