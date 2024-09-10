@@ -161,6 +161,9 @@ class Route:
     def parse_params(self, params):
         return params
 
+    def open_form(self, form, routing_context, **form_properties):
+        return anvil.open_form(form, routing_context=routing_context, **form_properties)
+
     # def params(self, params):
     #     return params
 
