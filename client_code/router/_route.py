@@ -1,7 +1,8 @@
 import anvil.server
 
-from ._constants import NO_CACHE
+from ._constants import LAYOUTS, NO_CACHE, TEMPLATE_WITH_CONTENT_PANEL
 from ._exceptions import Redirect
+from ._import_form import import_form
 from ._logger import logger
 from ._meta import get_default_meta
 from ._navigate import nav_args_to_location, navigate
@@ -128,6 +129,7 @@ class Route:
     pending_delay = 1
     pending_min = 0.5
     cache_data_mode = NO_CACHE
+    load_form_mode = LAYOUTS
     stale_time = 0
     cache_form = False
     server_fn = None
@@ -161,8 +163,27 @@ class Route:
     def parse_params(self, params):
         return params
 
-    def open_form(self, form, routing_context, **form_properties):
-        return anvil.open_form(form, routing_context=routing_context, **form_properties)
+    def load_form(self, form, routing_context, form_properties, **loader_args):
+        if self.load_form_mode == LAYOUTS:
+            return anvil.open_form(
+                form, routing_context=routing_context, **form_properties
+            )
+        elif self.load_form_mode == TEMPLATE_WITH_CONTENT_PANEL:
+            template = self.get_template(**loader_args)
+            template_form = import_form(template)
+
+            if template_form is not anvil.get_open_form():
+                anvil.open_form(template_form)
+
+            form = import_form(form, routing_context=routing_context, **form_properties)
+            template.content_panel.clear()
+            template.content_panel.add_component(form)
+            return form
+        else:
+            raise ValueError(f"Unknown load_form_mode {self.load_form_mode}")
+
+    def get_template(self, **loader_args):
+        return None
 
     # def params(self, params):
     #     return params

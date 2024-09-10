@@ -165,7 +165,7 @@ def on_navigate():
             raise error
 
         with ViewTransition():
-            route.open_form(form, context)
+            route.load_form(form, context)
 
     try:
         route.before_load(**context._loader_args)
@@ -202,7 +202,7 @@ def on_navigate():
             return
         # TODO: update the context probably
         logger.debug(f"found a cached form for this location: {form}")
-        match.route.open_form(form, context, **context.form_properties)
+        match.route.load_form(form, context, **context.form_properties)
         return
 
     # TODO: how does cached forms work with cache modes for data?
@@ -223,7 +223,7 @@ def on_navigate():
             f"exceeded pending delay: {pending_delay}, loading pending form {pending_form!r}"
         )
         with ViewTransition():
-            route.open_form(pending_form, context)
+            route.load_form(pending_form, context)
         sleep(pending_min)
 
     try:
@@ -243,8 +243,7 @@ def on_navigate():
     form = route.form
     try:
         with ViewTransition():
-            debugger
-            rv = route.open_form(form, context, **context.form_properties)
+            rv = route.load_form(form, context, **context.form_properties)
         form_to_context.set(rv, context)
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
