@@ -8,7 +8,7 @@ from ._constants import (
     NETWORK_FIRST,
     NO_CACHE,
     STALE_WHILE_REVALIDATE,
-    TEMPLATE_WITH_CONTENT_PANEL,
+    TEMPLATE_WITH_CONTAINER,
 )
 from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
