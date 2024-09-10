@@ -69,11 +69,13 @@ class NavLink(DefaultLink, LinkMixinCommon):
             self.add_event_handler("x-anvil-page-added", self._on_navigate)
             self.add_event_handler(
                 "x-anvil-page-added",
-                lambda **e: navigation_emitter.subscribe("navigate", self._on_navigate),
+                lambda **e: navigation_emitter.add_event_handler(
+                    "navigate", self._on_navigate
+                ),
             )
             self.add_event_handler(
                 "x-anvil-page-removed",
-                lambda **e: navigation_emitter.unsubscribe(
+                lambda **e: navigation_emitter.remove_event_handler(
                     "navigate", self._on_navigate
                 ),
             )

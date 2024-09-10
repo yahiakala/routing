@@ -1,3 +1,6 @@
+from .._utils import EventEmitter
+
+
 def launch():
     raise NotImplementedError("launch is not implemented on the server")
 
@@ -22,15 +25,4 @@ class UnloadBlocker(_Blocker):
     pass
 
 
-class _NavigationEmitter:
-    def subscribe(self, event_name, fn):
-        pass
-
-    def unsubscribe(self, event_name, fn):
-        pass
-
-    def emit(self, *args, **kwargs):
-        pass
-
-
-navigation_emitter = _NavigationEmitter()
+navigation_emitter = EventEmitter()

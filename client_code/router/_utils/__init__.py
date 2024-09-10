@@ -127,3 +127,31 @@ def dumps(obj):
 
 def loads(s):
     return json.loads(s, object_hook=object_hook)
+
+
+class EventEmitter:
+    _events = []
+    _subscribers = {}
+
+    def _validate_event(self, event_name):
+        if not isinstance(event_name, str):
+            raise TypeError("event_name must be a string")
+        if event_name not in self._events:
+            raise ValueError(f"event_name {event_name} is not valid")
+
+    def add_event_handler(self, event_name, handler):
+        self._validate_event(event_name)
+        self._subscribers.setdefault(event_name, set()).add(handler)
+
+    def remove_event_handler(self, event_name, handler):
+        self._validate_event(event_name)
+        if event_name in self._subscribers:
+            self._subscribers[event_name].discard(handler)
+
+    def raise_event(self, event_name, **kwargs):
+        self._validate_event(event_name)
+        kwargs["event_name"] = event_name
+        kwargs["sender"] = self
+        fns = self._subscribers.get(event_name, [])
+        for fn in fns:
+            fn(**kwargs)

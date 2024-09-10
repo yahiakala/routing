@@ -21,12 +21,12 @@ from ._url import get_url
 from ._view_transition import use_transitions
 
 
-def subscribe(event_name, fn):
-    return navigation_emitter.subscribe(event_name, fn)
+def add_event_handler(event_name, fn):
+    return navigation_emitter.add_event_handler(event_name, fn)
 
 
-def unsubscribe(event_name, fn):
-    return navigation_emitter.unsubscribe(event_name, fn)
+def remove_event_handler(event_name, fn):
+    return navigation_emitter.remove_event_handler(event_name, fn)
 
 
 def go(n=0):

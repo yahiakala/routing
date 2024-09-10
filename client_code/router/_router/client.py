@@ -14,7 +14,15 @@ from .._logger import logger
 from .._matcher import get_match
 from .._meta import update_meta_tags
 from .._navigate import navigate
-from .._utils import TIMEOUT, Promise, await_promise, ensure_dict, setTimeout, timeout
+from .._utils import (
+    TIMEOUT,
+    EventEmitter,
+    Promise,
+    await_promise,
+    ensure_dict,
+    setTimeout,
+    timeout,
+)
 from .._view_transition import ViewTransition
 
 waiting = False
@@ -35,24 +43,7 @@ def get_context(form) -> RoutingContext:
     return rv
 
 
-class _NavigationEmitter:
-    def __init__(self):
-        self._subscribers = {}
-
-    def subscribe(self, event_name, fn):
-        self._subscribers.setdefault(event_name, set()).add(fn)
-
-    def unsubscribe(self, event_name, fn):
-        self._subscribers.setdefault(event_name, set()).discard(fn)
-
-    def emit(self, event_name, **kwargs):
-        kwargs["event_name"] = event_name
-        fns = self._subscribers.get(event_name, [])
-        for fn in fns:
-            fn(**kwargs)
-
-
-navigation_emitter = _NavigationEmitter()
+navigation_emitter = EventEmitter()
 
 
 def _beforeunload(e):
@@ -255,8 +246,8 @@ def on_navigate():
 def listener(**listener_args):
     global waiting, undoing, redirect, current
 
-    setTimeout(lambda: navigation_emitter.emit("navigate", **listener_args))
-    pending_timeout = setTimeout(lambda: navigation_emitter.emit("pending"))
+    setTimeout(lambda: navigation_emitter.raise_event("navigate", **listener_args))
+    pending_timeout = setTimeout(lambda: navigation_emitter.raise_event("pending"))
 
     try:
         if undoing:
@@ -278,7 +269,7 @@ def listener(**listener_args):
                 redirect = True
     finally:
         clearTimeout(pending_timeout)
-        setTimeout(lambda: navigation_emitter.emit("idle"))
+        setTimeout(lambda: navigation_emitter.raise_event("idle"))
 
 
 def launch():

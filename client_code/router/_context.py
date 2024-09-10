@@ -1,10 +1,10 @@
 from ._invalidate import invalidate
 from ._loader import load_data
 from ._matcher import Match
-from ._utils import ensure_dict
+from ._utils import EventEmitter, ensure_dict
 
 
-class RoutingContext:
+class RoutingContext(EventEmitter):
     _current: "RoutingContext" = None
     _events = [
         "data_loaded",
@@ -45,9 +45,9 @@ class RoutingContext:
         self.route = context.match.route
 
         if prev_match.query != self.query:
-            self._emit("query_changed", query=self.query)
+            self.raise_event("query_changed", query=self.query)
         if prev_match.hash != self.hash:
-            self._emit("hash_changed", hash=self.hash)
+            self.raise_event("hash_changed", hash=self.hash)
 
     def _prevent_unload(self):
         for blocker in self._blockers:
@@ -61,27 +61,6 @@ class RoutingContext:
     def unregister_blocker(self, blocker):
         self._blockers.remove(blocker)
 
-    def _validate_event(self, event):
-        if not isinstance(event, str):
-            raise TypeError("event must be a string")
-        if event not in self._events:
-            raise ValueError(f"event {event} not in {self._events}")
-
-    def add_event_handler(self, event, handler):
-        self._validate_event(event)
-        self._listeners.setdefault(event, []).append(handler)
-
-    def remove_event_handler(self, event, handler):
-        self._validate_event(event)
-        if event in self._listeners:
-            self._listeners[event].remove(handler)
-
-    def _emit(self, event, **kwargs):
-        self._validate_event(event)
-        kwargs["sender"] = self
-        for handler in self._listeners.get(event, []):
-            handler(**kwargs)
-
     def invalidate(self, exact=False):
         # remove ourselves from cached forms and cached data
         invalidate(self, exact=exact)
@@ -89,9 +68,9 @@ class RoutingContext:
     def set_data(self, data, error=None):
         self._data = data
         self._error = error
-        self._emit("data_loaded", data=data, error=error)
+        self.raise_event("data_loaded", data=data, error=error)
         if error is not None:
-            self._emit("data_error", error=error)
+            self.raise_event("data_error", error=error)
 
     @property
     def data(self):
@@ -102,11 +81,11 @@ class RoutingContext:
         return self._error
 
     def raise_init_events(self):
-        self._emit("data_loaded", data=self.data, error=self.error)
+        self.raise_event("data_loaded", data=self.data, error=self.error)
         if self.error is not None:
-            self._emit("data_error", error=self.error)
-        self._emit("query_changed", query=self.query)
-        self._emit("hash_changed", hash=self.hash)
+            self.raise_event("data_error", error=self.error)
+        self.raise_event("query_changed", query=self.query)
+        self.raise_event("hash_changed", hash=self.hash)
 
     def refetch(self):
         self.invalidate(exact=True)
@@ -121,7 +100,7 @@ class RoutingContext:
         from ._non_blocking import call_async
 
         data_promise = call_async(load_data, self, force=True)
-        self._emit("data_loading")
+        self.raise_event("data_loading")
         return data_promise
 
     @property
