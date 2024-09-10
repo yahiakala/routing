@@ -4,7 +4,6 @@ from datetime import date, datetime
 from operator import methodcaller
 
 import anvil
-from anvil.tables import Row
 
 from .._constants import TIMEOUT
 
@@ -118,7 +117,7 @@ def object_hook(obj):
     deserializer_cls = KEY_TO_SERIALIZER_CLS.get(key)
     if deserializer_cls is None:
         return obj
-    
+
     deserializer = SERIALIZERS[deserializer_cls][1]
     return deserializer(obj[key])
 
