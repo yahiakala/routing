@@ -1,7 +1,6 @@
 # ruff:noqa: F401
 import json
 from datetime import date, datetime
-from operator import methodcaller
 
 import anvil
 
@@ -93,8 +92,8 @@ def decode_key(key):
 
 PREFIX = "$$_"
 SERIALIZERS = {
-    datetime: (methodcaller("isoformat"), datetime.fromisoformat),
-    date: (methodcaller("isoformat"), date.fromisoformat),
+    datetime: (datetime.isoformat, datetime.fromisoformat),
+    date: (date.isoformat, date.fromisoformat),
 }
 KEY_TO_SERIALIZER_CLS = {f"{PREFIX}{cls.__name__}": cls for cls in SERIALIZERS}
 
