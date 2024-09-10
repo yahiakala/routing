@@ -244,9 +244,7 @@ def on_navigate():
     try:
         with ViewTransition():
             debugger
-            rv = route.open_form(
-                form, routing_context=context, **context.form_properties
-            )
+            rv = route.open_form(form, context, **context.form_properties)
         form_to_context.set(rv, context)
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
