@@ -23,8 +23,10 @@ def import_form(form, *args, **kws):
     package_name = get_package_name()
 
     mod = __import__(form, {"__package__": package_name}, level=-1)
-    form_name = form.split(".").pop()
+    attrs = form.split(".")[1:]
+    for attr in attrs:
+        mod = getattr(mod, attr)
 
-    form_cls = getattr(mod, form_name)
+    form_cls = getattr(mod, attr)
 
     return form_cls(*args, **kws)
