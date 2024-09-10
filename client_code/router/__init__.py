@@ -9,9 +9,17 @@ from ._invalidate import invalidate
 from ._logger import debug_logging
 from ._navigate import navigate
 from ._route import Route, open_form
-from ._router import NavigationBlocker, launch
+from ._router import NavigationBlocker, launch, navigation_emitter
 from ._url import get_url
 from ._view_transition import use_transitions
+
+
+def subscribe(event_name, fn):
+    return navigation_emitter.subscribe(event_name, fn)
+
+
+def unsubscribe(event_name, fn):
+    return navigation_emitter.unsubscribe(event_name, fn)
 
 
 def go(n=0):

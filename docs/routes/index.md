@@ -61,10 +61,10 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 : The cache mode to use when loading data. e.g. `NETWORK_FIRST` or `STALE_WHILE_REVALIDATE`.
 
 `gc_time=30*60`
-: The time in seconds that determines when data is released from the cache for garbage collection. By default this is 30 minutes.
+: The time in seconds that determines when data is released from the cache for garbage collection. By default this is 30 minutes. When data is released from the cache, any cached forms with the same `path` and `cache_deps` will also be released.
 
 `stale_time=0`
-: The time in seconds that determines when the data is stale.
+: The time in seconds that determines when the data is stale. By default this is 0, i.e. the data is always considered stale when navigating to the route. This is only relevant when `cache_data_mode` is set to `STALE_WHILE_REVALIDATE`.
 
 `server_fn (optional)`
 : The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `loader` method. Note this is optional and equivalent to defining a `loader` method the calls the same server function.

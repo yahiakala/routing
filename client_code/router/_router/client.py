@@ -3,7 +3,7 @@ from time import sleep
 import anvil
 from anvil.history import history
 from anvil.js import window
-from anvil.js.window import WeakMap
+from anvil.js.window import WeakMap, clearTimeout, setTimeout
 
 from .. import _navigate
 from .._cached import CACHED_FORMS
@@ -111,6 +111,7 @@ def stop_unload():
 def gc():
     for key, cached in CACHED_DATA.items():
         if cached._should_gc():
+            logger.debug(f"releasing {key} from the cache for garbage collection")
             CACHED_DATA.pop(key, None)
             CACHED_FORMS.pop(key, None)
 
@@ -256,24 +257,29 @@ def listener(**listener_args):
     global waiting, undoing, redirect, current
 
     setTimeout(lambda: navigation_emitter.emit("navigate", **listener_args))
+    pending_timeout = setTimeout(lambda: navigation_emitter.emit("pending"))
 
-    if undoing:
-        undoing = False
-    elif waiting:
-        delta = listener_args.get("delta")
-        if delta is not None:
-            undoing = True
-            history.go(-delta)
+    try:
+        if undoing:
+            undoing = False
+        elif waiting:
+            delta = listener_args.get("delta")
+            if delta is not None:
+                undoing = True
+                history.go(-delta)
+            else:
+                # user determined to navigate
+                history.reload()
         else:
-            # user determined to navigate
-            history.reload()
-    else:
-        current = listener_args
+            current = listener_args
 
-        if redirect:
-            on_navigate()
-        else:
-            redirect = True
+            if redirect:
+                on_navigate()
+            else:
+                redirect = True
+    finally:
+        clearTimeout(pending_timeout)
+        setTimeout(lambda: navigation_emitter.emit("idle"))
 
 
 def launch():
