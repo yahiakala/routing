@@ -43,7 +43,11 @@ def get_context(form) -> RoutingContext:
     return rv
 
 
-navigation_emitter = EventEmitter()
+class _NavigationEmitter(EventEmitter):
+    _events = ["navigate", "pending", "idle"]
+
+
+navigation_emitter = _NavigationEmitter()
 
 
 def _beforeunload(e):
