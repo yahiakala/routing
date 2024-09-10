@@ -177,7 +177,11 @@ class Route:
 
             form = import_form(form, routing_context=routing_context, **form_properties)
             template.content_panel.clear()
+            from anvil.js import get_dom_node
+            debugger
+            print(get_dom_node(form))
             template.content_panel.add_component(form)
+            debugger
             return form
         else:
             raise ValueError(f"Unknown load_form_mode {self.load_form_mode}")
