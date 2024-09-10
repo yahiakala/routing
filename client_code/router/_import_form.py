@@ -21,9 +21,8 @@ def import_form(form, *args, **kws):
         raise TypeError(f"expected a form instance or a string, got {form!r}")
 
     package_name = get_package_name()
-    print(package_name)
 
-    mod = __import__(form, {__package__: package_name}, level=-1)
+    mod = __import__(form, {"__package__": package_name}, level=-1)
     form_name = form.split(".").pop()
 
     form_cls = getattr(mod, form_name)
