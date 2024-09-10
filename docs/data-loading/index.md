@@ -105,9 +105,9 @@ class RowTemplate(RowTemplateTemplate):
 
 ## Handling Errors
 
-If the loader method raises an exception, the router will behave differently depending on the `cache_mode` attribute on the route.
+If the loader method raises an exception, the router will behave differently depending on the `cache_data_mode` attribute on the route.
 
-Regardless of the `cache_mode` attribute, if there is no data in the cache, and the loader method raises an exception, the router will call `anvil.open_form` on the matching route's error form. If there is no error form, the router will raise the exception.
+Regardless of the `cache_data_mode` attribute, if there is no data in the cache, and the loader method raises an exception, the router will call `anvil.open_form` on the matching route's error form. If there is no error form, the router will raise the exception.
 
 If there is a cached form or cached data, then the router will load the form using the cache. If the loader method raises an exception, the `router_context` will raise the `"data_loaded"` event with `data=None` and `error=<The Exception>`, as well as the `"data_error"` event.
 

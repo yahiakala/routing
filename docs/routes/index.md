@@ -1,6 +1,7 @@
 ---
 weight: -8
 ---
+
 # Route Class
 
 The `Route` class is used to define routes for your app. When a user navigates to a path, the router will look for a matching route. The router will call `anvil.open_form` on the matching route's form.
@@ -56,7 +57,7 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `pending_min=0.5`
 : The minimum time to show the pending form when the data is loading.
 
-`cache_mode=NETWORK_FIRST`
+`cache_data_mode=CACHE_FIRST`
 : The cache mode to use when loading data. e.g. `NETWORK_FIRST` or `STALE_WHILE_REVALIDATE`.
 
 `stale_time=0`
@@ -67,7 +68,6 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 
 `server_silent=False`
 : If `True` then the server function will be called using `anvil.server.call_s`. By default this is `False`.
-
 
 ## Route Methods
 
@@ -89,7 +89,6 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `cache_deps`
 : Caching is determined by the `path` and the return value of the `cache_deps` method. The default implementation returns the `query` dictionary. That is, a route with the same `path` and `query` will be considered to be the same route. And routes with different `query` will be considered to be different routes.
 
-
 ## Not Found Form
 
 If a route is not found, the router will call `anvil.open_form` on the matching route's not found form.
@@ -104,7 +103,6 @@ from routing.router import Route
 Route.not_found_form = "Pages.NotFound"
 
 ```
-
 
 ```python
 # Pages.NotFound
@@ -121,7 +119,6 @@ class NotFound(NotFoundTemplate):
             raise self.routing_context.error
 
 ```
-
 
 ## Error Form
 
@@ -187,7 +184,7 @@ In the above example, it's important that the `NewAuthorRoute` comes before the 
 
 ## Server Routes
 
-When a user navigates to a url directly, the router will match routes on the server. 
+When a user navigates to a url directly, the router will match routes on the server.
 
 When you import your routes in server code, the router will automatically create a server route for each route.
 
@@ -213,6 +210,3 @@ for route in Routes.__subclasses__():
         # return a response object that will open the form on the client
 
 ```
-
-
-

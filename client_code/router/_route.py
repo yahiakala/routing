@@ -1,6 +1,6 @@
 import anvil.server
 
-from ._constants import NETWORK_FIRST
+from ._constants import CACHE_FIRST
 from ._exceptions import Redirect
 from ._logger import logger
 from ._meta import get_default_meta
@@ -108,7 +108,9 @@ def _create_server_route(cls):
             # TODO: handle error on the client
             return LoadAppResponse(data={"cache": cache}, meta=meta)
 
-        cached_data = CachedData(data=data, location=location, mode=route.cache_mode)
+        cached_data = CachedData(
+            data=data, location=location, mode=route.cache_data_mode
+        )
         cache = {match.key: cached_data}
 
         return LoadAppResponse(data={"cache": cache}, meta=meta)
@@ -123,7 +125,7 @@ class Route:
     pending_form = None
     pending_delay = 1
     pending_min = 0.5
-    cache_mode = NETWORK_FIRST
+    cache_data_mode = CACHE_FIRST
     stale_time = 0
     cache_form = False
     server_fn = None

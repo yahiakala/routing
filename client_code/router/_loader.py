@@ -4,9 +4,9 @@ from time import sleep
 import anvil.server
 
 from ._cached import CACHED_DATA, IN_FLIGHT_DATA
-from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._constants import CACHE_FIRST, NETWORK_FIRST, STALE_WHILE_REVALIDATE
 from ._logger import logger
-from ._non_blocking import call_async, Result
+from ._non_blocking import Result, call_async
 from ._utils import await_promise, report_exceptions
 
 
@@ -20,7 +20,7 @@ class CachedData:
 
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
-    
+
     def __repr__(self):
         return f"<CachedData {self.location} data={self.data!r}>"
 
@@ -57,10 +57,11 @@ def load_data_promise(context, force=False):
             return
         else:
             logger.debug(f"data loaded: {key}")
-            cached = CachedData(data=data, location=location, mode=route.cache_mode)
+            cached = CachedData(
+                data=data, location=location, mode=route.cache_data_mode
+            )
             CACHED_DATA[key] = cached
             context.set_data(data)
-
 
     def wrapped_loader(retries=0, **loader_args):
         try:
@@ -98,6 +99,9 @@ def load_data_promise(context, force=False):
         if is_initial:
             logger.debug("initial request, using cache")
             # data came in with startup data
+            data_promise = Result(cached.data)
+        elif mode == CACHE_FIRST:
+            logger.debug(f"{key} loading data, {CACHE_FIRST}")
             data_promise = Result(cached.data)
         elif mode == NETWORK_FIRST:
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")

@@ -35,16 +35,25 @@ class IndexRoute(Route):
 
 The routing library will cache data that was loaded by the `loader` method. If you are not using the `loader` method, then you can skip this section. For more details see the [Data Loading](/data-loading) section.
 
-The data caching behavior is determined by the `cache_mode` attribute on the route.
+The data caching behavior is determined by the `cache_data_mode` attribute on the route.
 
 !!! Note
 
     If there is a `loader` method, and there is no data in the cache, the the form will not be instantiated until the `loader` method returns a value.
 
 
+!!! Caching Forms with data loaders
+
+    If you are using `loaders` and `cache_form` is set to `True`, then loaders will not be called if there is an existing cached form. If you are using `STALE_WHILE_REVALIDATE` mode, we would recommend setting `cache_form` to `False` so that the `loader` method is called with the data is stale.
+
+
+### Cache First
+
+By default, the routing library uses the `CACHE_FIRST` mode. In this mode, the data will always be loaded from the cache if it is available.
+
 ### Network First
 
-By default, the routing library uses the `NETWORK_FIRST` mode. In this mode, the data will always be loaded when the user navigates to a route. However, if the `loader` method raises an `AppOfflineError`, the data will be loaded from the cache.
+In this mode, the data will always be loaded from the `loader` when the user navigates to a route. However, if the `loader` method raises an `AppOfflineError`, the data will be loaded from the cache.
 
 ### Stale While Revalidate
 
@@ -54,7 +63,7 @@ A more advanced mode is `STALE_WHILE_REVALIDATE`. In this mode, the data will be
 ```python
 from routing.router import Route, STALE_WHILE_REVALIDATE
 
-Route.cache_mode = STALE_WHILE_REVALIDATE
+Route.cache_data_mode = STALE_WHILE_REVALIDATE
 
 ```
 
@@ -64,7 +73,7 @@ Or you can set this attribute on specific routes.
 class IndexRoute(Route):
     path = "/"
     form = "Pages.Index"
-    cache_mode = STALE_WHILE_REVALIDATE
+    cache_data_mode = STALE_WHILE_REVALIDATE
 ```
 
 If you are using the `STALE_WHILE_REVALIDATE` mode, then you can customize the caching behavior by setting the `Route.stale_time` attribute. By default this is `0` seconds. i.e. the data is always considered stale when navigating to the route.

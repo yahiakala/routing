@@ -172,8 +172,6 @@ def on_navigate():
 
     RoutingContext._current = context
 
-
-
     logger.debug(f"Match key {match.key}")
     # don't do this because it prevents reloading the same form
     # if prev_context is not None and match.key == prev_context.match.key:
@@ -182,9 +180,6 @@ def on_navigate():
     #         prev_context._update(context)
     #         logger.debug(f"navigation would return the same form: {form}")
     #         return
-
-    # TODO: how does cached forms work with cache modes for data?
-    data_promise = load_data_promise(context)
 
     if match.key in CACHED_FORMS:
         form = CACHED_FORMS[match.key]
@@ -198,6 +193,9 @@ def on_navigate():
         logger.debug(f"found a cached form for this location: {form}")
         anvil.open_form(form)
         return
+
+    # TODO: how does cached forms work with cache modes for data?
+    data_promise = load_data_promise(context)
 
     try:
         result = Promise.race([data_promise, timeout(pending_delay)])
@@ -267,9 +265,6 @@ def listener(**listener_args):
             on_navigate()
         else:
             redirect = True
-
-
-
 
 
 def launch():

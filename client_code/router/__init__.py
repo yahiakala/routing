@@ -2,7 +2,7 @@
 from anvil.history import history as _history
 
 from ._cached import clear_cache
-from ._constants import NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._constants import CACHE_FIRST, NETWORK_FIRST, STALE_WHILE_REVALIDATE
 from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
 from ._invalidate import invalidate
@@ -26,7 +26,6 @@ def forward():
     return _history.go(1)
 
 
-
 def get_routing_context():
     return RoutingContext._current
 
@@ -37,4 +36,3 @@ def reload(hard=False):
     else:
         invalidate(path=_history.location.path)
         _history.replace(_history.location)
-

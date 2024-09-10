@@ -24,7 +24,7 @@ There are two types of caching, form caching and data caching.
 
 If a form is cached, instead of calling the `open_form` method on the matching route's form, the router will open the cached form.
 
-If data is cached, the router will only call the `loader` method if the data is stale. Stale data is determined by the `cache_mode` attribute on the route.
+If data is cached, the router will only call the `loader` method if the data is stale. Stale data is determined by the `cache_data_mode` attribute on the route.
 
 
 ## Server vs Client Routing
