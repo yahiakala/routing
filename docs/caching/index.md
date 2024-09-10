@@ -30,7 +30,6 @@ class IndexRoute(Route):
     cache_form = True
 ```
 
-
 ## Data Caching
 
 The routing library will cache data that was loaded by the `loader` method. If you are not using the `loader` method, then you can skip this section. For more details see the [Data Loading](/data-loading) section.
@@ -41,24 +40,25 @@ The data caching behavior is determined by the `cache_data_mode` attribute on th
 
     If there is a `loader` method, and there is no data in the cache, the the form will not be instantiated until the `loader` method returns a value.
 
-
 !!! Caching Forms with data loaders
 
     If you are using `loaders` and `cache_form` is set to `True`, then loaders will not be called if there is an existing cached form. If you are using `STALE_WHILE_REVALIDATE` mode, we would recommend setting `cache_form` to `False` so that the `loader` method is called with the data is stale.
 
+### No Cache
+
+By default, the routes use the `NO_CACHE` mode, i.e. data will not be cached.
 
 ### Cache First
 
-By default, the routing library uses the `CACHE_FIRST` mode. In this mode, the data will always be loaded from the cache if it is available.
+In `CACHE_FIRST` mode, the data will always be loaded from the cache if it is available.
 
 ### Network First
 
-In this mode, the data will always be loaded from the `loader` when the user navigates to a route. However, if the `loader` method raises an `AppOfflineError`, the data will be loaded from the cache.
+In `NETWORK_FIRST` mode, the data will always be loaded from the `loader` when the user navigates to a route. However, if the `loader` method raises an `AppOfflineError`, the data will be loaded from the cache.
 
 ### Stale While Revalidate
 
 A more advanced mode is `STALE_WHILE_REVALIDATE`. In this mode, the data will be loaded from the cache, and then loaded in the background from the server, if the data is stale. If there is no data in the cache, then the form will not be instantiated until the `loader` method returns a value.
-
 
 ```python
 from routing.router import Route, STALE_WHILE_REVALIDATE
@@ -80,7 +80,6 @@ If you are using the `STALE_WHILE_REVALIDATE` mode, then you can customize the c
 
 When the data is stale, the form will be instantiated with the stale data. The route's `loader` method will be called in the background, and when the `loader` method returns a value, the `routing_context` will be updated with the new data and raise the `"data_loaded"` event.
 
-
 ```python
 from routing import router
 
@@ -100,9 +99,7 @@ class ArticlesForm(ArticlesFormTemplate):
 
 The routing library will cache forms by the key. The key is a combination of the path, and the dictionary returned by the `cache_deps` method. By default the `cache_deps` method returns the `query` dictionary.
 
-
 ## Invalidating Cache
-
 
 If you want to invalidate the cache, you can call the `invalidate` function. Invalidating the cache will remove data and forms from the cache.
 

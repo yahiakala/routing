@@ -2,7 +2,7 @@
 from anvil.history import history as _history
 
 from ._cached import clear_cache
-from ._constants import CACHE_FIRST, NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._constants import CACHE_FIRST, NETWORK_FIRST, NO_CACHE, STALE_WHILE_REVALIDATE
 from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
 from ._invalidate import invalidate

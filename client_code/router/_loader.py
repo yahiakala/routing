@@ -4,7 +4,7 @@ from time import sleep
 import anvil.server
 
 from ._cached import CACHED_DATA, IN_FLIGHT_DATA
-from ._constants import CACHE_FIRST, NETWORK_FIRST, STALE_WHILE_REVALIDATE
+from ._constants import CACHE_FIRST, NETWORK_FIRST, NO_CACHE, STALE_WHILE_REVALIDATE
 from ._logger import logger
 from ._non_blocking import Result, call_async
 from ._utils import await_promise, report_exceptions
@@ -12,11 +12,15 @@ from ._utils import await_promise, report_exceptions
 
 @anvil.server.portable_class
 class CachedData:
-    def __init__(self, *, data, location, mode):
+    def __init__(self, *, data, location, mode, gc_time):
         self.data = data
         self.location = location
         self.mode = mode
+        self.gc_time = gc_time
         self.fetched_at = datetime.now()
+
+    def _should_gc(self):
+        return self.fetched_at + self.gc_time < datetime.now()
 
     def __deserialize__(self, data, gbl_data):
         self.__dict__.update(data, fetched_at=datetime.now())
@@ -57,10 +61,13 @@ def load_data_promise(context, force=False):
             return
         else:
             logger.debug(f"data loaded: {key}")
-            cached = CachedData(
-                data=data, location=location, mode=route.cache_data_mode
-            )
-            CACHED_DATA[key] = cached
+            mode = route.cache_data_mode
+            gc_time = route.gc_time
+            if mode != NO_CACHE:
+                cached = CachedData(
+                    data=data, location=location, mode=mode, gc_time=gc_time
+                )
+                CACHED_DATA[key] = cached
             context.set_data(data)
 
     def wrapped_loader(retries=0, **loader_args):
@@ -100,6 +107,9 @@ def load_data_promise(context, force=False):
             logger.debug("initial request, using cache")
             # data came in with startup data
             data_promise = Result(cached.data)
+            if cached.mode == NO_CACHE:
+                # we were loaded from server data - remove from the cache now
+                del CACHED_DATA[key]
         elif mode == CACHE_FIRST:
             logger.debug(f"{key} loading data, {CACHE_FIRST}")
             data_promise = Result(cached.data)

@@ -60,6 +60,9 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `cache_data_mode=CACHE_FIRST`
 : The cache mode to use when loading data. e.g. `NETWORK_FIRST` or `STALE_WHILE_REVALIDATE`.
 
+`gc_time=30*60`
+: The time in seconds that determines when data is released from the cache for garbage collection. By default this is 30 minutes.
+
 `stale_time=0`
 : The time in seconds that determines when the data is stale.
 

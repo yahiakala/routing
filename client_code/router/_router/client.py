@@ -108,6 +108,13 @@ def stop_unload():
     sleep(0)  # give control back to event loop
 
 
+def gc():
+    for key, cached in CACHED_DATA.items():
+        if cached._should_gc():
+            CACHED_DATA.pop(key, None)
+            CACHED_FORMS.pop(key, None)
+
+
 def on_navigate():
     location = history.location
     logger.debug("navigating")
@@ -136,6 +143,8 @@ def on_navigate():
     context = RoutingContext(
         match=match, nav_context=nav_context, form_properties=form_properties
     )
+
+    gc()
 
     route = match.route
 
