@@ -243,6 +243,7 @@ def on_navigate():
     form = route.form
     try:
         with ViewTransition():
+            debugger
             rv = route.open_form(
                 form, routing_context=context, **context.form_properties
             )
