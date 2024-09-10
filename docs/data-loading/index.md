@@ -6,7 +6,7 @@ An advantage of the data loading mechanism, over loading data during form instan
 
 ## Limitations
 
-Data caching is determined by the `path` and the dictionary returned by the `loader_deps` method. If your App needs to share data between routes then you may find that data caching is not sufficient and result in duplicate data being loaded. You can mitigate duplicate data by using `form_properties` or `nav_context` for simple data sharing.
+Data caching is determined by the `path` and the dictionary returned by the `cache_deps` method. If your App needs to share data between routes then you may find that data caching is not sufficient and result in duplicate data being loaded. You can mitigate duplicate data by using `form_properties` or `nav_context` for simple data sharing.
 
 ## Example
 

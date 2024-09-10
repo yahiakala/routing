@@ -74,20 +74,20 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `before_load`
 : Called before the route is matched. This method can raise a `Redirect` exception to redirect to a different route. By default this returns `None`.
 
-`loader_deps`
-: Caching is determined by the `path` and the dictionary returned by the `loader_deps` method. If there is no `loader_deps` method, then any two routes with the same `path` are considered to be the same route. By default this returns an empty dictionary.
-
-`loader`
-: Called when the route is matched. The return value will be available in the `data` property of the `RoutingContext` instance. By default this returns `None`.
-
-`meta`
-: should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
-
 `parse_query`
 : should return a dictionary of query parameters. By default this returns the original query parameters.
 
 `parse_params`
 : should return a dictionary of path parameters. By default this returns the original path parameters.
+
+`meta`
+: should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
+
+`loader`
+: Called when the route is matched. The return value will be available in the `data` property of the `RoutingContext` instance. By default this returns `None`.
+
+`cache_deps`
+: Caching is determined by the `path` and the return value of the `cache_deps` method. The default implementation returns the `query` dictionary. That is, a route with the same `path` and `query` will be considered to be the same route. And routes with different `query` will be considered to be different routes.
 
 
 ## Not Found Form

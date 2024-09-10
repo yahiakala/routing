@@ -144,8 +144,8 @@ class Route:
     def before_load(self, **loader_args):
         pass
 
-    def loader_deps(self, **loader_args):
-        return {}
+    def cache_deps(self, **loader_args):
+        return loader_args["query"]
 
     def loader(self, **loader_args):
         return None

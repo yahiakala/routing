@@ -12,7 +12,7 @@ class Match:
         self.hash = location.hash
         self.query = query
         self.route = route
-        self.deps = route.loader_deps(
+        self.deps = route.cache_deps(
             path=self.path, params=params, query=query, hash=self.hash
         )
         self.key = make_key(self.path, self.deps)
@@ -55,6 +55,19 @@ def get_match(location):
     return None
 
 
+def ensure_dict_wrapper(fn):
+    def wrapper(*args, **kws):
+        rv = fn(*args, **kws)
+        if rv is None:
+            return {}
+        if not isinstance(rv, dict):
+            raise TypeError(f"{fn.__name__} must return a dict")
+        return rv
+
+    return wrapper
+
+
+@ensure_dict_wrapper
 def parse_query(route: Route, query: dict):
     for key, value in dict(query).items():
         try:
@@ -71,6 +84,7 @@ def parse_query(route: Route, query: dict):
         return query
 
 
+@ensure_dict_wrapper
 def parse_path(route: Route, params: dict):
     parser = route.parse_params
     if callable(parser):

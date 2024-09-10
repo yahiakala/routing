@@ -89,7 +89,7 @@ class ArticlesForm(ArticlesFormTemplate):
 
 ## Caching keys
 
-The routing library will cache forms by the key. The key is a combination of the path, and the dictionary returned by the `loader_deps` method.
+The routing library will cache forms by the key. The key is a combination of the path, and the dictionary returned by the `cache_deps` method. By default the `cache_deps` method returns the `query` dictionary.
 
 
 ## Invalidating Cache
@@ -118,7 +118,7 @@ invalidate(routing_context, **kws)
 
 `deps`
 
-: The dependencies to invalidate. These are the same dependencies that are returned by the `loader_deps` method.
+: The dependencies to invalidate. These are the same dependencies that are returned by the `cache_deps` method.
 
 `exact`
 

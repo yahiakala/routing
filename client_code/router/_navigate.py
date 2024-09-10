@@ -6,7 +6,7 @@ from ._constants import NOT_FOUND
 from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
-from ._utils import encode_query_params, ensure_dict, url_encode
+from ._utils import dumps, encode_query_params, ensure_dict, loads, url_encode
 
 
 def clean_path(path, params):
@@ -38,13 +38,13 @@ def clean_path(path, params):
 
 def stringify_value(val):
     if not isinstance(val, str):
-        return json.dumps(val, sort_keys=True)
+        return dumps(val)
 
     try:
         # this way strings are flat like foo=bar
         # and already jsonified strings are returned as is
-        val = json.loads(val)
-        return json.dumps(val)
+        val = loads(val)
+        return dumps(val)
     except Exception:
         return val
 

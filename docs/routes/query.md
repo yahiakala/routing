@@ -37,10 +37,10 @@ class Dashboard(DashboardTemplate):
 
 ```
 
-Note that in the `tab_changed` event handler, we are navigating to the same page, and so, we don't need to include the `path` in the `navigate` call.
+Note that in the `tab_changed` event handler, we are navigating to the same path, and so, we don't need to include the `path` in the `navigate` call.
 If we want to be explicit, we can use `path="./"` or `path="/dashboard"`.
 
-By default, if the query parameters change, the page will not be reloaded.
+By default, if the query parameters change, a new instance of the form will be loaded (even if `cache_form` is set to `True`). See `cache_deps` below for more details.
 When the query parameters change, we can listen for the `query_changed` event and update our page state accordingly.
 
 ## Parsing Query Parameters
@@ -102,11 +102,11 @@ e.g. `foo=%5B1%2C+%22a%22%2C+true%5D'` will be decoded as `{"foo": [1, "a", true
 
 ## Loading a new instance of a form
 
-By default the routing library will not load a new instance of a form when the query parameters change.
+By default the routing library will load a new instance of a form when the query parameters change.
 
-If you wish to load a new instance of a form when certain query parameters change, you can use the `loader_deps` method.
+If you do NOT wish to load a new instance of a form when certain query parameters change, you can override the`cache_deps` method.
 
-This method should return a `dict` of dependencies, which determine when a form and its data should be loaded. The return value from `loader_deps` should be json-able.
+This method should return a `dict` of dependencies, which determine when a form and its data should be loaded from `cache`. The return value from `cache_deps` should be json-able.
 
 
 ```python
@@ -116,13 +116,14 @@ from routing.router import Route
 class DashboardRoute(Route):
     path = "/dashboard"
     form = "DashboardForm"
+    cache_form = True
 
-    def loader_deps(self, **loader_args):
-        # this ensures that whenever the `tab` changes a new instance of the form is loaded
-        query = loader_args["query"]
-        return {"tab": query["tab"]}
+    def cache_deps(self, **loader_args):
+        # this form is cached uniquely by the `path` only - there are no `query` dependencies
+        # i.e. if the `tab` changes, we keep the same instance of the form
+        return None
 
 ```
 
-For more details on `loader_deps` see the data loading section.
+For more details on `cache_deps` see the data loading section.
 
