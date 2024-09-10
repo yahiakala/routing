@@ -1,4 +1,5 @@
 import anvil.server
+from anvil.history import history
 
 from ._constants import LAYOUTS, NO_CACHE, TEMPLATE_WITH_CONTENT_PANEL
 from ._exceptions import Redirect
@@ -164,11 +165,18 @@ class Route:
         return params
 
     def load_form(self, form, routing_context, form_properties, **loader_args):
+        location = history.location
+        key = location.key
+
         if self.load_form_mode == LAYOUTS:
             return anvil.open_form(
                 form, routing_context=routing_context, **form_properties
             )
         elif self.load_form_mode == TEMPLATE_WITH_CONTENT_PANEL:
+
+            def is_stale():
+                return key != history.location.key
+
             template = self.get_template(**loader_args)
             template_form = import_form(template)
 
@@ -176,12 +184,12 @@ class Route:
                 anvil.open_form(template_form)
 
             form = import_form(form, routing_context=routing_context, **form_properties)
+
+            if is_stale():
+                return form
+
             template.content_panel.clear()
-            from anvil.js import get_dom_node
-            debugger
-            # print(get_dom_node(form))
             template.content_panel.add_component(form)
-            debugger
             return form
         else:
             raise ValueError(f"Unknown load_form_mode {self.load_form_mode}")
