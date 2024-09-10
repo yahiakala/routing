@@ -1,6 +1,6 @@
 import anvil.server
 
-from ._constants import CACHE_FIRST
+from ._constants import NO_CACHE
 from ._exceptions import Redirect
 from ._logger import logger
 from ._meta import get_default_meta
@@ -127,7 +127,7 @@ class Route:
     pending_form = None
     pending_delay = 1
     pending_min = 0.5
-    cache_data_mode = CACHE_FIRST
+    cache_data_mode = NO_CACHE
     stale_time = 0
     cache_form = False
     server_fn = None
