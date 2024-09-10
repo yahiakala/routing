@@ -37,17 +37,18 @@ def get_context(form) -> RoutingContext:
 
 class _NavigationEmitter:
     def __init__(self):
-        self._subscribers = set()
+        self._subscribers = {}
 
-    def subscribe(self, fn):
-        self._subscribers.add(fn)
+    def subscribe(self, event_name, fn):
+        self._subscribers.setdefault(event_name, set()).add(fn)
 
-    def unsubscribe(self, fn):
-        self._subscribers.discard(fn)
+    def unsubscribe(self, event_name, fn):
+        self._subscribers.setdefault(event_name, set()).discard(fn)
 
     def emit(self, event_name, **kwargs):
         kwargs["event_name"] = event_name
-        for fn in self._subscribers:
+        fns = self._subscribers.get(event_name, [])
+        for fn in fns:
             fn(**kwargs)
 
 

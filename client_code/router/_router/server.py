@@ -23,10 +23,10 @@ class UnloadBlocker(_Blocker):
 
 
 class _NavigationEmitter:
-    def subscribe(self, fn):
+    def subscribe(self, event_name, fn):
         pass
 
-    def unsubscribe(self, fn):
+    def unsubscribe(self, event_name, fn):
         pass
 
     def emit(self, *args, **kwargs):
