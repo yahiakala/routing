@@ -13,6 +13,7 @@ from ._constants import (
 from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
 from ._invalidate import invalidate
+from ._loader import use_data
 from ._logger import debug_logging
 from ._navigate import navigate
 from ._route import Route, open_form

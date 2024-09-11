@@ -6,6 +6,8 @@ import anvil.server
 from ._cached import CACHED_DATA, IN_FLIGHT_DATA
 from ._constants import CACHE_FIRST, NETWORK_FIRST, NO_CACHE, STALE_WHILE_REVALIDATE
 from ._logger import logger
+from ._matcher import get_match
+from ._navigate import get_nav_location
 from ._non_blocking import Result, call_async
 from ._utils import await_promise, report_exceptions
 
@@ -137,3 +139,39 @@ def load_data_promise(context, force=False):
 def load_data(context, force=False):
     await_promise(load_data_promise(context, force))
     return context.data
+
+
+def use_data(
+    context_or_path_or_url=None,
+    *,
+    path=None,
+    params=None,
+    query=None,
+    hash=None,
+):
+    from ._context import RoutingContext
+
+    location = get_nav_location(
+        context_or_path_or_url, path=path, query=query, params=params, hash=hash
+    )
+    match = get_match(location)
+    if match is None:
+        raise Exception(f"No match {location}")
+
+    key = match.key
+
+    if key in CACHED_DATA:
+        logger.debug(f"using cached data for {key}")
+        data_promise = Result(CACHED_DATA[key])
+    elif key in IN_FLIGHT_DATA:
+        logger.debug(f"using in flight data for {key}")
+        data_promise = IN_FLIGHT_DATA[key]
+    else:
+        logger.debug(f"loading data for {key}")
+        context = RoutingContext(match=match)
+        data_promise = load_data_promise(context)
+
+    data, error = await_promise(data_promise)
+    if error is not None:
+        raise error
+    return data
