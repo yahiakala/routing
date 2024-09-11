@@ -14,7 +14,7 @@ from ._invalidate import invalidate
 from ._loader import use_data
 from ._logger import debug_logging
 from ._navigate import navigate
-from ._route import Route, open_form
+from ._route import Route, open_form, TemplateWithContainerRoute
 from ._router import NavigationBlocker, launch, navigation_emitter
 from ._url import get_url
 from ._view_transition import use_transitions
