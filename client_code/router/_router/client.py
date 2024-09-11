@@ -105,7 +105,7 @@ def stop_unload():
 
 
 def gc():
-    for key, cached in CACHED_DATA.items():
+    for key, cached in CACHED_DATA.copy().items():
         if cached._should_gc():
             logger.debug(f"releasing {key} from the cache for garbage collection")
             CACHED_DATA.pop(key, None)
