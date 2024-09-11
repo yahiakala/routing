@@ -100,7 +100,7 @@ def _create_server_route(cls):
             meta = None
 
         try:
-            data = route.loader(**context._loader_args)
+            data = route.load_data(**context._loader_args)
         except Exception as e:
             logger.error(
                 f"error loading data for {location}, got {e!r}\n"
@@ -157,7 +157,7 @@ class Route:
     def cache_deps(self, **loader_args):
         return loader_args["query"]
 
-    def loader(self, **loader_args):
+    def load_data(self, **loader_args):
         return None
 
     def meta(self, **loader_args):
@@ -234,16 +234,16 @@ class Route:
             sorted_routes.append(cls())
 
         server_fn = cls.__dict__.get("server_fn")
-        existing_loader = cls.__dict__.get("loader")
+        existing_loader = cls.__dict__.get("load_data")
         if server_fn is not None and existing_loader is None:
 
-            def loader(self, **loader_args):
+            def load_data(self, **loader_args):
                 if self.server_silent:
                     return anvil.server.call_s(server_fn, **loader_args)
                 else:
                     return anvil.server.call(server_fn, **loader_args)
 
-            cls.loader = loader
+            cls.load_data = load_data
 
         if anvil.is_server_side():
             _create_server_route(cls)

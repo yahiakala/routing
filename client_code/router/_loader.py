@@ -73,7 +73,7 @@ def load_data_promise(context, force=False):
 
     def wrapped_loader(retries=0, **loader_args):
         try:
-            result = route.loader(**loader_args)
+            result = route.load_data(**loader_args)
         except anvil.server.AppOfflineError as e:
             if not retries:
                 logger.debug(f"{key} {e!r}, retrying")
@@ -107,10 +107,15 @@ def load_data_promise(context, force=False):
         if is_initial:
             logger.debug("initial request, using cache")
             # data came in with startup data
+            # THIS SHOULD BE HERE - otherwise we may create an unnecessary inflight promise
             data_promise = Result(cached.data)
             if cached.mode == NO_CACHE:
                 # we were loaded from server data - remove from the cache now
                 del CACHED_DATA[key]
+        elif mode == NO_CACHE:
+            # we (probably) shouldn't be here - but just in case
+            del CACHED_DATA[key]
+            data_promise = create_in_flight_data_promise()
         elif mode == CACHE_FIRST:
             logger.debug(f"{key} loading data, {CACHE_FIRST}")
             data_promise = Result(cached.data)
