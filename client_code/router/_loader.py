@@ -19,6 +19,7 @@ class CachedData:
         self.mode = mode
         self.gc_time = gc_time
         self.fetched_at = datetime.now()
+        self.stale = False
 
     def _should_gc(self):
         return datetime.now() - self.fetched_at > timedelta(seconds=self.gc_time)
@@ -125,7 +126,7 @@ def load_data_promise(context, force=False):
         elif mode == STALE_WHILE_REVALIDATE:
             data_promise = Result(cached.data)
             is_stale = (datetime.now() - fetched_at).total_seconds() > route.stale_time
-            if is_stale:
+            if cached.stale or is_stale:
                 logger.debug(
                     f"{key} - reloading in the background, {STALE_WHILE_REVALIDATE}"
                 )

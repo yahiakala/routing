@@ -1,4 +1,5 @@
 from ._cached import CACHED_DATA, CACHED_FORMS
+from ._constants import STALE_WHILE_REVALIDATE
 from ._utils import decode_key, ensure_dict, make_key, valid_absolute_path
 
 
@@ -69,5 +70,8 @@ def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
 
     for key in keys:
         CACHED_FORMS.pop(key, None)
-        CACHED_DATA.pop(key, None)
-        # TODO - consider other behavior - like refetch, remove
+
+        cached = CACHED_DATA.pop(key, None)
+        if cached is not None and cached.mode == STALE_WHILE_REVALIDATE:
+            cached.stale = True
+            CACHED_DATA[key] = cached

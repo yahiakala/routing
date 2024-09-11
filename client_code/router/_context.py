@@ -66,11 +66,12 @@ class RoutingContext(EventEmitter):
         invalidate(self, exact=exact)
 
     def set_data(self, data, error=None):
-        self._data = data
-        self._error = error
-        self.raise_event("data_loaded", data=data, error=error)
         if error is not None:
+            self._error = error
             self.raise_event("data_error", error=error)
+        else:
+            self._data = data
+            self.raise_event("data_loaded", data=data)
 
     @property
     def data(self):
