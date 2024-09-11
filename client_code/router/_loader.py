@@ -28,7 +28,10 @@ class CachedData:
         self.__dict__.update(data, fetched_at=datetime.now())
 
     def __repr__(self):
-        return f"<CachedData {self.location} data={self.data!r}>"
+        data_repr = repr(self.data)
+        if len(data_repr) > 100:
+            data_repr = data_repr[:100] + "..."
+        return f"<CachedData '{self.location}' data={data_repr}>"
 
 
 _initial_request = True
