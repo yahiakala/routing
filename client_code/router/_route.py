@@ -109,7 +109,7 @@ def _create_server_route(cls):
             # TODO: handle error on the client
             return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
 
-        mode = route.cache_data_mode
+        mode = route.cache_data
         gc_time = route.gc_time
         cached_data = CachedData(
             data=data, location=location, mode=mode, gc_time=gc_time
@@ -128,7 +128,7 @@ class Route:
     pending_form = None
     pending_delay = 1
     pending_min = 0.5
-    cache_data_mode = NO_CACHE
+    cache_data = NO_CACHE
     stale_time = 0
     cache_form = False
     server_fn = None

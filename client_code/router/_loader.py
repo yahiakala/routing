@@ -62,7 +62,7 @@ def load_data_promise(context, force=False):
             return
         else:
             logger.debug(f"data loaded: {key}")
-            mode = route.cache_data_mode
+            mode = route.cache_data
             gc_time = route.gc_time
             if mode != NO_CACHE:
                 cached = CachedData(

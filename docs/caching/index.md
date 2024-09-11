@@ -34,7 +34,7 @@ class IndexRoute(Route):
 
 The routing library will cache data that was loaded by the `load_data` method. If you are not using the `load_data` method, then you can skip this section. For more details see the [Data Loading](/data-loading) section.
 
-The data caching behavior is determined by the `cache_data_mode` attribute on the route.
+The data caching behavior is determined by the `cache_data` attribute on the route.
 
 !!! Note
 
@@ -63,7 +63,7 @@ A more advanced mode is `STALE_WHILE_REVALIDATE`. In this mode, the data will be
 ```python
 from routing.router import Route, STALE_WHILE_REVALIDATE
 
-Route.cache_data_mode = STALE_WHILE_REVALIDATE
+Route.cache_data = STALE_WHILE_REVALIDATE
 
 ```
 
@@ -73,7 +73,7 @@ Or you can set this attribute on specific routes.
 class IndexRoute(Route):
     path = "/"
     form = "Pages.Index"
-    cache_data_mode = STALE_WHILE_REVALIDATE
+    cache_data = STALE_WHILE_REVALIDATE
 ```
 
 If you are using the `STALE_WHILE_REVALIDATE` mode, then you can customize the caching behavior by setting the `Route.stale_time` attribute. By default this is `0` seconds. i.e. the data is always considered stale when navigating to the route.
@@ -130,7 +130,6 @@ invalidate(routing_context, **kws)
 
 : If `True` then the path and deps must match exactly. If `False` (the default) then any path or deps that are a subset of path and deps arguments will be invalidated.
 
-
 ## Partial Invalidation
 
 ```python
@@ -166,8 +165,6 @@ class ArticlesRoute(Route):
 ```
 
 In the above example the data is cached depending on the `page` query parameter. If you call `invalidate("/articles")` then all data associated with all pages will be invalidated. A deps value of `{"page": 1}` is considered a subset of an empty deps argument. If you call `invalidate("/articles", exact=True)` then no data will be invalidated, since there is no match. Calling `invalidate("/articles", deps={"page": 1})` will invalidate only the data for the first page.
-
-
 
 ## Invalidating Contexts
 
