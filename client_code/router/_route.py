@@ -2,7 +2,7 @@ import anvil.server
 from anvil.history import history
 
 from ._cached import CACHED_DATA
-from ._constants import LAYOUTS, NO_CACHE, TEMPLATE_WITH_CONTAINER
+from ._constants import NO_CACHE
 from ._exceptions import Redirect
 from ._import_form import import_form
 from ._logger import logger
@@ -88,7 +88,7 @@ def _create_server_route(cls):
                 f"{location}: error serving route from the server: {e!r}\n"
                 f"{traceback.format_exc()}"
             )
-            return LoadAppResponse(data={"cache": CACHED})
+            return LoadAppResponse(data={"cache": CACHED_DATA})
 
         try:
             meta = route.meta(**context._loader_args)
@@ -129,10 +129,6 @@ class Route:
     pending_delay = 1
     pending_min = 0.5
     cache_data_mode = NO_CACHE
-    load_form_mode = LAYOUTS
-    template = None
-    template_container = "content_panel"
-    template_container_properties = {}
     stale_time = 0
     cache_form = False
     server_fn = None
@@ -166,49 +162,13 @@ class Route:
     def parse_params(self, params):
         return params
 
-    def load_form(self, form, routing_context, form_properties, **loader_args):
-        location = history.location
-        key = location.key
-
-        if self.load_form_mode == LAYOUTS:
-            return anvil.open_form(
-                form, routing_context=routing_context, **form_properties
-            )
-        elif self.load_form_mode == TEMPLATE_WITH_CONTAINER:
-
-            def is_stale():
-                return key != history.location.key
-
-            template = self.get_template(**loader_args) or self.template
-
-            if isinstance(template, str):
-                template_form_name = template.split(".").pop()
-                if type(anvil.get_open_form()).__name__ == template_form_name:
-                    template = anvil.get_open_form()
-
-            template_form = import_form(template)
-
-            if template_form is not anvil.get_open_form() and not is_stale():
-                anvil.open_form(template_form)
-
-            form = import_form(form, routing_context=routing_context, **form_properties)
-
-            if is_stale():
-                return form
-
-            container = getattr(template, self.template_container)
-            container.clear()
-            container.add_component(form, **self.template_container_properties)
-
-            return form
-        else:
-            raise ValueError(f"Unknown load_form_mode {self.load_form_mode}")
+    def load_form(self, form, routing_context, **loader_args):
+        return anvil.open_form(
+            form, routing_context=routing_context, **routing_context.form_properties
+        )
 
     def get_template(self, **loader_args):
         return None
-
-    # def params(self, params):
-    #     return params
 
     def parse_query(self, query):
         return query

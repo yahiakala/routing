@@ -13,9 +13,9 @@ The router will try to match routes in the order they are defined.
 When a route is found, the router will call the route's `before_load` method.
 If the `before_load` method raises a `Redirect`, the router will navigate to the redirected url.
 
-If the route has a `loader` method, it will be called and the return value will be available as the `data` property on the `RoutingContext`.
+If the route has a `load_data` method, it will be called and the return value will be available as the `data` property on the `RoutingContext`.
 
-Once the `loader` method has been called, the router will call `open_form` on the matching route's form. A `routing_context` will be passed to the form.
+Once the `load_data` method has been called, the router will call `open_form` on the matching route's form. A `routing_context` will be passed to the form.
 
 
 ## Caching
@@ -24,7 +24,7 @@ There are two types of caching, form caching and data caching.
 
 If a form is cached, instead of calling the `open_form` method on the matching route's form, the router will open the cached form.
 
-If data is cached, the router will only call the `loader` method if the data is stale. Stale data is determined by the `cache_data_mode` attribute on the route.
+If data is cached, the router will only call the `load_data` method if the data is stale. Stale data is determined by the `cache_data_mode` attribute on the route.
 
 
 ## Server vs Client Routing

@@ -41,7 +41,7 @@ class IndexTemplate(IndexTemplate):
 
 `deps`
 
-: The dependencies `dict` returned by the `loader_deps` method.
+: The dependencies `dict` returned by the `cache_deps` method.
 
 `nav_context`
 
@@ -57,7 +57,7 @@ class IndexTemplate(IndexTemplate):
 
 `data`
 
-: The data for the current route. This is the value returned from the `loader` method.
+: The data for the current route. This is the value returned from the `load_data` method.
 
 <!-- `match`
 

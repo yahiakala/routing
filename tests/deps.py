@@ -57,11 +57,11 @@ def routes():
                 page = 0
             return {**search_params, "page": page}
 
-        def loader_deps(self, **loader_args):
+        def cache_deps(self, **loader_args):
             page = loader_args.get("search_params", {}).get("page", 1)
             return {"page": page}
 
-        def loader(self, **loader_args):
+        def load_data(self, **loader_args):
             # usually this would be a server call
             page = loader_args.get("deps", {}).get("page", 1)
             return get_page(page)
@@ -79,7 +79,7 @@ def routes():
                 id = 0
             return {"id": id}
 
-        def loader(self, **loader_args):
+        def load_data(self, **loader_args):
             sleep(self.stale_time / 2)
             id = loader_args.get("path_params", {}).get("id", 1)
             return {**articles[id - 1]}

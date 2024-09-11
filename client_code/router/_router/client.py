@@ -138,7 +138,7 @@ def _do_navigate(context):
             raise error
 
         with ViewTransition():
-            route.load_form(form, context, **context._loader_args)
+            route.load_form(form, context)
 
     try:
         route.before_load(**context._loader_args)
@@ -153,8 +153,6 @@ def _do_navigate(context):
     meta = route.meta(**context._loader_args)
     ensure_dict(meta, "meta")
     update_meta_tags(meta)
-
-    RoutingContext._current = context
 
     logger.debug(f"Match key {match.key}")
     # don't do this because it prevents reloading the same form
@@ -175,7 +173,7 @@ def _do_navigate(context):
             return
         # TODO: update the context probably
         logger.debug(f"found a cached form for this location: {form}")
-        match.route.load_form(form, context, **context._loader_args)
+        match.route.load_form(form, context)
         return
 
     # TODO: how does cached forms work with cache modes for data?
@@ -196,7 +194,7 @@ def _do_navigate(context):
             f"exceeded pending delay: {pending_delay}, loading pending form {pending_form!r}"
         )
         with ViewTransition():
-            route.load_form(pending_form, context, **context._loader_args)
+            route.load_form(pending_form, context)
         sleep(pending_min)
 
     try:
@@ -216,7 +214,7 @@ def _do_navigate(context):
     form = route.form
     try:
         with ViewTransition():
-            rv = route.load_form(form, context, **context._loader_args)
+            rv = route.load_form(form, context)
         form_to_context.set(rv, context)
         if route.cache_form:
             CACHED_FORMS[match.key] = rv
@@ -247,9 +245,11 @@ def on_navigate():
         match=match, nav_context=nav_context, form_properties=form_properties
     )
 
+    RoutingContext._current = context
+
     gc()
 
-    kws = {**context._loader_args, "context": context}
+    kws = {**context._loader_args, "routing_context": context}
     setTimeout(lambda: navigation_emitter.raise_event("navigate", **kws))
     pending = setTimeout(lambda: navigation_emitter.raise_event("pending", **kws))
     try:

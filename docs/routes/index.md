@@ -67,7 +67,7 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 : The time in seconds that determines when the data is stale. By default this is 0, i.e. the data is always considered stale when navigating to the route. This is only relevant when `cache_data_mode` is set to `STALE_WHILE_REVALIDATE`.
 
 `server_fn (optional)`
-: The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `loader` method. Note this is optional and equivalent to defining a `loader` method the calls the same server function.
+: The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `load_data` method. Note this is optional and equivalent to defining a `load_data` method the calls the same server function.
 
 `server_silent=False`
 : If `True` then the server function will be called using `anvil.server.call_s`. By default this is `False`.
@@ -86,8 +86,11 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `meta`
 : should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
 
-`loader`
+`load_data`
 : Called when the route is matched. The return value will be available in the `data` property of the `RoutingContext` instance. By default this returns `None`.
+
+`load_form`
+: This method is called with two arguments. The first argument is a form name (e.g. `"Pages.Index"`) or, if you are using cached forms, the cached form instance. The second argument is the `RoutingContext` instance. By default this calls `anvil.open_form` on the form.
 
 `cache_deps`
 : Caching is determined by the `path` and the return value of the `cache_deps` method. The default implementation returns the `query` dictionary. That is, a route with the same `path` and `query` will be considered to be the same route. And routes with different `query` will be considered to be different routes.

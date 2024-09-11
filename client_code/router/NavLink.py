@@ -80,9 +80,9 @@ class NavLink(DefaultLink, LinkMixinCommon):
                 ),
             )
 
-    def _on_navigate(self, context: RoutingContext=None, **nav_args):
-        context = context or RoutingContext._current
-        if context is None:
+    def _on_navigate(self, routing_context: RoutingContext = None, **nav_args):
+        routing_context = routing_context or RoutingContext._current
+        if routing_context is None:
             return
 
         location = self._location
@@ -90,17 +90,17 @@ class NavLink(DefaultLink, LinkMixinCommon):
 
         if location is None:
             active = False
-        elif self.exact_path and context.path != location.path:
+        elif self.exact_path and routing_context.path != location.path:
             active = False
         elif self.exact_query and _query_inclusively_equal(
-            self.query, context.query
+            self.query, routing_context.query
         ):
             active = False
-        elif self.exact_hash and context.hash != location.hash:
+        elif self.exact_hash and routing_context.hash != location.hash:
             active = False
-        elif context.path != location.path:
+        elif routing_context.path != location.path:
             # check if the current location is a parent of the new location
-            curr_segments = Segment.from_path(context.path)
+            curr_segments = Segment.from_path(routing_context.path)
             location_segments = Segment.from_path(location.path)
             if len(location_segments) > len(curr_segments):
                 active = False

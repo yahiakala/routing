@@ -10,38 +10,42 @@ A common gotcha will be that a Form could previously rely on the `item` property
 
 Define your routes. Each route definition will be similar to the hash routing `@route` decorator.
 
-By default the routing library will call `anvil.open_form` on the matching route's form. You can make the routing library behave more like hash routing by setting `load_form_mode` to `TEMPLATE_WITH_CONTAINER`.
-
-If you have a single template in your hash routing app, then set the `Route.template = "MyTemplate"`.
-
-If you have multiple templates, then you can either set the `template` attribute on individual routes, or define a `get_template` method on the `Route` class.
+By default, when a route subclasses from `Route` the routing library will call `anvil.open_form` on the matching route's form. For hash routing apps, this is not what you want. Instead you should subclass from `TemplateWithContainerRoute` and set the `template` attribute to the template form.
 
 ```python
 
-def get_template(**loader_args):
-    if anvil.users.get_user():
-        return "MainTemplate"
-    else:
-        return "LoginTemplate"
+from routing.router import TemplateWithContainerRoute as BaseRoute
 
-Route.get_template = staticmethod(get_template)
+BaseRoute.template = "MainTemplate"
+
+class IndexRoute(BaseRoute):
+    path = "/"
+    form = "Pages.Index"
 
 ```
 
+If you have a single template in your hash routing app, then set the `BaseRoute.template = "MyTemplate"`.
+
+If you have multiple templates, then you can either set the `template` attribute on individual routes, or define a `get_template` method on the `Route` class.
+
+#### `set_url_hash`
+
 Instead of calling hash routing's `set_url_hash` method, use the `navigate` function.
+
+#### `full_width_row`
 
 If the route decorator uses `full_width_row` you should configure the `Route.template_container_properties` attribute.
 
 ```python
 
-from routing.router import Route, TEMPLATE_WITH_CONTAINER
+from routing.router import TemplateWithContainerRoute as BaseRoute
 
-Route.load_form_mode = TEMPLATE_WITH_CONTAINER
-Route.template = "MainTemplate"
+BaseRoute.template = "MainTemplate"
 
-class IndexRoute(Route):
+class IndexRoute(BaseRoute):
     path = "/"
     form = "Pages.Index"
     template_container_properties = {"full_width_row": True}
 
 ```
+
