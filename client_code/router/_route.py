@@ -162,7 +162,7 @@ class Route:
     def parse_params(self, params):
         return params
 
-    def load_form(self, form, routing_context, **loader_args):
+    def load_form(self, form, routing_context):
         return anvil.open_form(
             form, routing_context=routing_context, **routing_context.form_properties
         )
@@ -177,21 +177,23 @@ class Route:
     #     return query
 
     def __init_subclass__(cls) -> None:
-        if cls.path is not None:
-            if not isinstance(cls.path, str):
-                raise TypeError("path must be a string")
+        if cls.path is None:
+            return
 
-            trimmed_path = trim_path(cls.path)
-            cls.segments = Segment.from_path(trimmed_path)
-            if trimmed_path.startswith("."):
-                raise ValueError("Route path cannot be relative")
+        if not isinstance(cls.path, str):
+            raise TypeError("path must be a string")
 
-            if not trimmed_path.startswith("/"):
-                cls.path = "/" + trimmed_path
-            else:
-                cls.path = trimmed_path
+        trimmed_path = trim_path(cls.path)
+        cls.segments = Segment.from_path(trimmed_path)
+        if trimmed_path.startswith("."):
+            raise ValueError("Route path cannot be relative")
 
-            sorted_routes.append(cls())
+        if not trimmed_path.startswith("/"):
+            cls.path = "/" + trimmed_path
+        else:
+            cls.path = trimmed_path
+
+        sorted_routes.append(cls())
 
         server_fn = cls.__dict__.get("server_fn")
         existing_loader = cls.__dict__.get("load_data")
@@ -228,3 +230,41 @@ def open_form(form, **form_properties):
         return navigate(path=route.path, form_properties=form_properties)
 
     raise ValueError(f"No route found for form {form}")
+
+
+class TemplateWithContainerRoute(Route):
+    template = None
+    template_container = "content_panel"
+    template_container_properties = {}
+
+    def load_form(self, form, routing_context):
+        location = history.location
+        key = location.key
+
+        def is_stale():
+            return key != history.location.key
+
+        template = self.template
+
+        if isinstance(template, str):
+            template_form_name = template.split(".").pop()
+            if type(anvil.get_open_form()).__name__ == template_form_name:
+                template = anvil.get_open_form()
+
+        template_form = import_form(template)
+
+        if template_form is not anvil.get_open_form() and not is_stale():
+            anvil.open_form(template_form)
+
+        form = import_form(
+            form, routing_context=routing_context, **routing_context.form_properties
+        )
+
+        if is_stale():
+            return form
+
+        container = getattr(template, self.template_container)
+        container.clear()
+        container.add_component(form, **self.template_container_properties)
+
+        return form
