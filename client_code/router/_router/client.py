@@ -262,27 +262,23 @@ def on_navigate():
 def listener(**listener_args):
     global waiting, undoing, redirect, current
 
-    try:
-        if undoing:
-            undoing = False
-        elif waiting:
-            delta = listener_args.get("delta")
-            if delta is not None:
-                undoing = True
-                history.go(-delta)
-            else:
-                # user determined to navigate
-                history.reload()
+    if undoing:
+        undoing = False
+    elif waiting:
+        delta = listener_args.get("delta")
+        if delta is not None:
+            undoing = True
+            history.go(-delta)
         else:
-            current = listener_args
+            # user determined to navigate
+            history.reload()
+    else:
+        current = listener_args
 
-            if redirect:
-                on_navigate()
-            else:
-                redirect = True
-    finally:
-        clearTimeout(pending_timeout)
-        setTimeout(lambda: navigation_emitter.raise_event("idle"))
+        if redirect:
+            on_navigate()
+        else:
+            redirect = True
 
 
 def launch():
