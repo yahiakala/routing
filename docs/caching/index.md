@@ -32,19 +32,19 @@ class IndexRoute(Route):
 
 ## Data Caching
 
-The routing library will cache data that was loaded by the `load_data` method. If you are not using the `load_data` method, then you can skip this section. For more details see the [Data Loading](/data-loading) section.
+The routing library can cache data that was loaded by the `load_data` method. If you are not using the `load_data` method, then you can skip this section. For more details see the [Data Loading](/data-loading) section.
 
-The data caching behavior is determined by the `cache_data` attribute on the route.
-
-!!! Note
-
-    If there is a `load_data` method, and there is no data in the cache, the the form will not be instantiated until the `load_data` method returns a value.
+You can turn on data caching by setting the `cache_data` attribute on the route to `True`.
 
 !!! Caching Forms with data loaders
 
-    If you are using `load_data` method and `cache_form` is set to `True`, then load_data method will not be called if there is an existing cached form. If you are using `STALE_WHILE_REVALIDATE` mode, we would recommend setting `cache_form` to `False` so that the `load_data` method is called with the data is stale.
+    If you are using `load_data` method and `cache_form` is set to `True`, then load_data method will not be called if there is an existing cached form.
+    
+<!-- If you are using `STALE_WHILE_REVALIDATE` mode, we would recommend setting `cache_form` to `False` so that the `load_data` method is called with the data is stale. -->
 
-### No Cache
+
+
+<!-- ### No Cache
 
 By default, the routes use the `NO_CACHE` mode, i.e. data will not be cached.
 
@@ -54,8 +54,8 @@ In `CACHE_FIRST` mode, the data will always be loaded from the cache if it is av
 
 ### Network First
 
-In `NETWORK_FIRST` mode, the data will always be loaded from the `load_data` when the user navigates to a route. However, if the `load_data` method raises an `AppOfflineError`, the data will be loaded from the cache.
-
+In `NETWORK_FIRST` mode, the data will always be loaded from the `load_data` when the user navigates to a route. However, if the `load_data` method raises an `AppOfflineError`, the data will be loaded from the cache. -->
+<!-- 
 ### Stale While Revalidate
 
 A more advanced mode is `STALE_WHILE_REVALIDATE`. In this mode, the data will be loaded from the cache, and then loaded in the background from the server, if the data is stale. If there is no data in the cache, then the form will not be instantiated until the `load_data` method returns a value.
@@ -93,11 +93,11 @@ class ArticlesForm(ArticlesFormTemplate):
     def on_data_loaded(self, **event_args):
         self.repeating_panel.items = self.routing_context.data
 
-```
+``` -->
 
 ## Caching keys
 
-The routing library will cache forms by the key. The key is a combination of the path, and the dictionary returned by the `cache_deps` method. By default the `cache_deps` method returns the `query` dictionary.
+The routing library will cache forms and data by a cache key. The key is a combination of the path, and the dictionary returned by the `cache_deps` method. By default the `cache_deps` method returns the `query` dictionary.
 
 ## Invalidating Cache
 
@@ -146,7 +146,7 @@ class ArticleRoute(Route):
 
 ```
 
-In the above example if you call `invalidate("/articles", exact=True)` then data and forms associated with the `ArticlesRoute` will be invalidated. If you call `invalidate("/articles", exact=False)` then data and forms associated with the `ArticlesRoute` and all cached `ArticleRoute`s will be invalidated since the `ArticleRoute` path is a subset of the `ArticlesRoute` path.
+In the above example if you call `invalidate("/articles", exact=True)` then data and forms associated with the `ArticlesRoute` will be invalidated. If you call `invalidate("/articles", exact=False)` then data and forms associated with the `ArticlesRoute` and all cached `ArticleRoute` will be invalidated since the `ArticleRoute` path is a subset of the `ArticlesRoute` path.
 
 ```python
 

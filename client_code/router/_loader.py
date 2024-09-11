@@ -118,7 +118,7 @@ def load_data_promise(context, force=False):
             del CACHED_DATA[key]
             data_promise = create_in_flight_data_promise()
         elif mode == CACHE_FIRST:
-            logger.debug(f"{key} loading data, {CACHE_FIRST}")
+            logger.debug(f"{key} loading data from cache")
             data_promise = Result(cached.data)
         elif mode == NETWORK_FIRST:
             logger.debug(f"{key} loading data, {NETWORK_FIRST}")

@@ -103,13 +103,13 @@ class RowTemplate(RowTemplateTemplate):
 
 ```
 
-## Handling Errors
+<!-- ## Handling Errors
 
 If the load_data method raises an exception, the router will behave differently depending on the `cache_data` attribute on the route.
 
 Regardless of the `cache_data` attribute, if there is no data in the cache, and the load_data method raises an exception, the router will call `anvil.open_form` on the matching route's error form. If there is no error form, the router will raise the exception.
 
-If there is a cached form or cached data, then the router will load the form using the cache. If the load_data method raises an exception, the `router_context` will raise the `"data_loaded"` event with `data=None` and `error=<The Exception>`, as well as the `"data_error"` event.
+If there is a cached form or cached data, then the router will load the form using the cache. If the load_data method raises an exception, the `router_context` will raise the `"data_loaded"` event with `data=None` and `error=<The Exception>`, as well as the `"data_error"` event. -->
 
 ## Invalidating Data
 
@@ -117,7 +117,7 @@ See [Invalidating Cache](/caching#invalidating-cache).
 
 ## Pending Form
 
-When data is loading for the first time, a user can provide a loading form. This form will be shown during the initial data load, or subsequent data loads if using `NETWORK_FIRST` mode.
+When data is loading for the first time, a user can provide a loading form. This form will be shown during while the data is loading.
 
 The pending form is determined by the `Route.pending_form` attribute. When the data is loading, the routing library will wait for the `pending_delay` seconds before showing the pending form. It will show the pending form for at least `pending_min` seconds.
 
