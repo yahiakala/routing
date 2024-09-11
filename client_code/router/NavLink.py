@@ -80,7 +80,11 @@ class NavLink(DefaultLink, LinkMixinCommon):
                 ),
             )
 
-    def _on_navigate(self, context: RoutingContext, **nav_args):
+    def _on_navigate(self, context: RoutingContext=None, **nav_args):
+        context = context or RoutingContext._current
+        if context is None:
+            return
+
         location = self._location
         active = True
 
