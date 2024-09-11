@@ -1,7 +1,8 @@
 import json
 
+from ._navigate import get_nav_location
 from ._route import Route, sorted_routes
-from ._utils import make_key, trim_path, url_decode
+from ._utils import make_key, trim_path, url_decode, loads
 
 
 class Match:
@@ -20,6 +21,20 @@ class Match:
 
 def get_segments(path):
     return path.split("/")
+
+
+def get_match_from_nav_args(context_or_path_or_url, *, path, query, params, hash):
+    from ._context import RoutingContext
+
+    # fast path
+    if path is None and query is None and params is None and hash is None:
+        if isinstance(context_or_path_or_url, RoutingContext):
+            return context_or_path_or_url.match
+
+    location = get_nav_location(
+        context_or_path_or_url, path=path, query=query, params=params, hash=hash
+    )
+    return get_match(location)
 
 
 def get_match(location):
@@ -71,9 +86,9 @@ def ensure_dict_wrapper(fn):
 def parse_query(route: Route, query: dict):
     for key, value in dict(query).items():
         try:
-            query[key] = json.loads(value)
+            query[key] = loads(value)
         except Exception:
-            query[key] = value
+            pass
 
     parser = route.parse_query
     if callable(parser):
@@ -86,6 +101,12 @@ def parse_query(route: Route, query: dict):
 
 @ensure_dict_wrapper
 def parse_path(route: Route, params: dict):
+    for key, value in dict(params).items():
+        try:
+            params[key] = loads(value)
+        except Exception:
+            pass
+
     parser = route.parse_params
     if callable(parser):
         return parser(params)

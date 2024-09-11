@@ -46,7 +46,7 @@ All attributes can be accessed from the `routing.router` module.
 : Clears the cache of forms and data
 
 `invalidate(*, path=None, deps=None, exact=False)`
-: Invalidates any cached data and forms based on the path and deps.
+: Invalidates any cached data and forms based on the path and deps. The `exact` argument determines whether to invalidate based on an exact match or a partial match.
 
 `open_form(form, **form_properties)`
 : When migrating you may be able to replace `anvil.open_form` with `router.open_form`. This will only work if you are not using `params`.

@@ -6,8 +6,7 @@ import anvil.server
 from ._cached import CACHED_DATA, IN_FLIGHT_DATA
 from ._constants import CACHE_FIRST, NETWORK_FIRST, NO_CACHE, STALE_WHILE_REVALIDATE
 from ._logger import logger
-from ._matcher import get_match
-from ._navigate import get_nav_location
+from ._matcher import get_match_from_nav_args
 from ._non_blocking import Result, call_async
 from ._utils import await_promise, report_exceptions
 
@@ -151,13 +150,9 @@ def use_data(
 ):
     from ._context import RoutingContext
 
-    location = get_nav_location(
-        context_or_path_or_url, path=path, query=query, params=params, hash=hash
+    match = get_match_from_nav_args(
+        context_or_path_or_url, path=path, params=params, query=query, hash=hash
     )
-    match = get_match(location)
-    if match is None:
-        raise Exception(f"No match {location}")
-
     key = match.key
 
     if key in CACHED_DATA:

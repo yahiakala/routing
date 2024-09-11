@@ -128,7 +128,48 @@ invalidate(routing_context, **kws)
 
 `exact`
 
-: If `True` then the path and deps must match exactly. By default this is `False`. If `False` then any path or deps that are a subset of path and deps arguments will be invalidated.
+: If `True` then the path and deps must match exactly. If `False` (the default) then any path or deps that are a subset of path and deps arguments will be invalidated.
+
+
+## Partial Invalidation
+
+```python
+
+from routing.router import Route
+
+class ArticlesRoute(Route):
+    path = "/articles"
+    form = "Pages.Articles"
+
+class ArticleRoute(Route):
+    path = "/articles/:id"
+    form = "Pages.Article"
+
+```
+
+In the above example if you call `invalidate("/articles", exact=True)` then data and forms associated with the `ArticlesRoute` will be invalidated. If you call `invalidate("/articles", exact=False)` then data and forms associated with the `ArticlesRoute` and all cached `ArticleRoute`s will be invalidated since the `ArticleRoute` path is a subset of the `ArticlesRoute` path.
+
+```python
+
+from routing.router import Route
+
+class ArticlesRoute(Route):
+    path = "/articles"
+    form = "Pages.Articles"
+
+    def cache_deps(self, **loader_args):
+        return {"page": loader_args["query"]["page"]}
+
+    def parse_query(self, query):
+        return {**query, "page": int(query.get("page", 1))}
+
+```
+
+In the above example the data is cached depending on the `page` query parameter. If you call `invalidate("/articles")` then all data associated with all pages will be invalidated. A deps value of `{"page": 1}` is considered a subset of an empty deps argument. If you call `invalidate("/articles", exact=True)` then no data will be invalidated, since there is no match. Calling `invalidate("/articles", deps={"page": 1})` will invalidate only the data for the first page.
+
+
+
+## Invalidating Contexts
 
 A routing context also has an `invalidate` method for convenience.
 
