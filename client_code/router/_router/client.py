@@ -288,7 +288,7 @@ def launch():
     if startup_data is not None:
         startup_cache = startup_data.get("cache", {})
         CACHED_DATA.update(startup_cache)
-        logger.debug(f"startup data: {repr(startup_cache)[:100]}...")
+        logger.debug(f"startup data: {repr(startup_cache)}...")
 
     history.listen(listener)
     on_navigate()

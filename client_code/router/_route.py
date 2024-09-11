@@ -1,6 +1,7 @@
 import anvil.server
 from anvil.history import history
 
+from ._cached import CACHED_DATA
 from ._constants import LAYOUTS, NO_CACHE, TEMPLATE_WITH_CONTAINER
 from ._exceptions import Redirect
 from ._import_form import import_form
@@ -69,8 +70,6 @@ def _create_server_route(cls):
         route = match.route
         context = RoutingContext(match=match)
 
-        cache = {}
-
         try:
             route.before_load(**context._loader_args)
         except Redirect as r:
@@ -89,7 +88,7 @@ def _create_server_route(cls):
                 f"{location}: error serving route from the server: {e!r}\n"
                 f"{traceback.format_exc()}"
             )
-            return LoadAppResponse(data={"cache": cache})
+            return LoadAppResponse(data={"cache": CACHED})
 
         try:
             meta = route.meta(**context._loader_args)
@@ -108,16 +107,16 @@ def _create_server_route(cls):
                 f"{traceback.format_exc()}"
             )
             # TODO: handle error on the client
-            return LoadAppResponse(data={"cache": cache}, meta=meta)
+            return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
 
         mode = route.cache_data_mode
         gc_time = route.gc_time
         cached_data = CachedData(
             data=data, location=location, mode=mode, gc_time=gc_time
         )
-        cache = {match.key: cached_data}
+        CACHED_DATA[match.key] = cached_data
 
-        return LoadAppResponse(data={"cache": cache}, meta=meta)
+        return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
 
 
 class Route:
