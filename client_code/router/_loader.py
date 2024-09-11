@@ -162,7 +162,7 @@ def use_data(
 
     if key in CACHED_DATA:
         logger.debug(f"using cached data for {key}")
-        data_promise = Result(CACHED_DATA[key])
+        data_promise = Result(CACHED_DATA[key].data)
     elif key in IN_FLIGHT_DATA:
         logger.debug(f"using in flight data for {key}")
         data_promise = IN_FLIGHT_DATA[key]
