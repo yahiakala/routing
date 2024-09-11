@@ -112,38 +112,16 @@ def gc():
             CACHED_FORMS.pop(key, None)
 
 
-def on_navigate():
-    location = history.location
-    logger.debug("navigating")
-    key = location.key
-    nav_context = _navigate._current_nav_context
-    form_properties = _navigate._current_form_properties
+def _do_navigate(context):
+    match = context.match
+    route = match.route
+    location = context.location
 
     def is_stale():
-        stale = key != history.location.key
+        stale = location.key != history.location.key
         if stale:
             logger.debug(f"stale navigation detected exiting: {location}")
         return stale
-
-    prev_context = RoutingContext._current
-    if prev_context is not None:
-        with NavigationBlocker(True):
-            if prev_context._prevent_unload():
-                logger.debug(f"navigation blocked by {prev_context.location}")
-                stop_unload()
-                return
-
-    match = get_match(location)
-    if match is None:
-        raise Exception(f"No match {location}")
-
-    context = RoutingContext(
-        match=match, nav_context=nav_context, form_properties=form_properties
-    )
-
-    gc()
-
-    route = match.route
 
     pending_form = route.pending_form
     pending_delay = route.pending_delay
@@ -247,11 +225,42 @@ def on_navigate():
         return handle_error("error_form", e)
 
 
+def on_navigate():
+    location = history.location
+    logger.debug("navigating")
+    nav_context = _navigate._current_nav_context
+    form_properties = _navigate._current_form_properties
+
+    prev_context = RoutingContext._current
+    if prev_context is not None:
+        with NavigationBlocker(True):
+            if prev_context._prevent_unload():
+                logger.debug(f"navigation blocked by {prev_context.location}")
+                stop_unload()
+                return
+
+    match = get_match(location)
+    if match is None:
+        raise Exception(f"No match {location}")
+
+    context = RoutingContext(
+        match=match, nav_context=nav_context, form_properties=form_properties
+    )
+
+    gc()
+
+    kws = {**context._loader_args, "context": context}
+    setTimeout(lambda: navigation_emitter.raise_event("navigate", **kws))
+    pending = setTimeout(lambda: navigation_emitter.raise_event("pending", **kws))
+    try:
+        _do_navigate(context)
+    finally:
+        clearTimeout(pending)
+        setTimeout(lambda: navigation_emitter.raise_event("idle", **kws))
+
+
 def listener(**listener_args):
     global waiting, undoing, redirect, current
-
-    setTimeout(lambda: navigation_emitter.raise_event("navigate", **listener_args))
-    pending_timeout = setTimeout(lambda: navigation_emitter.raise_event("pending"))
 
     try:
         if undoing:
