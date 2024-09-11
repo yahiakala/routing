@@ -23,6 +23,7 @@ except ImportError:
             self.error = None
             self.resolved = False
             self._subscribers = {}
+            self.get()
 
         def get(self):
             if self.resolved:
