@@ -37,14 +37,14 @@ def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
     from ._context import RoutingContext
 
     if isinstance(context_or_path, RoutingContext):
-        path = context_or_path.path
-        deps = context_or_path.deps
         if path is not None:
             raise TypeError("cannot set named argument path if a first argument is set")
         if deps is not None:
             raise TypeError(
                 "cannot set named argument deps if a first argument is a RoutingContext"
             )
+        path = context_or_path.path
+        deps = context_or_path.deps
     else:
         if context_or_path is not None:
             if not isinstance(context_or_path, str):
