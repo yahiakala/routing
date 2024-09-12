@@ -34,7 +34,10 @@ def get_match_from_nav_args(context_or_path_or_url, *, path, query, params, hash
     location = get_nav_location(
         context_or_path_or_url, path=path, query=query, params=params, hash=hash
     )
-    return get_match(location)
+    match = get_match(location)
+    if match is None:
+        raise Exception(f"No match {location}")
+    return match
 
 
 def get_match(location):
