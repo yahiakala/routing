@@ -131,7 +131,10 @@ def loads(s):
 
 class EventEmitter:
     _events = []
-    _subscribers = {}
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls, *args, **kwargs)
+        instance._subscribers = {}
+        return instance
 
     def _validate_event(self, event_name):
         if not isinstance(event_name, str):
