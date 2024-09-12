@@ -132,7 +132,7 @@ def loads(s):
 class EventEmitter:
     _events = []
     def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls, *args, **kwargs)
+        instance = object.__new__(cls)
         instance._subscribers = {}
         return instance
 
