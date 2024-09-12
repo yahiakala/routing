@@ -12,7 +12,7 @@ from ._context import RoutingContext
 from ._exceptions import NotFound, Redirect
 from ._invalidate import invalidate
 from ._loader import use_data
-from ._logger import debug_logging
+from ._logger import debug_logging, logger
 from ._navigate import navigate
 from ._route import Route, TemplateWithContainerRoute, open_form
 from ._router import NavigationBlocker, launch, navigation_emitter
@@ -45,8 +45,10 @@ def get_routing_context():
 
 
 def reload(hard=False):
+    logger.debug(f"reload called with hard={hard}")
     if hard:
-        return _history.reload()
+        _history.reload()
     else:
         invalidate(path=_history.location.path)
+
         _history.replace(_history.location)

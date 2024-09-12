@@ -137,7 +137,9 @@ class EventEmitter:
         if not isinstance(event_name, str):
             raise TypeError("event_name must be a string")
         if event_name not in self._events:
-            raise ValueError(f"event_name {event_name} is not valid")
+            raise ValueError(
+                f"event_name {event_name} is not valid, valid events are {self._events}"
+            )
 
     def add_event_handler(self, event_name, handler):
         self._validate_event(event_name)
