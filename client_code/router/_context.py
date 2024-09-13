@@ -51,6 +51,9 @@ class RoutingContext(EventEmitter):
 
     def _prevent_unload(self):
         for blocker in list(self._blockers):
+            if blocker not in self._blockers:
+                # we were removed while blocking
+                continue
             if blocker():
                 return True
         return False
