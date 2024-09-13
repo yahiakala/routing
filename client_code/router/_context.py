@@ -50,7 +50,7 @@ class RoutingContext(EventEmitter):
             self.raise_event("hash_changed", hash=self.hash)
 
     def _prevent_unload(self):
-        for blocker in self._blockers:
+        for blocker in list(self._blockers):
             if blocker():
                 return True
         return False
