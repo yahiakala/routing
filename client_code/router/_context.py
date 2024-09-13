@@ -59,7 +59,7 @@ class RoutingContext(EventEmitter):
         self._blockers.add(blocker)
 
     def unregister_blocker(self, blocker):
-        self._blockers.remove(blocker)
+        self._blockers.discard(blocker)
 
     def invalidate(self, exact=False):
         # remove ourselves from cached forms and cached data
