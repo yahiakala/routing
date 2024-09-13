@@ -2,7 +2,7 @@ import json
 
 from ._navigate import get_nav_location
 from ._route import Route, sorted_routes
-from ._utils import make_key, trim_path, url_decode, loads
+from ._utils import ensure_dict, loads, make_key, trim_path, url_decode
 
 
 class Match:
@@ -76,11 +76,7 @@ def get_match(location):
 def ensure_dict_wrapper(fn):
     def wrapper(*args, **kws):
         rv = fn(*args, **kws)
-        if rv is None:
-            return {}
-        if not isinstance(rv, dict):
-            raise TypeError(f"{fn.__name__} must return a dict")
-        return rv
+        return ensure_dict(rv, fn.__name__)
 
     return wrapper
 
