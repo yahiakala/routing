@@ -13,6 +13,7 @@ from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._matcher import get_match
 from ._navigate import nav_args_to_location, navigate_with_location
+from ._router import navigation_emitter
 from ._utils import ensure_dict
 
 _DefaultLink = get_design_component(anvil.Link)
@@ -146,8 +147,11 @@ class LinkMixinCommon(Component):
         if in_designer and self._form is not None:
             register_interaction(self, get_dom_node(self), "dblclick", self._do_click)
 
+        if not in_designer:
+            navigation_emitter.add_event_handler("navigate", self._set_href)
+
     def _cleanup(self, **event_args):
-        pass
+        navigation_emitter.remove_event_handler("navigate", self._set_href)
 
     @property
     def nav_context(self):
