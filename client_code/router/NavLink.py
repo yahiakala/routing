@@ -92,7 +92,7 @@ class NavLink(DefaultLink, LinkMixinCommon):
             active = False
         elif self.exact_path and routing_context.path != location.path:
             active = False
-        elif self.exact_query and _query_inclusively_equal(
+        elif self.exact_query and not _query_inclusively_equal(
             self.query, routing_context.query
         ):
             active = False
