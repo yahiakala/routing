@@ -232,6 +232,8 @@ class LinkMixinCommon(Component):
         self._props["exact_hash"] = value
 
     def _set_href(self, **nav_args):
+        prev_location = self._location
+
         self._location = None
         self._form = None
 
@@ -258,6 +260,9 @@ class LinkMixinCommon(Component):
             self._invalid = None
 
         self._location = location
+
+        if prev_location == location:
+            return
 
         if in_designer:
             self._form = _temp_hack_to_get_form(self)
