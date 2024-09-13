@@ -10,6 +10,7 @@ from ._LinkCommon import (
 )
 from ._router import navigation_emitter
 from ._segments import Segment
+from ._utils import ensure_dict
 
 # This is just temporary to test using other nav links
 try:
@@ -87,6 +88,12 @@ class NavLink(DefaultLink, LinkMixinCommon):
 
         location = self._location
         active = True
+
+        query = self.query
+        if callable(query):
+            query = query(routing_context.query)
+        else:
+            query = ensure_dict(query, "query")
 
         if location is None:
             active = False

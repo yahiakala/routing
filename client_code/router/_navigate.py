@@ -52,6 +52,18 @@ def stringify_value(val):
 def clean_query_params(query):
     if not query:
         return {}
+    
+    if callable(query):
+        from ._context import RoutingContext
+        context = RoutingContext._current
+        if context is None:
+            prev = {}
+        else:
+            prev = context.query
+
+        query = query(prev)
+
+        query = ensure_dict(query, "query")
 
     real_query = {}
     keys = sorted(query.keys())
