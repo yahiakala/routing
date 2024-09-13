@@ -234,13 +234,22 @@ class LinkMixinCommon(Component):
     def _set_href(self, **nav_args):
         prev_location = self._location
 
-        self._location = None
-        self._form = None
-
         path = self.path or None
         params = self.params
         query = self.query
         hash = self.hash
+
+        # fast path
+        if (
+            path is not None
+            and not callable(query)
+            and not in_designer
+            and prev_location is not None
+        ):
+            return
+
+        self._location = None
+        self._form = None
 
         try:
             location = nav_args_to_location(
