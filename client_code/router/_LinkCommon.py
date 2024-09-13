@@ -231,7 +231,7 @@ class LinkMixinCommon(Component):
     def exact_hash(self, value):
         self._props["exact_hash"] = value
 
-    def _set_href(self):
+    def _set_href(self, **nav_args):
         self._location = None
         self._form = None
 
