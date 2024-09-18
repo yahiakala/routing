@@ -97,34 +97,46 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 
 ## Not Found Form
 
-If a route is not found, the router will call `anvil.open_form` on the matching route's not found form.
+There are two ways a route can be not found. The first is when the user navigates to a path that does not match any routes. The second is when a user raises a `NotFound` exception in a route's `before_load` or `load_data` method.
 
-If no not found form is defined, the router will raise a `NotFound` exception, which will be caught by Anvil's exception handler.
+### Not Found Route
+
+By definition, if there is not matching route, the router has no route to navigate to. If you want to handle this case, you can define a not found route.
 
 ```python
-
 from routing.router import Route
 
-# you probably want to define a default not found form
-Route.not_found_form = "Pages.NotFound"
-
+class NotFoundRoute(Route):
+    form = "Pages.NotFound"
+    default_not_found = True
 ```
+
+The `NotFoundRoute` will be used when the user navigates to a path that does not match any routes. The `path` attribute should not be set, since this will be determined based on the path the user navigates to.
+
+If no `default_not_found` attribute is set, then the router will raise a `NotFound` exception, which will be caught by Anvil's exception handler.
+
+### Raising a NotFound Exception
+
+If you raise a `NotFound` exception in a route's `before_load` or `load_data` method, the router will call the route's `load_form` method with the route's not found form.
 
 ```python
-# Pages.NotFound
-import anvil
+from routing.router import Route
 
-class NotFound(NotFoundTemplate):
-    def __init__(self, routing_context: RoutingContext, **properties):
-        self.init_components(**properties)
-        self.routing_context = routing_context
-        self.label.text = f"404: No route found for {routing_context.path!r}"
+class ArticleRoute(Route):
+    path = "/articles/:id"
+    form = "Pages.Article"
+    not_found_form = "Pages.ArticleNotFound"
 
-    def form_show(self, **event_args):
-        if anvil.app.environment.name.startswith("Debug"):
-            raise self.routing_context.error
+    def load_data(self, **loader_args):
+        id = loader_args["params"]["id"]
+        article = app_tables.articles.get(id=id)
+        if article is None:
+            raise NotFound(f"No article with id {id}")
+        return article
 
 ```
+
+If a route raises a `NotFound` exception and there is no `not_found_form` attribute, the router will raise the exception, which will be caught by Anvil's exception handler.
 
 ## Error Form
 
