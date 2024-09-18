@@ -1,5 +1,6 @@
 import json
 
+from ._exceptions import NotFound
 from ._navigate import get_nav_location
 from ._route import Route, sorted_routes
 from ._utils import ensure_dict, loads, make_key, trim_path, url_decode
@@ -77,6 +78,7 @@ def get_not_found_match(location, not_found_route_cls):
     path = location.path
     not_found_route = not_found_route_cls()
     not_found_route.path = path
+    not_found_route.error = NotFound(f"No match for {location}")
     params = parse_params(not_found_route, {})
     query = parse_query(not_found_route, location.search_params)
     return Match(location, params, query, not_found_route)
