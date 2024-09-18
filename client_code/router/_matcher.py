@@ -66,11 +66,20 @@ def get_match(location):
                 break
 
         else:  # if no break
-            params = parse_path(route, params)
+            params = parse_params(route, params)
             query = parse_query(route, location.search_params)
             return Match(location, params, query, route)
 
     return None
+
+
+def get_not_found_match(location, not_found_route_cls):
+    path = location.path
+    not_found_route = not_found_route_cls()
+    not_found_route.path = path
+    params = parse_params(not_found_route, {})
+    query = parse_query(not_found_route, location.search_params)
+    return Match(location, params, query, not_found_route)
 
 
 def ensure_dict_wrapper(fn):
@@ -99,7 +108,7 @@ def parse_query(route: Route, query: dict):
 
 
 @ensure_dict_wrapper
-def parse_path(route: Route, params: dict):
+def parse_params(route: Route, params: dict):
     for key, value in dict(params).items():
         try:
             params[key] = loads(value)

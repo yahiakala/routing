@@ -11,7 +11,7 @@ from .._context import RoutingContext
 from .._exceptions import NotFound, Redirect
 from .._loader import CACHED_DATA, load_data_promise
 from .._logger import logger
-from .._matcher import get_match
+from .._matcher import get_match, get_not_found_match
 from .._meta import update_meta_tags
 from .._navigate import navigate
 from .._utils import (
@@ -240,7 +240,12 @@ def on_navigate():
 
     match = get_match(location)
     if match is None:
-        raise Exception(f"No match {location}")
+        from .._route import default_not_found_route_cls
+
+        if default_not_found_route_cls is not None:
+            match = get_not_found_match(location, default_not_found_route_cls)
+        else:
+            raise NotFound(f"No match for {location}")
 
     context = RoutingContext(
         match=match, nav_context=nav_context, form_properties=form_properties

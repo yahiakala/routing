@@ -14,6 +14,8 @@ from ._utils import encode_query_params, trim_path
 sorted_routes = []
 LoadAppResponse = None
 
+default_not_found_route_cls = None
+
 
 def _get_load_app_response():
     global LoadAppResponse
@@ -134,6 +136,7 @@ class Route:
     server_fn = None
     server_silent = False
     gc_time = 30 * 60
+    default_not_found = False
 
     @classmethod
     def create(cls, *, path=None, form=None, server_fn=None, **props):
@@ -173,10 +176,24 @@ class Route:
     def parse_query(self, query):
         return query
 
+    @classmethod
+    def set_default_not_found(cls, not_found_route):
+        global default_not_found_route_cls
+        if issubclass(not_found_route, Route):
+            assert not_found_route.path is None, "not_found_route must not set a path"
+            default_not_found_route_cls = not_found_route
+        else:
+            raise TypeError(
+                f"not_found_route must be a Route subclass, got {not_found_route}"
+            )
+
     # def prepare_query(self, query):
     #     return query
 
     def __init_subclass__(cls) -> None:
+        if cls.__dict__.get("default_not_found"):
+            cls.set_default_not_found(cls)
+
         if cls.path is None:
             return
 
