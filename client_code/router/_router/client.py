@@ -246,13 +246,13 @@ def on_navigate():
         if default_not_found_route_cls is not None:
             match = get_not_found_match(location, default_not_found_route_cls)
         else:
-            raise NotFound(f"No match for {location}")
+            raise NotFound(f"No match for '{location}'")
 
     context = RoutingContext(
         match=match, nav_context=nav_context, form_properties=form_properties
     )
     if not found:
-        context.set_data(None, NotFound(f"No match for {location}"))
+        context.set_data(None, NotFound(f"No match for '{location}'"))
 
     RoutingContext._current = context
 

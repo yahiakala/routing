@@ -67,7 +67,7 @@ def _create_server_route(cls):
         logger.debug(f"serving route from the server: {location}")
         if match is None:
             # this shouldn't happen
-            raise Exception(f"No match for {location}")
+            raise Exception(f"No match for '{location}'")
 
         route = match.route
         context = RoutingContext(match=match)
