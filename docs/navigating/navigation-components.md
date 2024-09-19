@@ -13,7 +13,7 @@ Navigation Components by default are subclasses of the `Anvil.Link` component. B
 
 The NavLink component is a link that you will likely use in your main layout's sidebar. The routing library will set the `active` property on the NavLink to `True` when the NavLink's properties match the current routing context.
 
-If you are using the default NavLink component, then `active` means it will set it's `role` property to `selected`. If the NavLink component is not the default, then how the `active` property behaves is determined by the Base class of the NavLink component.
+If you are using the default NavLink component, then `active` means it will set it's `role` property to `active`. If the NavLink component is not the default, then how the `active` property behaves is determined by the Base class of the NavLink component.
 
 ### Navigation Attributes
 

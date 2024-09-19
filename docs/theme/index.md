@@ -20,7 +20,7 @@ class NavLinkBase(anvil.Link):
     @active.setter
     def active(self, value):
         self._props["active"] = value
-        self.role = "selected" if value else None
+        self.role = "active" if value else None
 
 
 class AnchorBase(anvil.Link):

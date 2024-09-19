@@ -45,7 +45,7 @@ class DefaultLink(_DefaultLink):
     @active.setter
     def active(self, value):
         self._active = value
-        self.role = "selected" if value else None
+        self.role = "active" if value else None
 
 
 def _temp_hack_to_get_form(self):
