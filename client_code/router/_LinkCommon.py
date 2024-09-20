@@ -70,7 +70,7 @@ def filter_props(prop_list):
 class LinkMixinCommon(Component):
     def __init__(self, **properties):
         print("INSTANTIATING LINK MIXIN COMMON", properties)
-        self._props = properties
+        self.__props = properties
         self._location = None
         self._form = None
         self._invalid = None
@@ -121,82 +121,82 @@ class LinkMixinCommon(Component):
 
     @property
     def nav_context(self):
-        return self._props.get("nav_context")
+        return self.__props.get("nav_context")
 
     @nav_context.setter
     def nav_context(self, value):
         value = ensure_dict(value, "nav_context")
-        self._props["nav_context"] = value
+        self.__props["nav_context"] = value
 
     @property
     def form_properties(self):
-        return self._props.get("form_properties")
+        return self.__props.get("form_properties")
 
     @form_properties.setter
     def form_properties(self, value):
         value = ensure_dict(value, "form_properties")
-        self._props["form_properties"] = value
+        self.__props["form_properties"] = value
 
     @property
     def path(self):
-        return self._props.get("path")
+        return self.__props.get("path")
 
     @path.setter
     def path(self, value):
-        self._props["path"] = value
+        self.__props["path"] = value
         self._set_href()
 
     @property
     def query(self):
-        return self._props.get("query")
+        return self.__props.get("query")
 
     @query.setter
     def query(self, value):
-        self._props["query"] = value
+        self.__props["query"] = value
         self._set_href()
 
     @property
     def params(self):
-        return self._props.get("params")
+        return self.__props.get("params")
 
     @params.setter
     def params(self, value):
-        self._props["params"] = value
+        self.__props["params"] = value
         self._set_href()
 
     @property
     def hash(self):
-        return self._props.get("hash")
+        return self.__props.get("hash")
 
     @hash.setter
     def hash(self, value):
-        self._props["hash"] = value
+        self.__props["hash"] = value
         self._set_href()
 
     @property
     def exact_path(self):
-        return self._props.get("exact_path")
+        return self.__props.get("exact_path")
 
     @exact_path.setter
     def exact_path(self, value):
-        self._props["exact_path"] = value
+        self.__props["exact_path"] = value
 
     @property
     def exact_query(self):
-        print("GETTING EXACT QUERY", self._props)
-        return self._props.get("exact_query")
+        print("GETTING EXACT QUERY", self.__props)
+        return self.__props.get("exact_query")
 
     @exact_query.setter
     def exact_query(self, value):
-        self._props["exact_query"] = value
+        self.__props["exact_query"] = value
 
     @property
     def exact_hash(self):
-        return self._props.get("exact_hash")
+        return self.__props.get("exact_hash")
 
     @exact_hash.setter
     def exact_hash(self, value):
-        self._props["exact_hash"] = value
+        self.__props["exact_hash"] = value
 
     def _set_href(self, **nav_args):
         prev_location = self._location
