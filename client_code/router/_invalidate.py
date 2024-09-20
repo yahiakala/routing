@@ -1,5 +1,6 @@
 from ._cached import CACHED_DATA, CACHED_FORMS
 from ._constants import STALE_WHILE_REVALIDATE
+from ._logger import logger
 from ._utils import decode_key, ensure_dict, make_key, valid_absolute_path
 
 
@@ -67,6 +68,11 @@ def invalidate(context_or_path=None, *, path=None, deps=None, exact=False):
 
     else:
         keys = get_invalid_keys(path, deps)
+
+    if keys:
+        logger.debug(f"invalidating keys: {keys}")
+    else:
+        logger.debug("no keys to invalidate")
 
     for key in keys:
         CACHED_FORMS.pop(key, None)
