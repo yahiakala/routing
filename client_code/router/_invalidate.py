@@ -12,7 +12,7 @@ def get_invalid_keys(start_path, start_deps):
     else:
         start_parts = start_path.split("/")
 
-    for key in CACHED_DATA.keys():
+    for key in CACHED_DATA.keys() | CACHED_FORMS.keys():
         path, deps = decode_key(key)
         if path == "/":
             parts = []
