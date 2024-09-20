@@ -57,6 +57,7 @@ def _create_server_route(cls):
 
     LoadAppResponse = _get_load_app_response()
 
+    # remove on next deploy
     Location.__repr__ = dict.__repr__
     def __str__(self):
         return self.get("path", "") + (self.get("search", "") or "") + (self.get("hash", "") or "")
