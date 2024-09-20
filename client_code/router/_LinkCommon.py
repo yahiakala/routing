@@ -18,7 +18,8 @@ def _temp_hack_to_get_form(self):
     from ._import_utils import import_module
 
     try:
-        import_module("routes")
+        rv = import_module("routes")
+        print("IMPORTED MODULE", rv)
     except (ImportError, ModuleNotFoundError, AttributeError):
         pass
 
