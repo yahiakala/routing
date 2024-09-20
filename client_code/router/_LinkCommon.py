@@ -1,11 +1,5 @@
-import anvil
 from anvil import Component
-from anvil.designer import (
-    get_design_component,
-    in_designer,
-    register_interaction,
-    start_editing_form,
-)
+from anvil.designer import in_designer, register_interaction, start_editing_form
 from anvil.history import Location
 from anvil.js import get_dom_node
 
@@ -16,44 +10,15 @@ from ._navigate import nav_args_to_location, navigate_with_location
 from ._router import navigation_emitter
 from ._utils import ensure_dict
 
-_DefaultLink = get_design_component(anvil.Link)
-
-
-class DefaultLink(_DefaultLink):
-    def __init__(self, href=None, **properties):
-        self._active = False
-        super().__init__(url=href, **properties)
-        self._d = get_dom_node(self)
-        self._d.addEventListener("click", self._handle_click, True)
-
-    def _handle_click(self, e):
-        e.stopImmediatePropagation()
-        self.raise_event("click", event=e)
-
-    @property
-    def href(self):
-        return self.url
-
-    @href.setter
-    def href(self, value):
-        self.url = value
-
-    @property
-    def active(self):
-        return self._active
-
-    @active.setter
-    def active(self, value):
-        self._active = value
-        self.role = "active" if value else None
-
 
 def _temp_hack_to_get_form(self):
     if not in_designer:
         return None
 
+    from ._import_utils import import_module
+
     try:
-        from SimpleRoutingExample import routes  # noqa: F401
+        import_module("routes")
     except (ImportError, ModuleNotFoundError, AttributeError):
         pass
 
@@ -95,7 +60,7 @@ active_props = {
 
 all_props = {**nav_props, **active_props}
 
-ignore_props = ["href", *all_props]
+ignore_props = ["href", "url", *all_props]
 
 
 def filter_props(prop_list):

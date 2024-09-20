@@ -1,20 +1,11 @@
-from ._LinkCommon import DefaultLink, LinkMixinCommon, filter_props, nav_props
-
-# This is just temporary to test using other nav links
-try:
-    from Mantine import utils
-    from Mantine.Anchor import Anchor as DefaultLink
-
-    utils.set_color_scheme("light")
-
-except ImportError:
-    pass
+from ._BaseLinks import BaseAnchor
+from ._LinkCommon import LinkMixinCommon, filter_props, nav_props
 
 
-class Anchor(DefaultLink, LinkMixinCommon):
+class Anchor(BaseAnchor, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
-        *filter_props(DefaultLink._anvil_properties_),
+        *filter_props(BaseAnchor._anvil_properties_),
     ]
 
     def __init__(

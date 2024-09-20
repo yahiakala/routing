@@ -4,7 +4,7 @@ from anvil.history import history
 from ._cached import CACHED_DATA
 from ._constants import NO_CACHE
 from ._exceptions import Redirect
-from ._import_form import import_form
+from ._import_utils import import_form
 from ._logger import logger
 from ._meta import get_default_meta
 from ._navigate import nav_args_to_location, navigate

@@ -1,8 +1,8 @@
 from anvil.designer import in_designer
 
 from ._context import RoutingContext
+from ._BaseLinks import BaseNavLink
 from ._LinkCommon import (
-    DefaultLink,
     LinkMixinCommon,
     active_props,
     filter_props,
@@ -11,16 +11,6 @@ from ._LinkCommon import (
 from ._router import navigation_emitter
 from ._segments import Segment
 from ._utils import ensure_dict
-
-# This is just temporary to test using other nav links
-try:
-    from Mantine import utils
-    from Mantine.NavLink import NavLink as DefaultLink
-
-    utils.set_color_scheme("light")
-
-except ImportError:
-    pass
 
 
 def _query_inclusively_equal(a, b):
@@ -33,11 +23,11 @@ def _query_inclusively_equal(a, b):
     return True
 
 
-class NavLink(DefaultLink, LinkMixinCommon):
+class NavLink(BaseNavLink, LinkMixinCommon):
     _anvil_properties_ = [
         *nav_props.values(),
         *active_props.values(),
-        *filter_props(DefaultLink._anvil_properties_),
+        *filter_props(BaseNavLink._anvil_properties_),
     ]
 
     def __init__(
