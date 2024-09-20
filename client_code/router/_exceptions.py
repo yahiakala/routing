@@ -6,8 +6,8 @@ from ._utils import ensure_dict
 class Redirect(AnvilWrappedError):
     def __init__(
         self,
-        *,
         path=None,
+        *,
         query=None,
         params=None,
         hash=None,
