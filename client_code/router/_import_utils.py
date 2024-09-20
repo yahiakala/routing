@@ -4,7 +4,7 @@ import anvil
 def get_package_name():
     try:
         return anvil.app.package_name
-    except AttributeError:
+    except Exception:
         from anvil.js.window import anvilAppMainPackage
 
         return anvilAppMainPackage
