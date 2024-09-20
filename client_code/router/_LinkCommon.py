@@ -20,8 +20,8 @@ def _temp_hack_to_get_form(self):
     try:
         rv = import_module("routes")
         print("IMPORTED MODULE", rv)
-    except (ImportError, ModuleNotFoundError, AttributeError):
-        pass
+    except (ImportError, ModuleNotFoundError, AttributeError) as e:
+        print(repr(e))
 
     if self._location is None:
         return None
