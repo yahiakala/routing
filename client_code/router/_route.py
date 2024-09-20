@@ -56,17 +56,18 @@ def _create_server_route(cls):
         return
 
     LoadAppResponse = _get_load_app_response()
-    print("HI THREE")
+
+    Location.__repr__ = dict.__repr__
+    Location.__str__ = dict.__str__
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
         request = anvil.server.request
         path = request.path
         search = encode_query_params(request.query_params)
-        print(path, search)
         location = Location(path=path, search=search, key="default")
         match = get_match(location=location)
-        # logger.debug(f"serving route from the server: {location}")
+        logger.debug(f"serving route from the server: {location}")
         if match is None:
             # this shouldn't happen
             raise Exception(f"No match for '{location}'")
@@ -83,33 +84,33 @@ def _create_server_route(cls):
                 params=r.params,
                 hash=r.hash,
             )
-            # logger.debug(f"redirecting to {location}")
+            logger.debug(f"redirecting to {location}")
             url = location.get_url(True)
             return anvil.server.HttpResponse(status=302, headers={"Location": url})
         except Exception as e:
             # TODO: handle error on the client
-            # logger.error(
-            #     f"{location}: error serving route from the server: {e!r}\n"
-            #     f"{traceback.format_exc()}"
-            # )
+            logger.error(
+                f"{location}: error serving route from the server: {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             return LoadAppResponse(data={"cache": CACHED_DATA})
 
         try:
             meta = route.meta(**context._loader_args)
         except Exception as e:
-            # logger.error(
-            #     f"error getting meta data for {location}: got {e!r}\n"
-            #     f"{traceback.format_exc()}"
-            # )
+            logger.error(
+                f"error getting meta data for {location}: got {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             meta = None
 
         try:
             data = route.load_data(**context._loader_args)
         except Exception as e:
-            # logger.error(
-            #     f"error loading data for {location}, got {e!r}\n"
-            #     f"{traceback.format_exc()}"
-            # )
+            logger.error(
+                f"error loading data for {location}, got {e!r}\n"
+                f"{traceback.format_exc()}"
+            )
             # TODO: handle error on the client
             return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
 
