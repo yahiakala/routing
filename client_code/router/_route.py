@@ -58,7 +58,10 @@ def _create_server_route(cls):
     LoadAppResponse = _get_load_app_response()
 
     Location.__repr__ = dict.__repr__
-    Location.__str__ = dict.__str__
+    def __str__(self):
+        return self.get("path", "") + (self.get("search", "") or "") + (self.get("hash", "") or "")
+
+    Location.__str__ = __str__
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
