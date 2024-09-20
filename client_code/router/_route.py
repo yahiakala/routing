@@ -57,6 +57,10 @@ def _create_server_route(cls):
 
     LoadAppResponse = _get_load_app_response()
 
+    Location.__repr__ = dict.__repr__
+    Location.__str__ = dict.__str__
+
+
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
         request = anvil.server.request
