@@ -62,6 +62,7 @@ try:
 
         @active.setter
         def active(self, value):
+            print("SETTING ACTIVE PROPERTY", self, value)
             self.selected = value
 
 
