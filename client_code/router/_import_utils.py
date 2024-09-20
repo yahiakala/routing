@@ -5,9 +5,21 @@ def get_package_name():
     try:
         return anvil.app.package_name
     except Exception:
+        pass
+    try:
         from anvil.js.window import anvilAppMainPackage
 
         return anvilAppMainPackage
+    except Exception:
+        pass
+    try:
+        from anvil.js.window import debugAnvilData
+
+        return debugAnvilData.appPackage
+    except Exception:
+        pass
+
+    raise Exception("Could not determine package name")
 
 
 def import_module(module_name):
@@ -17,7 +29,7 @@ def import_module(module_name):
     attrs = module_name.split(".")[1:]
     for attr in attrs:
         mod = getattr(mod, attr)
-    
+
     return mod
 
 
