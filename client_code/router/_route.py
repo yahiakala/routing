@@ -56,12 +56,14 @@ def _create_server_route(cls):
         return
 
     LoadAppResponse = _get_load_app_response()
+    print("HI THREE")
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
         request = anvil.server.request
         path = request.path
         search = encode_query_params(request.query_params)
+        print(path, search)
         location = Location(path=path, search=search, key="default")
         match = get_match(location=location)
         # logger.debug(f"serving route from the server: {location}")
