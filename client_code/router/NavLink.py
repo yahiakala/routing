@@ -32,6 +32,7 @@ class NavLink(BaseNavLink, LinkMixinCommon):
         params=None,
         hash=None,
         nav_context=None,
+        form_properties=None,
         exact_path=False,
         exact_query=False,
         exact_hash=False,
@@ -44,12 +45,15 @@ class NavLink(BaseNavLink, LinkMixinCommon):
             params=params,
             hash=hash,
             nav_context=nav_context,
-            exact_path=exact_path,
-            exact_query=exact_query,
-            exact_hash=exact_hash,
+            form_properties=form_properties,
             **properties,
         )
         BaseNavLink.__init__(self, **properties)
+        self.__active_props = dict(
+            exact_path=exact_path,
+            exact_query=exact_query,
+            exact_hash=exact_hash,
+        )
 
         if not in_designer:
             self.add_event_handler("x-anvil-page-added", self._on_navigate)
@@ -77,8 +81,8 @@ class NavLink(BaseNavLink, LinkMixinCommon):
         query = self.query
         if callable(query):
             query = query(routing_context.query)
-        else:
-            query = ensure_dict(query, "query")
+
+        query = ensure_dict(query, "query")
 
         if location is None:
             active = False
@@ -104,3 +108,27 @@ class NavLink(BaseNavLink, LinkMixinCommon):
                     break
 
         self.active = active
+
+    @property
+    def exact_path(self):
+        return self.__active_props.get("exact_path")
+
+    @exact_path.setter
+    def exact_path(self, value):
+        self.__active_props["exact_path"] = value
+
+    @property
+    def exact_query(self):
+        return self.__active_props.get("exact_query")
+
+    @exact_query.setter
+    def exact_query(self, value):
+        self.__active_props["exact_query"] = value
+
+    @property
+    def exact_hash(self):
+        return self.__active_props.get("exact_hash")
+
+    @exact_hash.setter
+    def exact_hash(self, value):
+        self.__active_props["exact_hash"] = value

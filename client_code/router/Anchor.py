@@ -15,6 +15,7 @@ class Anchor(BaseAnchor, LinkMixinCommon):
         params=None,
         hash=None,
         nav_context=None,
+        form_properties=None,
         **properties,
     ):
         LinkMixinCommon.__init__(
@@ -24,6 +25,7 @@ class Anchor(BaseAnchor, LinkMixinCommon):
             params=params,
             hash=hash,
             nav_context=nav_context,
+            form_properties=form_properties,
             **properties,
         )
         BaseAnchor.__init__(self, **properties)

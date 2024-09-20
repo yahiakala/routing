@@ -69,7 +69,6 @@ def filter_props(prop_list):
 
 class LinkMixinCommon(Component):
     def __init__(self, **properties):
-        print("INSTANTIATING LINK MIXIN COMMON", properties)
         self.__props = properties
         self._location = None
         self._form = None
@@ -172,31 +171,6 @@ class LinkMixinCommon(Component):
     def hash(self, value):
         self.__props["hash"] = value
         self._set_href()
-
-    @property
-    def exact_path(self):
-        return self.__props.get("exact_path")
-
-    @exact_path.setter
-    def exact_path(self, value):
-        self.__props["exact_path"] = value
-
-    @property
-    def exact_query(self):
-        print("GETTING EXACT QUERY", self.__props)
-        return self.__props.get("exact_query")
-
-    @exact_query.setter
-    def exact_query(self, value):
-        self.__props["exact_query"] = value
-
-    @property
-    def exact_hash(self):
-        return self.__props.get("exact_hash")
-
-    @exact_hash.setter
-    def exact_hash(self, value):
-        self.__props["exact_hash"] = value
 
     def _set_href(self, **nav_args):
         prev_location = self._location

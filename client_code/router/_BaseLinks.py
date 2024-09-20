@@ -57,12 +57,10 @@ try:
 
         @property
         def active(self):
-            print("GETTING ACTIVE PROPERTY", self)
             return self.selected
 
         @active.setter
         def active(self, value):
-            print("SETTING ACTIVE PROPERTY", self, value)
             self.selected = value
 
 
