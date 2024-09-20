@@ -69,6 +69,7 @@ def filter_props(prop_list):
 
 class LinkMixinCommon(Component):
     def __init__(self, **properties):
+        print("INSTANTIATING LINK MIXIN COMMON", properties)
         self._props = properties
         self._location = None
         self._form = None
@@ -182,6 +183,7 @@ class LinkMixinCommon(Component):
 
     @property
     def exact_query(self):
+        print("GETTING EXACT QUERY", self._props)
         return self._props.get("exact_query")
 
     @exact_query.setter
