@@ -1,13 +1,8 @@
 from anvil.designer import in_designer
 
-from ._context import RoutingContext
 from ._BaseLinks import BaseNavLink
-from ._LinkCommon import (
-    LinkMixinCommon,
-    active_props,
-    filter_props,
-    nav_props,
-)
+from ._context import RoutingContext
+from ._LinkCommon import LinkMixinCommon, active_props, filter_props, nav_props
 from ._router import navigation_emitter
 from ._segments import Segment
 from ._utils import ensure_dict
@@ -54,7 +49,7 @@ class NavLink(BaseNavLink, LinkMixinCommon):
             exact_hash=exact_hash,
             **properties,
         )
-        DefaultLink.__init__(self, **properties)
+        BaseNavLink.__init__(self, **properties)
 
         if not in_designer:
             self.add_event_handler("x-anvil-page-added", self._on_navigate)

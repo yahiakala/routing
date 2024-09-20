@@ -26,4 +26,4 @@ class Anchor(BaseAnchor, LinkMixinCommon):
             nav_context=nav_context,
             **properties,
         )
-        DefaultLink.__init__(self, **properties)
+        BaseAnchor.__init__(self, **properties)
