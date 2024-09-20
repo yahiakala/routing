@@ -59,8 +59,13 @@ def _create_server_route(cls):
 
     # remove on next deploy
     Location.__repr__ = dict.__repr__
+
     def __str__(self):
-        return self.get("path", "") + (self.get("search", "") or "") + (self.get("hash", "") or "")
+        return (
+            self.get("path", "")
+            + (self.get("search", "") or "")
+            + (self.get("hash", "") or "")
+        )
 
     Location.__str__ = __str__
 
