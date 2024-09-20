@@ -45,8 +45,8 @@ class BaseNavLink(BaseAnchor):
 
 
 try:
-    from m3.Link import Link as M3Link
-    from m3.NavigationLink import NavigationLink as M3NavLink
+    from m3._Components.Link import Link as M3Link
+    from m3._Components.NavigationLink import NavigationLink as M3NavLink
 
     class BaseAnchor(UrlMixin, M3Link):
         pass
