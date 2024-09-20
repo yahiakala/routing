@@ -31,7 +31,7 @@ class BaseAnchor(UrlMixin, BaseAnvilLink):
 
 
 class BaseNavLink(BaseAnchor):
-    def __init__(self, active=False, **properties):
+    def __init__(self, active=False, role=None, **properties):
         super().__init__(**properties)
         self.active = active
 
@@ -52,11 +52,12 @@ try:
         pass
 
     class BaseNavLink(UrlMixin, M3NavLink):
-        def __init__(self, active=False, **properties):
+        def __init__(self, active=False, selected=False, **properties):
             super().__init__(selected=active, **properties)
 
         @property
         def active(self):
+            print("GETTING ACTIVE PROPERTY", self)
             return self.selected
 
         @active.setter
