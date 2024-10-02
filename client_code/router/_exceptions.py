@@ -20,7 +20,6 @@ class Redirect(AnvilWrappedError):
         self.hash = hash
         self.nav_context = ensure_dict(nav_context, "nav_context")
         self.form_properties = ensure_dict(form_properties, "form_properties")
-        print(self.__dict__)
 
 
 class NotFound(AnvilWrappedError):
