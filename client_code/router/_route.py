@@ -16,11 +16,22 @@ LoadAppResponse = None
 
 default_not_found_route_cls = None
 
-
+# TODO remove this after next deploy
 def _get_load_app_response():
     global LoadAppResponse
 
     if LoadAppResponse is not None:
+        return LoadAppResponse
+
+
+    try:
+        from anvil.server import AppResponder
+    except (ImportError, AttributeError):
+        pass
+    else:
+        def LoadAppResponse(data=None, meta=None):
+            return AppResponder(data=data, meta=meta).load_app()
+        
         return LoadAppResponse
 
     try:
@@ -56,18 +67,6 @@ def _create_server_route(cls):
         return
 
     LoadAppResponse = _get_load_app_response()
-
-    # remove on next deploy
-    Location.__repr__ = dict.__repr__
-
-    def __str__(self):
-        return (
-            self.get("path", "")
-            + (self.get("search", "") or "")
-            + (self.get("hash", "") or "")
-        )
-
-    Location.__str__ = __str__
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
