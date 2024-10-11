@@ -3,3 +3,7 @@
 __pycache__
 .anvil-data
 site/
+.ruff_cache/
+.pytest_cache/
+.vscode/
+.venv/
