@@ -22,3 +22,7 @@ To use as a third party dependency, use the code `3PIDO5P3H4VPEMPL`
 
 Copy the url and clone the app anonymously from github in the anvil designer.
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
