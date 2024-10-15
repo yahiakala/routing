@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Anvil
 # SPDX-License-Identifier: MIT
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 TIMEOUT = object()
 NOT_FOUND = object()

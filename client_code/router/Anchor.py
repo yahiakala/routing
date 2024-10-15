@@ -4,7 +4,7 @@
 from ._BaseLinks import BaseAnchor
 from ._LinkCommon import LinkMixinCommon, filter_props, nav_props
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 
 class Anchor(BaseAnchor, LinkMixinCommon):
