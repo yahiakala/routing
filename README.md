@@ -6,7 +6,7 @@ The routing library provides a router for your Anvil app. It uses a combination 
 
 ## BETA
 
-This library is currently in beta. It is not yet ready for production use. Please use with caution.
+This library is currently in beta. It is not yet ready for production. Please use with caution.
 
 ## Building the docs
 
