@@ -48,4 +48,3 @@ class IndexRoute(BaseRoute):
     template_container_properties = {"full_width_row": True}
 
 ```
-

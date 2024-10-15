@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from datetime import datetime, timedelta
 from time import sleep
 
@@ -9,6 +12,8 @@ from ._logger import logger
 from ._matcher import get_match_from_nav_args
 from ._non_blocking import Result, call_async
 from ._utils import await_promise, report_exceptions
+
+__version__ = "0.0.2"
 
 
 @anvil.server.portable_class
@@ -111,7 +116,8 @@ def load_data_promise(context, force=False):
         if is_initial:
             logger.debug("initial request, using cache")
             # data came in with startup data
-            # THIS SHOULD BE HERE - otherwise we may create an unnecessary inflight promise
+            # THIS SHOULD BE HERE
+            # otherwise we may create an unnecessary inflight promise
             data_promise = Result(cached.data)
             if cached.mode == NO_CACHE:
                 # we were loaded from server data - remove from the cache now

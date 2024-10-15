@@ -1,7 +1,12 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from ._cached import CACHED_DATA, CACHED_FORMS
 from ._constants import STALE_WHILE_REVALIDATE
 from ._logger import logger
 from ._utils import decode_key, ensure_dict, make_key, valid_absolute_path
+
+__version__ = "0.0.2"
 
 
 def get_invalid_keys(start_path, start_deps):

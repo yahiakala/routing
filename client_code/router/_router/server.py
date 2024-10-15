@@ -1,4 +1,9 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from .._utils import EventEmitter
+
+__version__ = "0.0.2"
 
 
 def launch():

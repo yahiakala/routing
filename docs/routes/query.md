@@ -98,7 +98,7 @@ e.g. `?foo=bar&baz=1&eggs=true` will be decoded as `{"foo": "bar", "baz": 1, "eg
 
 For nested, json-able objects, i.e. `lists` and `dicts`, the routing library will encode the object as a json string in the query string.
 
-e.g. `foo=%5B1%2C+%22a%22%2C+true%5D'` will be decoded as `{"foo": [1, "a", true]}`. 
+e.g. `foo=%5B1%2C+%22a%22%2C+true%5D'` will be decoded as `{"foo": [1, "a", true]}`.
 
 ## Loading a new instance of a form
 
@@ -126,4 +126,3 @@ class DashboardRoute(Route):
 ```
 
 For more details on `cache_deps` see the data loading section.
-

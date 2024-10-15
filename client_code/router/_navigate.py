@@ -1,4 +1,5 @@
-import json
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
 
 from anvil.history import Location, history
 
@@ -7,6 +8,8 @@ from ._exceptions import InvalidPathParams
 from ._logger import logger
 from ._segments import Segment
 from ._utils import dumps, encode_query_params, ensure_dict, loads, url_encode
+
+__version__ = "0.0.2"
 
 
 def clean_path(path, params):
@@ -52,9 +55,10 @@ def stringify_value(val):
 def clean_query_params(query):
     if not query:
         return {}
-    
+
     if callable(query):
         from ._context import RoutingContext
+
         context = RoutingContext._current
         if context is None:
             prev = {}
@@ -126,7 +130,8 @@ def get_nav_location(context_or_path_or_url, *, path, query, params, hash):
         )
 
         # search params on a raw location are a bit gnarly
-        # they are json stringified so we would be json stringifying again - let's not do that
+        # they are json stringified so we would be json stringifying again
+        # let's not do that
         if hash is None and query is None:
             location.search = temp_location.search
             location.hash = temp_location.hash

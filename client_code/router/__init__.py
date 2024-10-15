@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # ruff: noqa: F401, F811
 from anvil.history import history as _history
 
@@ -18,6 +21,8 @@ from ._route import Route, TemplateWithContainerRoute, open_form
 from ._router import NavigationBlocker, launch, navigation_emitter
 from ._url import get_url
 from ._view_transition import use_transitions
+
+__version__ = "0.0.2"
 
 
 def add_event_handler(event_name, fn):

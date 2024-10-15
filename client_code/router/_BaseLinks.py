@@ -1,6 +1,12 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
+# ruff: noqa: F401
 import anvil
 from anvil.designer import get_design_component
 from anvil.js import get_dom_node
+
+__version__ = "0.0.2"
 
 
 class UrlMixin:

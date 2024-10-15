@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # ruff: noqa: F401
 from anvil.designer import in_designer
 from anvil.js import (
@@ -7,6 +10,8 @@ from anvil.js import (
 from anvil.js.window import Promise, URLSearchParams, document, setTimeout
 
 from .._constants import TIMEOUT
+
+__version__ = "0.0.2"
 
 if in_designer:
     from anvil.js.window import decodeURIComponent as url_decode

@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from anvil import Component
 from anvil.designer import in_designer, register_interaction, start_editing_form
 from anvil.history import Location
@@ -9,6 +12,8 @@ from ._matcher import get_match
 from ._navigate import nav_args_to_location, navigate_with_location
 from ._router import navigation_emitter
 from ._utils import ensure_dict
+
+__version__ = "0.0.2"
 
 
 def _temp_hack_to_get_form(self):

@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
+__version__ = "0.0.2"
+
 CACHED_FORMS = {}
 CACHED_DATA = {}
 IN_FLIGHT_DATA = {}

@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # ruff:noqa: F401
 import json
 from datetime import date, datetime
@@ -5,6 +8,8 @@ from datetime import date, datetime
 import anvil
 
 from .._constants import TIMEOUT
+
+__version__ = "0.0.2"
 
 if anvil.is_server_side():
     from .server import (
@@ -131,6 +136,7 @@ def loads(s):
 
 class EventEmitter:
     _events = []
+
     def __new__(cls, *args, **kwargs):
         instance = object.__new__(cls)
         instance._subscribers = {}

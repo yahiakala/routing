@@ -1,7 +1,12 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # ruff: noqa: F401
 import anvil
 
 from .._utils import setTimeout
+
+__version__ = "0.0.2"
 
 if anvil.is_server_side():
     from .server import PromiseLike
@@ -18,7 +23,8 @@ class Deferred:
         self.promise = PromiseLike(callback)
 
 
-# We wrap the result in a obtuse python object to avoid converting python objects to javascript
+# We wrap the result in a obtuse python object
+# to avoid converting python objects to javascript
 class Result:
     def __init__(self, ok=None, error=None):
         self.ok = ok

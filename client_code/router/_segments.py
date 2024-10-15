@@ -1,4 +1,9 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from ._utils import trim_path
+
+__version__ = "0.0.2"
 
 
 class Segment:

@@ -28,7 +28,7 @@ class AnchorBase(anvil.Link):
 
 ```
 
-**TODO - not yet supported APIs** 
+**TODO - not yet supported APIs**
 
 To tell the routing library to use your own base classes, you can call the anvil's `set_config` method in the preload module.
 

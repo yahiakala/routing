@@ -112,4 +112,3 @@ The `RoutingContext` instance will emit events when the route changes.
 
 : Raises the `data_loaded`, `data_loading`, `data_error`, `query_changed` and `hash_changed` events.
 This event is useful during instantiation of the form. First setup your event handlers, then call `raise_init_events()`.
-

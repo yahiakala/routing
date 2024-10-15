@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 import anvil.server
 from anvil.history import history
 
@@ -11,10 +14,13 @@ from ._navigate import nav_args_to_location, navigate
 from ._segments import Segment
 from ._utils import encode_query_params, trim_path
 
+__version__ = "0.0.2"
+
 sorted_routes = []
 LoadAppResponse = None
 
 default_not_found_route_cls = None
+
 
 # TODO remove this after next deploy
 def _get_load_app_response():
@@ -23,15 +29,15 @@ def _get_load_app_response():
     if LoadAppResponse is not None:
         return LoadAppResponse
 
-
     try:
         from anvil.server import AppResponder
     except (ImportError, AttributeError):
         pass
     else:
+
         def LoadAppResponse(data=None, meta=None):
             return AppResponder(data=data, meta=meta).load_app()
-        
+
         return LoadAppResponse
 
     try:
@@ -252,7 +258,8 @@ def open_form(form, **form_properties):
 
         if any(segment.is_param() for segment in route.segments):
             raise ValueError(
-                f"Tried to call open_form with {form} but {route.path} requires path params"
+                f"Tried to call open_form with {form}"
+                f" but {route.path} requires path params"
             )
 
         return navigate(path=route.path, form_properties=form_properties)

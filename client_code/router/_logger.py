@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # SPDX-License-Identifier: MIT
 #
 # Copyright (c) 2021 The Anvil Extras project team members listed at
@@ -11,7 +14,7 @@ from datetime import datetime as _datetime
 import anvil
 from anvil.history import history
 
-__version__ = "2.6.2"
+__version__ = "0.0.2"
 
 NOTSET = 0
 DEBUG = 1

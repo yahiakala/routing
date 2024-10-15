@@ -1,9 +1,12 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from time import sleep
 
 import anvil
 from anvil.history import history
 from anvil.js import window
-from anvil.js.window import WeakMap, clearTimeout, setTimeout
+from anvil.js.window import WeakMap, clearTimeout
 
 from .. import _navigate
 from .._cached import CACHED_FORMS
@@ -24,6 +27,8 @@ from .._utils import (
     timeout,
 )
 from .._view_transition import ViewTransition
+
+__version__ = "0.0.2"
 
 waiting = False
 undoing = False
@@ -192,7 +197,8 @@ def _do_navigate(context):
 
     if pending_form is not None and result is TIMEOUT:
         logger.debug(
-            f"exceeded pending delay: {pending_delay}, loading pending form {pending_form!r}"
+            f"exceeded pending delay: {pending_delay},"
+            f" loading pending form {pending_form!r}"
         )
         with ViewTransition():
             route.load_form(pending_form, context)

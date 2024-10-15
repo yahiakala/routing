@@ -1,7 +1,12 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from ._invalidate import invalidate
 from ._loader import load_data
 from ._matcher import Match
 from ._utils import EventEmitter, ensure_dict
+
+__version__ = "0.0.2"
 
 
 class RoutingContext(EventEmitter):

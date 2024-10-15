@@ -1,6 +1,11 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 from anvil.server import AnvilWrappedError, _register_exception_type
 
 from ._utils import ensure_dict
+
+__version__ = "0.0.2"
 
 
 class Redirect(AnvilWrappedError):

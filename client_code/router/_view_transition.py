@@ -1,14 +1,12 @@
+# Copyright (c) 2024 Anvil
 # SPDX-License-Identifier: MIT
-#
-# Copyright (c) 2021 The Anvil Extras project team members listed at
-# https://github.com/anvilistas/anvil-extras/graphs/contributors
-#
-# This software is published at https://github.com/anvilistas/anvil-extras
 
 from time import sleep
 
 from ._non_blocking import Deferred
 from ._utils import document, setTimeout
+
+__version__ = "0.0.2"
 
 _transition = None
 _can_transition = hasattr(document, "startViewTransition")

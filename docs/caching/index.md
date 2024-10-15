@@ -39,7 +39,7 @@ You can turn on data caching by setting the `cache_data` attribute on the route 
 !!! Caching Forms with data loaders
 
     If you are using `load_data` method and `cache_form` is set to `True`, then load_data method will not be called if there is an existing cached form.
-    
+
 <!-- If you are using `STALE_WHILE_REVALIDATE` mode, we would recommend setting `cache_form` to `False` so that the `load_data` method is called with the data is stale. -->
 
 
@@ -55,7 +55,7 @@ In `CACHE_FIRST` mode, the data will always be loaded from the cache if it is av
 ### Network First
 
 In `NETWORK_FIRST` mode, the data will always be loaded from the `load_data` when the user navigates to a route. However, if the `load_data` method raises an `AppOfflineError`, the data will be loaded from the cache. -->
-<!-- 
+<!--
 ### Stale While Revalidate
 
 A more advanced mode is `STALE_WHILE_REVALIDATE`. In this mode, the data will be loaded from the cache, and then loaded in the background from the server, if the data is stale. If there is no data in the cache, then the form will not be instantiated until the `load_data` method returns a value.

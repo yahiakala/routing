@@ -1,5 +1,10 @@
+# Copyright (c) 2024 Anvil
+# SPDX-License-Identifier: MIT
+
 # ruff: noqa: F401
 from urllib.parse import urlencode
+
+__version__ = "0.0.2"
 
 try:
     from anvil.http import (
