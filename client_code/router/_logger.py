@@ -14,7 +14,7 @@ from datetime import datetime as _datetime
 import anvil
 from anvil.history import history
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 NOTSET = 0
 DEBUG = 1
