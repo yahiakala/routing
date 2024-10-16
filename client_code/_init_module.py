@@ -44,11 +44,8 @@ except ImportError:
 
 
 try:
-    from Mantine import utils
     from Mantine.Anchor import Anchor as BaseAnchor
     from Mantine.NavLink import NavLink as BaseNavLink
-
-    utils.set_color_scheme("light")
 
 except ImportError:
     pass
