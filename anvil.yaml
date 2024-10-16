@@ -1,4 +1,5 @@
 allow_embedding: false
+client_init_module: _init_module
 name: routing
 native_deps: null
 package_name: routing
