@@ -29,11 +29,11 @@ class BaseNavLink(BaseAnchor):
 
     @property
     def active(self):
-        return self.role == "active"
+        return self.role == "selected"
 
     @active.setter
     def active(self, value):
-        self.role = "active" if value else None
+        self.role = "selected" if value else None
 
 
 try:
