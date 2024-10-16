@@ -3,7 +3,7 @@
 
 from anvil.designer import in_designer
 
-from ._BaseLinks import BaseNavLink
+from ._BaseLinks import setup_base_navlink
 from ._context import RoutingContext
 from ._LinkCommon import LinkMixinCommon, active_props, filter_props, nav_props
 from ._router import navigation_emitter
@@ -11,6 +11,8 @@ from ._segments import Segment
 from ._utils import ensure_dict
 
 __version__ = "0.1.0"
+
+BaseNavLink = setup_base_navlink()
 
 
 def _query_inclusively_equal(a, b):

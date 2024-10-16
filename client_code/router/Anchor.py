@@ -1,10 +1,11 @@
 # Copyright (c) 2024 Anvil
 # SPDX-License-Identifier: MIT
-
-from ._BaseLinks import BaseAnchor
+from ._BaseLinks import setup_base_anchor
 from ._LinkCommon import LinkMixinCommon, filter_props, nav_props
 
 __version__ = "0.1.0"
+
+BaseAnchor = setup_base_anchor()
 
 
 class Anchor(BaseAnchor, LinkMixinCommon):
