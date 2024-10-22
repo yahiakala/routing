@@ -56,3 +56,6 @@ autolabeler:
   - label: 'type: feature'
     branch:
       - '/feat\/.+/'
+  - label: 'skip-changelog'
+    branch:
+      - '/pre-commit-ci-.+/'
