@@ -17,44 +17,8 @@ from ._utils import encode_query_params, trim_path
 __version__ = "0.1.0"
 
 sorted_routes = []
-LoadAppResponse = None
 
 default_not_found_route_cls = None
-
-
-# TODO remove this after next deploy
-def _get_load_app_response():
-    global LoadAppResponse
-
-    if LoadAppResponse is not None:
-        return LoadAppResponse
-
-    try:
-        from anvil.server import AppResponder
-    except (ImportError, AttributeError):
-        pass
-    else:
-
-        def LoadAppResponse(data=None, meta=None):
-            return AppResponder(data=data, meta=meta).load_app()
-
-        return LoadAppResponse
-
-    try:
-        from anvil.server import LoadAppResponse as LAR
-    except ImportError:
-        from anvil.server import _LoadAppResponse as LAR
-
-    try:
-        LAR(data={}, meta={})
-    except TypeError:
-        # meta not yet supported
-        def LoadAppResponse(data=None, meta=None):
-            return LAR(data=data)
-    else:
-        LoadAppResponse = LAR
-
-    return LoadAppResponse
 
 
 def _create_server_route(cls):
@@ -62,6 +26,7 @@ def _create_server_route(cls):
     import traceback
 
     from anvil.history import Location
+    from anvil.server import AppResponder
 
     from ._context import RoutingContext
     from ._loader import CachedData
@@ -71,8 +36,6 @@ def _create_server_route(cls):
 
     if path is None:
         return
-
-    LoadAppResponse = _get_load_app_response()
 
     @anvil.server.route(path)
     def route_handler(*args, **kwargs):
@@ -107,7 +70,7 @@ def _create_server_route(cls):
                 f"{location}: error serving route from the server: {e!r}\n"
                 f"{traceback.format_exc()}"
             )
-            return LoadAppResponse(data={"cache": CACHED_DATA})
+            return AppResponder(data={"cache": CACHED_DATA}).load_app()
 
         try:
             meta = route.meta(**context._loader_args)
@@ -126,7 +89,7 @@ def _create_server_route(cls):
                 f"{traceback.format_exc()}"
             )
             # TODO: handle error on the client
-            return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
+            return AppResponder(data={"cache": CACHED_DATA}, meta=meta).load_app()
 
         mode = route.cache_data
         gc_time = route.gc_time
@@ -135,7 +98,7 @@ def _create_server_route(cls):
         )
         CACHED_DATA[match.key] = cached_data
 
-        return LoadAppResponse(data={"cache": CACHED_DATA}, meta=meta)
+        return AppResponder(data={"cache": CACHED_DATA}, meta=meta).load_app()
 
 
 class Route:
