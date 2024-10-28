@@ -68,8 +68,12 @@ all_props = {**nav_props, **active_props}
 ignore_props = ["href", "url", *all_props]
 
 
+def prop_filter(prop):
+    return prop["name"] not in ignore_props and prop["type"] != "form"
+
+
 def filter_props(prop_list):
-    return filter(lambda prop: prop["name"] not in ignore_props, prop_list)
+    return filter(prop_filter, prop_list)
 
 
 class LinkMixinCommon(Component):
