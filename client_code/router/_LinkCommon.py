@@ -57,7 +57,7 @@ nav_props = {
 }
 
 active_props = {
-    "active": {"name": "active", "type": "boolean", "important": True},
+    "active": {"name": "active", "type": "boolean", "group": "active"},
     "exact_path": {"name": "exact_path", "type": "boolean", "group": "active"},
     "exact_query": {"name": "exact_query", "type": "boolean", "group": "active"},
     "exact_hash": {"name": "exact_hash", "type": "boolean", "group": "active"},
