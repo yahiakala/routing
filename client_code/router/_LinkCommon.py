@@ -65,7 +65,7 @@ active_props = {
 
 all_props = {**nav_props, **active_props}
 
-ignore_props = ["href", "url", *all_props]
+ignore_props = ["href", "url", "selected", *all_props]
 
 
 def prop_filter(prop):
