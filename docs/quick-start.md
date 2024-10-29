@@ -5,7 +5,7 @@ weight: -9.9
 
 ## From a Clone
 
-Clone the following Anvil app: [https://anvil.works/build#clone:BP3HYFTXRG2UZMNK=KQOTMZYGL7QZMXBOIXI3GT66](https://anvil.works/build#clone:BP3HYFTXRG2UZMNK=KQOTMZYGL7QZMXBOIXI3GT66)
+Clone the following Anvil app: [https://anvil.works/build#clone:34ZTMM7IQRTCMIAD=PPWCEPHZKQ3VYBIEF6T7GWOY](https://anvil.works/build#clone:34ZTMM7IQRTCMIAD=PPWCEPHZKQ3VYBIEF6T7GWOY)
 
 ## From a New App
 
