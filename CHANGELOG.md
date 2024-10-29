@@ -1,6 +1,25 @@
 # Changelog
 
-## v0.2.0 (01/01/1970)
+## v0.2.1 (01/01/1970)
+## What's Changed
+### 📖 Documentation
+
+- update clone to use M3 [#23](https://github.com/anvil-works/routing/pull/23)
+
+### Other changes
+
+- Ignore selected prop from designer [#21](https://github.com/anvil-works/routing/pull/21)
+- Filter out form props to avoid confusion [#19](https://github.com/anvil-works/routing/pull/19)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.0...v0.2.1
+
+---
+
+## v0.2.0 (27/10/2024)
 ## What's Changed
 ### 🚀 Features
 
