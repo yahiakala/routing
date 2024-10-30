@@ -1,6 +1,24 @@
 # Changelog
 
-## v0.2.1 (01/01/1970)
+## v0.2.2 (01/01/1970)
+## What's Changed
+
+### 🐛 Bug Fixes
+- Fix TemplateWithContainerRoute to use template_form (typo) [#26](https://github.com/anvil-works/routing/pull/26)
+
+### 📖 Documentation
+
+- improve docs - general readability, typos etc [#24](https://github.com/anvil-works/routing/pull/24)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork, @yahiakala
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.1...v0.2.2
+
+---
+
+## v0.2.1 (29/10/2024)
 ## What's Changed
 ### 📖 Documentation
 
