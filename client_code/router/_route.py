@@ -265,7 +265,7 @@ class TemplateWithContainerRoute(Route):
             return form
 
         print(template)
-        container = getattr(template, self.template_container)
+        container = getattr(template_form, self.template_container)
         container.clear()
         container.add_component(form, **self.template_container_properties)
 
