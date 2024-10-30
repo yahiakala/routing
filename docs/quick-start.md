@@ -1,6 +1,7 @@
 ---
 weight: -9.9
 ---
+
 # Quick Start
 
 ## From a Clone
@@ -74,10 +75,10 @@ In `Layouts.Main`, include a `SideBar` and add 3 `NavLink` components.
 
 Ensure the nav links have the following properties set:
 
--   The first `NavLink` should have the `path="/"`.
--   The second `NavLink` should have the `path="/about"`.
--   The third `NavLink` should have the `path="/contact"`.
+-   The first `NavLink` should have `path="/"`.
+-   The second `NavLink` should have `path="/about"`.
+-   The third `NavLink` should have `path="/contact"`.
 
-Add a title `slot` to the `Layouts.Main` form. And inside `Pages.Index`, add a label component to the title slot with the `text` property set to `"Home"`. Do the same for `Pages.About` and `Pages.Contact`.
+Add a title `slot` to the `Layouts.Main` form. Inside `Pages.Index`, add a label component to the title slot with the `text` property set to `"Home"`. Do the same for `Pages.About` and `Pages.Contact`.
 
-You should now be able to navigate using the side bar nav links.
+You should now be able to navigate using the sidebar nav links.

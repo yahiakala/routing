@@ -25,7 +25,7 @@ class Author(AuthorTemplate):
 
 ## Parsing Params
 
-By default, the params are considered json-able. e.g. if the path is `"/articles/123"` then the `123` is an integer after calling `json.loads`. If you want to parse the params into a different type, you can use the `parse_params` method.
+By default, the params are considered JSON-able. e.g. if the path is `"/articles/123"` then the `123` is an integer after calling `json.loads`. If you want to parse the params into a different type, you can use the `parse_params` method.
 
 ```python
 class AuthorRoute(Route):
@@ -50,13 +50,11 @@ from routing.router import navigate
 ...
     def button_click(self, **event_args):
         navigate(path="/authors/:id", params={"id": 123})
-
 ```
 
 Or equivalently with routing `NavLink` or `Anchor` components.
 
 ```python
-
 from ._anvil_designer import RowTemplateTemplate
 from routing.router import NavLink
 
@@ -71,7 +69,6 @@ class RowTemplate(RowTemplateTemplate):
                 params={"id": self.item["id"]},
             )
         )
-
 ```
 
 **Other equivalent ways to navigate include:**
