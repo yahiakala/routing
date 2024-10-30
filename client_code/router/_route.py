@@ -261,7 +261,7 @@ class TemplateWithContainerRoute(Route):
         if is_stale():
             return form
 
-        container = getattr(template, self.template_container)
+        container = getattr(template_form, self.template_container)
         container.clear()
         container.add_component(form, **self.template_container_properties)
 
