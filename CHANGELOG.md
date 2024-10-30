@@ -12,7 +12,7 @@
 
 ## Contributors
 Thanks to all our contributors! 🎉
-@s-cork, @yahiakala 
+@s-cork, @yahiakala
 
 **Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.1...v0.2.2
 
