@@ -16,7 +16,6 @@ In the above example, the user will be redirected to the `/dashboard` route when
 
 A common use case for redirecting is to ensure that a user is logged in before navigating to a route.
 
-
 ```python
 from routing.router import Route, Redirect
 import anvil.users
@@ -40,9 +39,7 @@ class EnsureUserMixin:
 class DashboardRoute(EnsureUserMixin, Route):
     path = "/dashboard"
     form = "Pages.Dashboard"
-
 ```
-
 
 !!! note
 

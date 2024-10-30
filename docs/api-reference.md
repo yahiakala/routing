@@ -2,9 +2,9 @@
 weight: -9.7
 ---
 
-# Api Reference
+# API Reference
 
-The routing library provides the following functions, classes and attributes.
+The routing library provides the following functions, classes, and attributes.
 All attributes can be accessed from the `routing.router` module.
 
 ## Functions
@@ -19,37 +19,37 @@ All attributes can be accessed from the `routing.router` module.
 : Launches the routing library and navigates to the first route. Call this in your startup module.
 
 `go(n=0)`
-: Navigates to the nth page in the history stack
+: Navigates to the nth page in the history stack.
 
 `back()`
-: Navigates back in the history stack
+: Navigates back in the history stack.
 
 `forward()`
-: Navigates forward in the history stack
+: Navigates forward in the history stack.
 
 `reload(hard=False)`
-: Reloads the current page. If `hard` is `True` then the page will be reloaded from the server. If `hard` is `False` then the page will be removed from the cache and reloaded on the client.
+: Reloads the current page. If `hard` is `True`, the page will be reloaded from the server. If `hard` is `False`, the page will be removed from the cache and reloaded on the client.
 
 `get_routing_context()`
-: Returns the current routing context
+: Returns the current routing context.
 
 `get_url()`
 `get_url(*, path=None, params=None, query=None, hash=None, full=False)`
 `get_url(path, **kws)`
 `get_url(routing_context, **kws)`
-: Gets the url. if no keyword arguments are passed then the current url will be returned. If `full` is `True` then the full url will be returned e.g. `http://my-app.anvil.app/articles/123?foo=bar#hash`. If `full` is `False` then the url will be relative to the base url e.g. `/articles/123?foo=bar#hash`. If no then the current page url will be returned.
+: Gets the URL. If no keyword arguments are passed, the current URL will be returned. If `full` is `True`, the full URL will be returned (e.g., `http://my-app.anvil.app/articles/123?foo=bar#hash`). If `full` is `False`, the URL will be relative to the base URL (e.g., `/articles/123?foo=bar#hash`).
 
 `debug_logging(enable=True)`
-: Enables or disables debug logging
+: Enables or disables debug logging.
 
 `clear_cache()`
-: Clears the cache of forms and data
+: Clears the cache of forms and data.
 
 `invalidate(*, path=None, deps=None, exact=False)`
 : Invalidates any cached data and forms based on the path and deps. The `exact` argument determines whether to invalidate based on an exact match or a partial match.
 
 `open_form(form, **form_properties)`
-: When migrating you may be able to replace `anvil.open_form` with `router.open_form`. This will only work if you are not using `params`.
+: When migrating, you may be able to replace `anvil.open_form` with `router.open_form`. This will only work if you are not using `params`.
 
 ## Classes
 
@@ -65,7 +65,7 @@ All attributes can be accessed from the `routing.router` module.
 : A link that you will likely use in your main layout's sidebar. Has an `active` property that is set when the NavLink's navigation properties match the current routing context.
 
 `Anchor.Anchor`
-: A link that you can use inline, or use as a container for other components.
+: A link that you can use inline or as a container for other components.
 
 ## Context Managers
 
@@ -78,4 +78,4 @@ All attributes can be accessed from the `routing.router` module.
 : Raise during a route's `before_load` method to redirect to a different route.
 
 `NotFound`
-: Raised when a route is not found for given path.
+: Raised when a route is not found for a given path.

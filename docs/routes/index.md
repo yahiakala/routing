@@ -63,11 +63,8 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 `gc_time=30*60`
 : The time in seconds that determines when data is released from the cache for garbage collection. By default this is 30 minutes. When data is released from the cache, any cached forms with the same `path` and `cache_deps` will also be released.
 
-<!-- `stale_time=0`
-: The time in seconds that determines when the data is stale. By default this is 0, i.e. the data is always considered stale when navigating to the route. This is only relevant when `cache_data` is set to `STALE_WHILE_REVALIDATE`. -->
-
 `server_fn (optional str)`
-: The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `load_data` method. Note this is optional and equivalent to defining a `load_data` method the calls the same server function.
+: The server function to call when the route is matched. e.g. `"get_article"`. This server function will be called with the same keyword arguments as the route's `load_data` method. Note this is optional and equivalent to defining a `load_data` method that calls the same server function.
 
 `server_silent=False`
 : If `True` then the server function will be called using `anvil.server.call_s`. By default this is `False`.
@@ -78,13 +75,13 @@ ContactRoute = Route.create(path="/contact", form="Pages.Contact")
 : Called before the route is matched. This method can raise a `Redirect` exception to redirect to a different route. By default this returns `None`.
 
 `parse_query`
-: should return a dictionary of query parameters. By default this returns the original query parameters.
+: Should return a dictionary of query parameters. By default this returns the original query parameters.
 
 `parse_params`
-: should return a dictionary of path parameters. By default this returns the original path parameters.
+: Should return a dictionary of path parameters. By default this returns the original path parameters.
 
 `meta`
-: should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
+: Should return a dictionary with the `title` and `description` of the page. This will be used to update the meta tags and the title of the page. By default this returns the original title and description.
 
 `load_data`
 : Called when the route is matched. The return value will be available in the `data` property of the `RoutingContext` instance. By default this returns `None`.
@@ -101,7 +98,7 @@ There are two ways a route can be not found. The first is when the user navigate
 
 ### Not Found Route
 
-By definition, if there is not matching route, the router has no route to navigate to. If you want to handle this case, you can define a not found route.
+By definition, if there is no matching route, the router has no route to navigate to. If you want to handle this case, you can define a not found route.
 
 ```python
 from routing.router import Route
@@ -133,7 +130,6 @@ class ArticleRoute(Route):
         if article is None:
             raise NotFound(f"No article with id {id}")
         return article
-
 ```
 
 If a route raises a `NotFound` exception and there is no `not_found_form` attribute, the router will raise the exception, which will be caught by Anvil's exception handler.
@@ -150,13 +146,11 @@ from routing.router import Route
 # Either define the error form globally
 Route.error_form = "Pages.Error"
 
-
 # or define the error form per route
 class IndexRoute(Route):
     path = "/"
     form = "Pages.Index"
     error_form = "Pages.Error"
-
 ```
 
 ```python
@@ -174,7 +168,6 @@ class Error(ErrorTemplate):
     def form_show(self, **event_args):
         if anvil.app.environment.name.startswith("Debug"):
             raise self.routing_context.error
-
 ```
 
 ## Ordering Routes
@@ -195,14 +188,13 @@ class NewAuthorRoute(Route):
 class AuthorRoute(Route):
     path = "/authors/:id"
     form = "Pages.Author"
-
 ```
 
 In the above example, it's important that the `NewAuthorRoute` comes before the `AuthorRoute` in the list of routes. This is because `/authors/new` is a valid path for the `AuthorRoute`, so the router would successfully match the route and open the form.
 
 ## Server Routes
 
-When a user navigates to a url directly, the router will match routes on the server.
+When a user navigates to a URL directly, the router will match routes on the server.
 
 When you import your routes in server code, the router will automatically create a server route for each route.
 
@@ -226,5 +218,4 @@ for route in Routes.__subclasses__():
     def server_route(**params):
         ...
         # return a response object that will open the form on the client
-
 ```

@@ -1,12 +1,12 @@
 ---
 weight: 10
 ---
+
 # Blocking Navigation
 
-You may want to prevent the user from navigating away from a page, if say, they are editing a form.
+You may want to prevent the user from navigating away from a page, for example, if they are editing a form.
 
 ```python
-
 from routing.router import RoutingContext, navigate
 
 class EditForm(EditFormTemplate):
@@ -22,13 +22,11 @@ class EditForm(EditFormTemplate):
     def save_button_click(self, **event_args):
         self.routing_context.unregister_blocker(self.prevent_navigation)
         navigate(path="/dashboard")
-
-
 ```
 
 !!! note
 
-    When you register a blocker, if a user navigates to another website, the browser dialog asking if they want to leave the current page will be shown.
+    When you register a blocker, if a user navigates to another website, the browser dialogue asking if they want to leave the current page will be shown.
 
 Alternatively, you can use the `NavigationBlocker` context manager.
 
@@ -44,5 +42,5 @@ class Form(FormTemplate):
             alert("Important Alert", dismissible=False)
 ```
 
-The above navigation blocker will prevent the user navigating away from the page while the alert is open.
-`warn_before_unload` will show the browser dialog asking if the user wants to leave the page, if the user navigates to a new website. By default this is `False`.
+The above navigation blocker will prevent the user from navigating away from the page while the alert is open.
+`warn_before_unload` will show the browser dialogue asking if the user wants to leave the page if they navigate to a new website. By default, this is `False`.
