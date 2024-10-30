@@ -246,12 +246,15 @@ class TemplateWithContainerRoute(Route):
 
         if isinstance(template, str):
             template_form_name = template.split(".").pop()
+            print('test 1')
             if type(anvil.get_open_form()).__name__ == template_form_name:
+                print('test 2')
                 template = anvil.get_open_form()
 
         template_form = import_form(template)
 
         if template_form is not anvil.get_open_form() and not is_stale():
+            print('test 3')
             anvil.open_form(template_form)
 
         form = import_form(
@@ -261,6 +264,7 @@ class TemplateWithContainerRoute(Route):
         if is_stale():
             return form
 
+        print(template)
         container = getattr(template, self.template_container)
         container.clear()
         container.add_component(form, **self.template_container_properties)
