@@ -28,7 +28,7 @@ class IndexRoute(BaseRoute):
 
 If you have a single template in your hash routing app, then set `BaseRoute.template = "MyTemplate"`.
 
-If you have multiple templates, then you can either set the `template` attribute on individual routes.
+If you have multiple templates, then you can set the `template` attribute on individual routes.
 
 ### `set_url_hash`
 
