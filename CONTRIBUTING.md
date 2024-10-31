@@ -1,3 +1,6 @@
+---
+weight: 10
+---
 # Contributing
 
 We welcome contributions to the routing library! This document outlines the process for contributing to this project.

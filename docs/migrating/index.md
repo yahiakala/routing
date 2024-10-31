@@ -1,3 +1,7 @@
+---
+weight: 9
+---
+
 # Migrating
 
 ## From an app that navigates with `anvil.open_form`
@@ -24,11 +28,13 @@ class IndexRoute(BaseRoute):
 
 If you have a single template in your hash routing app, then set `BaseRoute.template = "MyTemplate"`.
 
-If you have multiple templates, then you can either set the `template` attribute on individual routes or define a `get_template` method on the `Route` class.
+If you have multiple templates, then you can either set the `template` attribute on individual routes.
 
 ### `set_url_hash`
 
 Instead of calling hash routing's `set_url_hash` method, use the `navigate` function.
+
+Or, if the `set_url_hash` call is inside a `Link`'s click handler, replace the `Link` with a `NavLink`/`Anchor`. Set the `path` and `query` attribute appropriately and remove the click handler.
 
 ### `full_width_row`
 
@@ -43,4 +49,14 @@ class IndexRoute(BaseRoute):
     path = "/"
     form = "Pages.Index"
     template_container_properties = {"full_width_row": True}
+```
+
+If you are using `full_width_row` on all routes then you can set the `full_width_row` attribute on the `Route` class.
+
+```python
+from routing.router import TemplateWithContainerRoute as BaseRoute
+
+BaseRoute.template = "MainTemplate"
+BaseRoute.template_container_properties = {"full_width_row": True}
+
 ```
