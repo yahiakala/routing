@@ -6,7 +6,7 @@ package_name: routing
 runtime_options:
   client_version: '3'
   legacy_features: {__dict__: true, bootstrap3: true, class_names: true, root_container: true}
-  server_spec: null
+  server_spec: {base: python310-minimal}
   server_version: python3-full
   version: 3
 services:
