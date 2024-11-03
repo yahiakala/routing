@@ -7,7 +7,7 @@ from anvil import confirm as anvil_confirm
 
 from ._router import NavigationBlocker, navigation_emitter
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 dismissible_alerts = []
 
