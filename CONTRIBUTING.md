@@ -70,7 +70,7 @@ We use MkDocs for our documentation. To set up the documentation environment:
 2.  Install requirements:
 
     ```
-      uv pip sync requirements.txt
+      uv pip install -r requirements.txt
     ```
 
 3.  Documentation files are in the `docs/` directory and written in Markdown format.
