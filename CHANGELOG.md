@@ -1,6 +1,25 @@
 # Changelog
 
-## v0.2.2 (01/01/1970)
+## v0.3.0 (01/01/1970)
+## What's Changed
+### 🚀 Features
+
+- Support auto-close on dismissible alerts and prevent navigation otherwise [#32](https://github.com/anvil-works/routing/pull/32)
+
+### 📖 Documentation
+
+- Support auto-close on dismissible alerts and prevent navigation otherwise [#32](https://github.com/anvil-works/routing/pull/32)
+- Update Installation docs and add contribution docs [#27](https://github.com/anvil-works/routing/pull/27)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.2...v0.3.0
+
+---
+
+## v0.2.2 (30/10/2024)
 ## What's Changed
 
 ### 🐛 Bug Fixes
