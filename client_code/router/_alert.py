@@ -33,12 +33,12 @@ class DismissibleAlert:
         dismissible_alerts = [x for x in dismissible_alerts if x is not self]
 
 
-def wrap_alert(alert_method):
-    def alert(content, *args, dismissible=True, **kwargs):
+def wrap_alert(alert_method, dismissible=True):
+    def alert(content, *args, dismissible=dismissible, **kwargs):
         if isinstance(content, str):
             content = anvil.Label(text=content)
 
-        if not dismissible:
+        if dismissible:
             with DismissibleAlert(content):
                 return alert_method(content, *args, dismissible=dismissible, **kwargs)
         else:
@@ -49,4 +49,4 @@ def wrap_alert(alert_method):
 
 
 alert = wrap_alert(anvil_alert)
-confirm = wrap_alert(anvil_confirm)
+confirm = wrap_alert(anvil_confirm, dismissible=False)
