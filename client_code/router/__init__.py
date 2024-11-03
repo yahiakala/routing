@@ -4,6 +4,7 @@
 # ruff: noqa: F401, F811
 from anvil.history import history as _history
 
+from ._alert import alert, confirm
 from ._cached import clear_cache
 from ._constants import (
     CACHE_FIRST,
