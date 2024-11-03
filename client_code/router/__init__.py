@@ -23,7 +23,7 @@ from ._router import NavigationBlocker, launch, navigation_emitter
 from ._url import get_url
 from ._view_transition import use_transitions
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 
 def add_event_handler(event_name, fn):
