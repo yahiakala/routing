@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 import anvil
-from anvil import alert as anvil_alert
-from anvil import confirm as anvil_confirm
 
 from ._router import NavigationBlocker, navigation_emitter
 
@@ -48,5 +46,17 @@ def wrap_alert(alert_method, dismissible=True):
     return alert
 
 
-alert = wrap_alert(anvil_alert)
-confirm = wrap_alert(anvil_confirm, dismissible=False)
+try:
+    _anvil_alert = anvil.alert
+    _anvil_confirm = anvil.confirm
+except AttributeError:
+
+    def _anvil_alert(*args, **kws):
+        pass
+
+    def _anvil_confirm(*args, **kws):
+        pass
+
+
+alert = wrap_alert(_anvil_alert)
+confirm = wrap_alert(_anvil_confirm, dismissible=False)
