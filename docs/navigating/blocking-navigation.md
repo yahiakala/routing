@@ -44,3 +44,22 @@ class Form(FormTemplate):
 
 The above navigation blocker will prevent the user from navigating away from the page while the alert is open.
 `warn_before_unload` will show the browser dialogue asking if the user wants to leave the page if they navigate to a new website. By default, this is `False`.
+
+## Alerts
+
+The `alert` and `confirm` functions are provided by the routing library. These functions behave similarly to Anvil's default `alert` and `confirm` functions, but they will block navigation when `dismissible` is `True`, or close the alert when the user navigates to a new page.
+
+You can override the default `alert` and `confirm` functions by setting the `anvil.alert` and `anvil.confirm` attributes in your startup module.
+
+```python
+# startup.py
+import anvil
+from routing import router
+from . import routes
+
+anvil.alert = router.alert
+anvil.confirm = router.confirm
+
+if __name__ == "__main__":
+    router.launch()
+```

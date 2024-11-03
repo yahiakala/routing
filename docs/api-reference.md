@@ -51,6 +51,12 @@ All attributes can be accessed from the `routing.router` module.
 `open_form(form, **form_properties)`
 : When migrating, you may be able to replace `anvil.open_form` with `router.open_form`. This will only work if you are not using `params`.
 
+`alert(content, *args, dismissible=True, **kwargs)`
+: Shows an alert. If `dismissible` is `True`, the alert will be dismissed when the user navigates to a new page. To override Anvil's default alert, you can set the `anvil.alert = router.alert`.
+
+`confirm(content, *args, dismissible=True, **kwargs)`
+: Shows a confirmation dialog. If `dismissible` is `True`, the dialog will be dismissed when the user navigates to a new page. To override Anvil's default alert, you can set the `anvil.alert = router.alert`.
+
 ## Classes
 
 `Route`
