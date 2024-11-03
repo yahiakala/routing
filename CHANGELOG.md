@@ -1,6 +1,20 @@
 # Changelog
 
-## v0.3.1 (01/01/1970)
+## v0.3.2 (01/01/1970)
+## What's Changed
+### 🐛 Bug Fixes
+
+- Fix - alert is not available on the server [#35](https://github.com/anvil-works/routing/pull/35)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.3.1...v0.3.2
+
+---
+
+## v0.3.1 (03/11/2024)
 ## What's Changed
 ### 🐛 Bug Fixes
 
