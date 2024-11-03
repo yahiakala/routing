@@ -1,6 +1,20 @@
 # Changelog
 
-## v0.3.0 (01/01/1970)
+## v0.3.1 (01/01/1970)
+## What's Changed
+### 🐛 Bug Fixes
+
+- fix dismissible default argument for alerts/confirm [#33](https://github.com/anvil-works/routing/pull/33)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.3.0...v0.3.1
+
+---
+
+## v0.3.0 (03/11/2024)
 ## What's Changed
 ### 🚀 Features
 
