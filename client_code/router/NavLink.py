@@ -53,36 +53,33 @@ class NavLink(BaseNavLink, LinkMixinCommon):
             hash=hash,
             nav_context=nav_context,
             form_properties=form_properties,
-            **properties,
-        )
-        BaseNavLink.__init__(self, **properties)
-        self.__active_props = dict(
             exact_path=exact_path,
             exact_query=exact_query,
             exact_hash=exact_hash,
         )
+        BaseNavLink.__init__(self, **properties)
 
         if not in_designer:
-            self.add_event_handler("x-anvil-page-added", self._on_navigate)
+            self.add_event_handler("x-anvil-page-added", self._rn_on_navigate)
             self.add_event_handler(
                 "x-anvil-page-added",
                 lambda **e: navigation_emitter.add_event_handler(
-                    "navigate", self._on_navigate
+                    "navigate", self._rn_on_navigate
                 ),
             )
             self.add_event_handler(
                 "x-anvil-page-removed",
                 lambda **e: navigation_emitter.remove_event_handler(
-                    "navigate", self._on_navigate
+                    "navigate", self._rn_on_navigate
                 ),
             )
 
-    def _on_navigate(self, routing_context: RoutingContext = None, **nav_args):
+    def _rn_on_navigate(self, routing_context: RoutingContext = None, **nav_args):
         routing_context = routing_context or RoutingContext._current
         if routing_context is None:
             return
 
-        location = self._location
+        location = self._rn.location
         active = True
 
         query = self.query
@@ -118,24 +115,24 @@ class NavLink(BaseNavLink, LinkMixinCommon):
 
     @property
     def exact_path(self):
-        return self.__active_props.get("exact_path")
+        return self._rn.props.get("exact_path")
 
     @exact_path.setter
     def exact_path(self, value):
-        self.__active_props["exact_path"] = value
+        self._rn.props["exact_path"] = value
 
     @property
     def exact_query(self):
-        return self.__active_props.get("exact_query")
+        return self._rn.props.get("exact_query")
 
     @exact_query.setter
     def exact_query(self, value):
-        self.__active_props["exact_query"] = value
+        self._rn.props["exact_query"] = value
 
     @property
     def exact_hash(self):
-        return self.__active_props.get("exact_hash")
+        return self._rn.props.get("exact_hash")
 
     @exact_hash.setter
     def exact_hash(self, value):
-        self.__active_props["exact_hash"] = value
+        self._rn.props["exact_hash"] = value
