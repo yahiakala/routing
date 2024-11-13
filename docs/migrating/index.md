@@ -60,3 +60,45 @@ BaseRoute.template = "MainTemplate"
 BaseRoute.template_container_properties = {"full_width_row": True}
 
 ```
+
+### `on_navigation` callback
+
+In hash routing the `on_navigation` method is called on the Template form when the hash changes. This was often used to update the active nav link in the sidebar. If you are using `Link` components in your sidebar, we recommend replacing these with `NavLink` components. The `NavLink` component will automatically update the `active` property when the hash changes, and you remove the need for `click` handlers.
+
+If you want to keep your existing `on_navigation` method, you can achieve this through the `router`'s event system. The `router` will emit a `navigation` event when the url changes.
+
+```python
+
+from ._anvil_designer import MainTemplate
+from routing import router
+
+
+class Main(MainTemplate):
+    def __init__(self, **properties):
+        self.links = {"/": self.home_nav, "/about": self.about_nav}
+        self.init_components(**properties)
+
+    def on_navigate(self, **event_args):
+        context = router.get_routing_context()
+        for path, link in self.links.items():
+            if path == context.path:
+                link.role = "selected"
+            else:
+                link.role = None
+
+    def home_nav_click(self, **event_args):
+        router.navigate("/")
+
+    def about_nav_click(self, **event_args):
+        router.navigate("/about")
+
+    def form_show(self, **event_args):
+        router.add_event_handler("navigate", self.on_navigate)
+        self.on_navigate()
+
+    def form_hide(self, **event_args):
+        router.remove_event_handler("navigate", self.on_navigate)
+
+```
+
+We recommend subscribing to the `navigation` event in the `form_show` method of your template form, and unsubscribing in the `form_hide` method.
