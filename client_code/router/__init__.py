@@ -4,6 +4,7 @@
 # ruff: noqa: F401, F811
 from anvil.history import history as _history
 
+from ._alert import alert, confirm
 from ._cached import clear_cache
 from ._constants import (
     CACHE_FIRST,
@@ -22,7 +23,7 @@ from ._router import NavigationBlocker, launch, navigation_emitter
 from ._url import get_url
 from ._view_transition import use_transitions
 
-__version__ = "0.2.1"
+__version__ = "0.3.2"
 
 
 def add_event_handler(event_name, fn):

@@ -13,7 +13,7 @@ from ._navigate import nav_args_to_location, navigate_with_location
 from ._router import navigation_emitter
 from ._utils import ensure_dict
 
-__version__ = "0.2.1"
+__version__ = "0.3.2"
 
 
 def _temp_hack_to_get_form(self):
@@ -27,11 +27,11 @@ def _temp_hack_to_get_form(self):
     except Exception:
         pass
 
-    if self._location is None:
+    if self._rn.location is None:
         return None
-    elif self._location.path is None:
+    elif self._rn.location.path is None:
         return None
-    match = get_match(location=self._location)
+    match = get_match(location=self._rn.location)
 
     if match is not None:
         return match.route.form
@@ -76,33 +76,38 @@ def filter_props(prop_list):
     return filter(prop_filter, prop_list)
 
 
+class RouteNamespace:
+    pass
+
+
 class LinkMixinCommon(Component):
     def __init__(self, **properties):
-        self.__props = properties
-        self._location = None
-        self._form = None
-        self._invalid = None
-        self.add_event_handler("x-anvil-page-added", self._setup)
-        self.add_event_handler("x-anvil-page-removed", self._cleanup)
-        self.add_event_handler("click", self._on_click)
+        self._rn = RouteNamespace()
+        self._rn.props = properties
+        self._rn.location = None
+        self._rn.form = None
+        self._rn.invalid = None
+        self.add_event_handler("x-anvil-page-added", self._rn_setup)
+        self.add_event_handler("x-anvil-page-removed", self._rn_cleanup)
+        self.add_event_handler("click", self._rn_on_click)
 
-    def _do_click(self, e):
+    def _rn_do_click(self, e):
         if not in_designer:
-            if self._location is not None:
-                logger.debug(f"NavLink clicked, navigating to {self._location}")
+            if self._rn.location is not None:
+                logger.debug(f"NavLink clicked, navigating to {self._rn.location}")
                 navigate_with_location(
-                    self._location,
+                    self._rn.location,
                     nav_context=self.nav_context,
                     form_properties=self.form_properties,
                 )
-            elif self._invalid is not None:
-                raise self._invalid
+            elif self._rn.invalid is not None:
+                raise self._rn.invalid
             else:
                 logger.debug("NavLink clicked, but with invalid path, query or hash")
-        elif self._form is not None:
-            start_editing_form(self, self._form)
+        elif self._rn.form is not None:
+            start_editing_form(self, self._rn.form)
 
-    def _on_click(self, **event_args):
+    def _rn_on_click(self, **event_args):
         event = event_args.get("event")
         if event is None:
             raise RuntimeError("Link provider did not pass the event")
@@ -112,77 +117,79 @@ class LinkMixinCommon(Component):
             )
             return
         event.preventDefault()
-        self._do_click(event)
+        self._rn_do_click(event)
 
-    def _setup(self, **event_args):
+    def _rn_setup(self, **event_args):
         # we have to do this when we're on the page in case links are relative
-        self._set_href()
+        self._rn_set_href()
 
-        if in_designer and self._form is not None:
-            register_interaction(self, get_dom_node(self), "dblclick", self._do_click)
+        if in_designer and self._rn.form is not None:
+            register_interaction(
+                self, get_dom_node(self), "dblclick", self._rn_do_click
+            )
 
         if not in_designer:
-            navigation_emitter.add_event_handler("navigate", self._set_href)
+            navigation_emitter.add_event_handler("navigate", self._rn_set_href)
 
-    def _cleanup(self, **event_args):
-        navigation_emitter.remove_event_handler("navigate", self._set_href)
+    def _rn_cleanup(self, **event_args):
+        navigation_emitter.remove_event_handler("navigate", self._rn_set_href)
 
     @property
     def nav_context(self):
-        return self.__props.get("nav_context")
+        return self._rn.props.get("nav_context")
 
     @nav_context.setter
     def nav_context(self, value):
         value = ensure_dict(value, "nav_context")
-        self.__props["nav_context"] = value
+        self._rn.props["nav_context"] = value
 
     @property
     def form_properties(self):
-        return self.__props.get("form_properties")
+        return self._rn.props.get("form_properties")
 
     @form_properties.setter
     def form_properties(self, value):
         value = ensure_dict(value, "form_properties")
-        self.__props["form_properties"] = value
+        self._rn.props["form_properties"] = value
 
     @property
     def path(self):
-        return self.__props.get("path")
+        return self._rn.props.get("path")
 
     @path.setter
     def path(self, value):
-        self.__props["path"] = value
-        self._set_href()
+        self._rn.props["path"] = value
+        self._rn_set_href()
 
     @property
     def query(self):
-        return self.__props.get("query")
+        return self._rn.props.get("query")
 
     @query.setter
     def query(self, value):
-        self.__props["query"] = value
-        self._set_href()
+        self._rn.props["query"] = value
+        self._rn_set_href()
 
     @property
     def params(self):
-        return self.__props.get("params")
+        return self._rn.props.get("params")
 
     @params.setter
     def params(self, value):
-        self.__props["params"] = value
-        self._set_href()
+        self._rn.props["params"] = value
+        self._rn_set_href()
 
     @property
     def hash(self):
-        return self.__props.get("hash")
+        return self._rn.props.get("hash")
 
     @hash.setter
     def hash(self, value):
-        self.__props["hash"] = value
-        self._set_href()
+        self._rn.props["hash"] = value
+        self._rn_set_href()
 
-    def _set_href(self, **nav_args):
-        prev_location = self._location
+    def _rn_set_href(self, **nav_args):
+        prev_location = self._rn.location
 
         path = self.path or None
         params = self.params
@@ -198,8 +205,8 @@ class LinkMixinCommon(Component):
         ):
             return
 
-        self._location = None
-        self._form = None
+        self._rn.location = None
+        self._rn.form = None
 
         try:
             location = nav_args_to_location(
@@ -210,20 +217,20 @@ class LinkMixinCommon(Component):
             )
         except InvalidPathParams as e:
             if not in_designer:
-                self._invalid = e
+                self._rn.invalid = e
                 self.href = ""
                 return
             else:
                 location = Location(path=path, hash=hash)
         else:
-            self._invalid = None
+            self._rn.invalid = None
 
-        self._location = location
+        self._rn.location = location
 
         if prev_location == location:
             return
 
         if in_designer:
-            self._form = _temp_hack_to_get_form(self)
+            self._rn.form = _temp_hack_to_get_form(self)
         elif location.path is not None:
             self.href = location.get_url(True)

@@ -1,6 +1,71 @@
 # Changelog
 
-## v0.2.1 (01/01/1970)
+## v0.3.2 (01/01/1970)
+## What's Changed
+### 🐛 Bug Fixes
+
+- Fix - alert is not available on the server [#35](https://github.com/anvil-works/routing/pull/35)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.3.1...v0.3.2
+
+---
+
+## v0.3.1 (03/11/2024)
+## What's Changed
+### 🐛 Bug Fixes
+
+- fix dismissible default argument for alerts/confirm [#33](https://github.com/anvil-works/routing/pull/33)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.3.0...v0.3.1
+
+---
+
+## v0.3.0 (03/11/2024)
+## What's Changed
+### 🚀 Features
+
+- Support auto-close on dismissible alerts and prevent navigation otherwise [#32](https://github.com/anvil-works/routing/pull/32)
+
+### 📖 Documentation
+
+- Support auto-close on dismissible alerts and prevent navigation otherwise [#32](https://github.com/anvil-works/routing/pull/32)
+- Update Installation docs and add contribution docs [#27](https://github.com/anvil-works/routing/pull/27)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.2...v0.3.0
+
+---
+
+## v0.2.2 (30/10/2024)
+## What's Changed
+
+### 🐛 Bug Fixes
+- Fix TemplateWithContainerRoute to use template_form (typo) [#26](https://github.com/anvil-works/routing/pull/26)
+
+### 📖 Documentation
+
+- improve docs - general readability, typos etc [#24](https://github.com/anvil-works/routing/pull/24)
+
+## Contributors
+Thanks to all our contributors! 🎉
+@s-cork, @yahiakala
+
+**Full Changelog**: https://github.com/anvil-works/routing/compare/v0.2.1...v0.2.2
+
+---
+
+## v0.2.1 (29/10/2024)
 ## What's Changed
 ### 📖 Documentation
 

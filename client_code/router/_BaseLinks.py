@@ -5,7 +5,7 @@
 import anvil
 from anvil.designer import get_design_component
 
-__version__ = "0.2.1"
+__version__ = "0.3.2"
 
 
 class UrlMixin:

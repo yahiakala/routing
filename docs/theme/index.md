@@ -1,8 +1,10 @@
 # Theme
 
-If you are writing a custom theme for your Anvil app, you may want to use your own components for the `NavLink` and `Anchor` base classes.
+When creating a custom theme for your Anvil app, you may want to implement your own components for the `NavLink` and `Anchor` base classes.
 
-The default implementation for the `NavLink` and `Anchor` base classes are similar to the following:
+## Default NavLink and Anchor Components
+
+The default implementations for the `NavLink` and `Anchor` base classes are as follows:
 
 ```python
 import anvil
@@ -26,24 +28,34 @@ class AnchorBase(anvil.Link):
     pass
 ```
 
-**TODO - not yet supported APIs**
+## Customising the NavLink and Anchor Components
 
-To tell the routing library to use your own base classes, you can call Anvil's `set_config` method in the preload module.
+To configure the routing library to use your custom base classes, follow these steps:
 
-```python
-# preload module
+1. Create a preload module in your project:
 
-from anvil import set_config
-from ...MyNavLink import MyNavLink
-from ...MyAnchor import MyAnchor
-set_config(nav_link=MyNavLink, anchor=MyAnchor)
-```
+        # preload module: _preload.py
+        import anvil
+        from ...MyNavLink import MyNavLink
+        from ...MyAnchor import MyAnchor
 
-## Existing Themes
+        anvil.pluggable_ui.provide(
+            "MY_PACKAGE_NAME", {"routing.NavLink": MyNavLink, "routing.Anchor": MyAnchor}
+        )
 
--   Mantine
--   M3 **TODO**
+
+2. Configure the client initialisation module:
+
+    The client initialisation module runs when the client starts up. As there is currently no way to set this through the Anvil editor, you'll need to modify your `anvil.yaml` file locally by adding:
+
+        client_init_module: _preload
 
 !!! Note
 
-    If you are using multiple themes that set the `NavLink` and `Anchor` base classes, then the last theme to set the base classes will be used.
+    If multiple themes define `NavLink` and `Anchor` base classes, the most recently loaded theme's implementations will take precedence.
+
+## Supported Themes
+
+Currently supported themes include:
+
+-   M3

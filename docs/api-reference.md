@@ -30,6 +30,16 @@ All attributes can be accessed from the `routing.router` module.
 `reload(hard=False)`
 : Reloads the current page. If `hard` is `True`, the page will be reloaded from the server. If `hard` is `False`, the page will be removed from the cache and reloaded on the client.
 
+`add_event_handler(event_name, handler)`
+: Adds an event handler for the given event name. The event handler should take a `**event_args` argument. The `event_name` can be one of the following:
+
+-   `"navigate"`: raised when the url changes.
+-   `"pending"`: raised when the navigation starts.
+-   `"idle"`: raised when the navigation is complete.
+
+`remove_event_handler(event_name, handler)`
+: Removes an event handler for the given event name.
+
 `get_routing_context()`
 : Returns the current routing context.
 
@@ -50,6 +60,12 @@ All attributes can be accessed from the `routing.router` module.
 
 `open_form(form, **form_properties)`
 : When migrating, you may be able to replace `anvil.open_form` with `router.open_form`. This will only work if you are not using `params`.
+
+`alert(content, *args, dismissible=True, **kwargs)`
+: Shows an alert. If `dismissible` is `True`, the alert will be dismissed when the user navigates to a new page. To override Anvil's default alert, you can set the `anvil.alert = router.alert`.
+
+`confirm(content, *args, dismissible=True, **kwargs)`
+: Shows a confirmation dialog. If `dismissible` is `True`, the dialog will be dismissed when the user navigates to a new page. To override Anvil's default alert, you can set the `anvil.alert = router.alert`.
 
 ## Classes
 
