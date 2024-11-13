@@ -30,6 +30,16 @@ All attributes can be accessed from the `routing.router` module.
 `reload(hard=False)`
 : Reloads the current page. If `hard` is `True`, the page will be reloaded from the server. If `hard` is `False`, the page will be removed from the cache and reloaded on the client.
 
+`add_event_handler(event_name, handler)`
+: Adds an event handler for the given event name. The event handler should take a `**event_args` argument. The `event_name` can be one of the following:
+
+-   `"navigate"`: raised when the url changes.
+-   `"pending"`: raised when the navigation starts.
+-   `"idle"`: raised when the navigation is complete.
+
+`remove_event_handler(event_name, handler)`
+: Removes an event handler for the given event name.
+
 `get_routing_context()`
 : Returns the current routing context.
 
