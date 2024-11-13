@@ -38,7 +38,16 @@ class Form(FormTemplate):
 : The params for the path. e.g. `{"id": 123}`
 
 `query`
-: The query parameters to navigate to. e.g. `{"tab": "income"}`
+: The query parameters to navigate to. e.g. `{"tab": "income"}`. This can be a function that takes the current query parameters as an argument and returns the new query parameters. If you provide a query function, avoid modifying the query parameters directly, instead return a new dictionary.
+
+```python
+
+def on_button_click(self, **event_args):
+    def query(prev):
+        return {**prev, "open": not prev.get("open", False)}
+    navigate(query=query)
+
+```
 
 `hash`
 : The hash to navigate to.

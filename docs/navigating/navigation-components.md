@@ -24,7 +24,7 @@ If you are using the default NavLink component, then `active` means it will set 
 : The params for the path. e.g. `{"id": 123}`
 
 `query`
-: The query parameters to navigate to. e.g. `{"tab": "income"}`
+: The query parameters to navigate to. e.g. `{"tab": "income"}`. This can be a function that takes the current query parameters as an argument and returns the new query parameters.
 
 `form_properties`
 : The form properties to pass to the form when it is opened.
