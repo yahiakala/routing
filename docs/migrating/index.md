@@ -63,7 +63,7 @@ BaseRoute.template_container_properties = {"full_width_row": True}
 
 ### `on_navigation` callback
 
-In hash routing the `on_navigation` method is called on the Template form when the hash changes. This was often used to update the active nav link in the sidebar. If you are using `Link` components in your sidebar, we recommend replacing these with `NavLink` components. The `NavLink` component will automatically update the `active` property when the hash changes, and you remove the need for `click` handlers.
+In hash routing the `on_navigation` method is called on the Template form when the hash changes. This is often used to update the active nav link in the sidebar. If you are using `Link` components in your sidebar, we recommend replacing these with `NavLink` components. The `NavLink` component will automatically update the `active` property when the url changes, and removes the need for `click` handlers. `NavLink`s also improve user experience as they support `ctrl+click` to open in a new tab, and preserves the browser's native link preview behavior, allowing users to see the destination URL in their browser's status bar when hovering over the link.
 
 If you want to keep your existing `on_navigation` method, you can achieve this through the `router`'s event system. The `router` will emit a `navigation` event when the url changes.
 
@@ -101,4 +101,4 @@ class Main(MainTemplate):
 
 ```
 
-We recommend subscribing to the `navigation` event in the `form_show` method of your template form, and unsubscribing in the `form_hide` method.
+If you have multiple Templates, we recommend subscribing to the `navigation` event in the `form_show` method of your template form, and unsubscribing in the `form_hide` method. If you only have a single template, you can subscribe to the `navigation` event in the `__init__` method of your template form and there is no need to unsubscribe.
