@@ -191,4 +191,4 @@ class AdminRoute(EnsureUserMixin, BaseRoute):
 
 ```
 
-Note that redirects are no longer defined in the startup form, but the routes module. In addition, caching is defined for each route, not as a parameter in the navigation function (anvil_extras set_url_hash).
+Note that redirects are no longer defined in the startup form, but the routes module. In addition, caching is defined for each route, not as a parameter in the navigation function (anvil_extras `set_url_hash`). Any common attributes and methods can be set on base classes or mix-in classes.
