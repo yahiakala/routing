@@ -129,7 +129,7 @@ class Main(MainTemplate):
 
 If you have multiple Templates, we recommend subscribing to the `navigation` event in the `form_show` method of your template form, and unsubscribing in the `form_hide` method. If you only have a single template, you can subscribe to the `navigation` event in the `__init__` method of your template form and there is no need to unsubscribe.
 
-### Using Different Templates, redirects, and other advanced usage
+### Using multiple templates, redirects, and other advanced usage
 
 When migrating from anvil_extras, you might have different templates for different parts of your application. For example, you might have:
 - A main template with navigation for authenticated users
