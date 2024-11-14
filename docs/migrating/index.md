@@ -89,7 +89,7 @@ NavLinks provide several advantages:
 
 ### `on_navigation` callback
 
-In hash routing the `on_navigation` method is called on the Template form when the hash changes. This is often used to update the active nav link in the sidebar. If you are using `Link` components in your sidebar, we recommend replacing these with `NavLink` components (see previous section). The `NavLink` component will automatically update the `active` property when the url changes, and removes the need for `click` handlers. `NavLink`s also improve user experience as they support `ctrl+click` to open in a new tab, and preserves the browser's native link preview behavior, allowing users to see the destination URL in their browser's status bar when hovering over the link.
+In hash routing the `on_navigation` method is called on the Template form when the hash changes. This is often used to update the active nav link in the sidebar. If you are using `Link` components in your sidebar, we recommend replacing these with `NavLink` components (see previous section).
 
 If you want to keep your existing `on_navigation` method, you can achieve this through the `router`'s event system. The `router` will emit a `navigation` event when the url changes.
 
