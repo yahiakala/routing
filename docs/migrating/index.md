@@ -63,7 +63,7 @@ BaseRoute.template_container_properties = {"full_width_row": True}
 
 ### Navigation Links
 
-Replace regular HTML links with `NavLink` components. Instead of using click handlers and manually managing navigation, configure the path directly on the component:
+Replace regular HTML links with `NavLink` components. Instead of using click handlers and manually managing navigation, configure the path directly on the component (either in code or in the designer):
 
 ```python
 
